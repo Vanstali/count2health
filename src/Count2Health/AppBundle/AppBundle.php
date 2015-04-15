@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle;
+namespace Count2Health\AppBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
