@@ -13,5 +13,5 @@
 /composer.phar
 /vendor/
 /web/bundles/
-*.db
+app/data/*
 .DS_Store
