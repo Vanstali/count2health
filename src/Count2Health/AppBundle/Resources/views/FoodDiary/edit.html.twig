@@ -1,0 +1,7 @@
+{{ form_start(form) }}
+{{ form_row(form.name) }}
+<p>{{ form_label(form.numberOfUnits) }}
+{{ form_widget(form.numberOfUnits) }} {% if food is null %}servings{% else %}x {{ form_widget(form.servings) }}{% endif %}</p>
+<p>{{ form_label(form.meal) }}
+{{ form_widget(form.meal) }}</p>
+{{ form_end(form) }}

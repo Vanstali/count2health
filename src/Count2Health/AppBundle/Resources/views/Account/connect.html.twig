@@ -1,0 +1,11 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Connect to FatSecret{% endblock %}
+
+{% block body %}
+<h1>Connect to FatSecret</h1>
+
+<p>Are you sure you would like to connect your account with FatSecret? This will delete all of your existing data.</p>
+
+<p><a href="{{ path('account_connect_confirm') }}">Yes</a></p>
+{% endblock %}

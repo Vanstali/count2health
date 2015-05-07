@@ -1,0 +1,39 @@
+{% if results.recipe is defined %}
+{% for recipe in results.recipe %}
+<h2 tabindex="0"{% if loop.index == 1 %} id="first-search-result"{% endif %}>
+<a href="{{ path('recipe_view', {'id': recipe.recipe_id}) }}">
+{{ recipe.recipe_name }}
+</a>
+</h2>
+
+{% if recipe.recipe_image is defined %}
+<p><img src="{{ recipe.recipe_image|raw }}" alt="{{ recipe.recipe_name }}"></p>
+{% endif %}
+
+<p>{{ recipe.recipe_description }}</p>
+{% endfor %}
+
+{% if results.page_number > 0 or results.page_number < total_pages %}
+<div id="pager">
+<p tabindex="0">
+Page {{ (results.page_number+1) }} of {{ (total_pages+1) }}
+</p>
+<p>
+{% if results.page_number > 0 %}
+<a href="#" onclick="showPage({{ (results.page_number-1) }});" tabindex="0"
+accesskey="p">
+&larr; Prev
+</a>
+{% endif %}
+{% if results.page_number < total_pages %}
+<a href="#" onclick="showPage({{ (results.page_number+1) }});" tabindex="0"
+accesskey="n">
+Next &rarr;
+</a>
+{% endif %}
+</p>
+</div>
+{% endif %}
+{% else %}
+<h2 tabindex="0" id="first-search-result">No results. Please try again.</h2>
+{% endif %}

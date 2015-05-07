@@ -1,0 +1,14 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}Add Weight{% endblock %}
+
+{% block body %}
+<h1>Weigh In</h1>
+
+{{ form_start(form) }}
+{{ form_widget(form) }}
+{{ form_end(form) }}
+
+<p><a href="{{ path('weight_diary') }}">Back to your weight diary</a></p>
+
+{% endblock %}

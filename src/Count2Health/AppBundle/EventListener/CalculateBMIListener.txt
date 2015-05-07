@@ -1,0 +1,32 @@
+<?php
+
+namespace Count2Health\AppBundle\EventListener;
+
+use Doctrine\ORM\Event\LifecycleEventArgs;
+use JMS\DiExtraBundle\Annotation as DI;
+use PhpUnitsOfMeasure\PhysicalQuantity\Mass;
+use Count2Health\AppBundle\Entity\WeightLog;
+
+/**
+ * @DI\Service
+ * @DI\Tag("doctrine.event_listener", attributes={"event": "prePersist"})
+ */
+class CalculateBMIListener
+{
+    public function prePersist(LifecycleEventArgs $args)
+    {
+        $em = $args->getEntityManager();
+        $entity = $args->getEntity();
+
+        if (!($entity instanceof WeightLog)) {
+            return;
+        }
+
+        $height = $entity->getUser()->getSetting()->getHeight();
+        $weight = $entity->getWeight();
+
+        $bmi = $weight->toUnit('kg') / pow($height->toUnit('m'), 2);
+        $entity->setBMI($bmi);
+
+    }
+}

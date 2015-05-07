@@ -1,0 +1,28 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}{{ activity.name }}{% endblock %}
+
+{% block body %}
+<h1>
+<a href="{{ path('activities_browse_by_category', {'category': activity.category.id}) }}">
+{{ activity.category.name }}
+</a> &gt; {{ activity.name }}
+</h1>
+
+<p>MET value: {{ activity.mets|number_format(1) }}</p>
+
+{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+<p>For a person weighing {{ weight|weight(app.user) }}, this activity burns {{ activity.getCaloriesBurnedPerHour(weight)|round }} calories per hour.</p>
+{% else %}
+<p>For a person weighing {{ weight.toUnit('lb') }} ({{ weight.toUnit('kg') }}), this activity burns {{ activity.getCaloriesBurnedPerHour(weight) }} calories per hour.</p>
+{% endif %}
+
+{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+<h2>Add This Activity</h2>
+
+{{ form_start(form) }}
+{{ form_widget(form) }}
+{{ form_end(form) }}
+{% endif %}
+
+{% endblock %}

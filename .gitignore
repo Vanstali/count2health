@@ -1,4 +1,8 @@
 /app/bootstrap.php.cache
+<<<<<<< HEAD
+=======
+/app/data/*
+>>>>>>> develop
 /app/cache/*
 !app/cache/.gitkeep
 /app/config/parameters.yml
@@ -9,3 +13,5 @@
 /composer.phar
 /vendor/
 /web/bundles/
+*.db
+.DS_Store

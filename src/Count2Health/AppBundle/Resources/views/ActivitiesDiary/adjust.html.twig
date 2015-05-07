@@ -1,0 +1,26 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Adjust Exercise{% endblock %}
+
+{% block body %}
+<h1>Adjust Exercise</h1>
+
+{{ form_start(form) }}
+<p>{{ form_label(form.time) }}</p>
+{{ form_widget(form.time) }}
+<p>To activity {{ form_widget(form.to) }}</p>
+
+<p>Take Time From {{ form_widget(form.from) }}</p>
+{{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript">
+$(function()
+        {
+        $('#count2health_appbundle_exercise_to').autocomplete({
+    source: {{ types|raw }}
+            });
+        });
+</script>
+{% endblock %}
