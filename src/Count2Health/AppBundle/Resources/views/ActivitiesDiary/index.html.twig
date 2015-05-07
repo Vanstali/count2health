@@ -1,0 +1,61 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}Activity Diary{% endblock %}
+
+{% block body %}
+<h1>Activity Diary</h1>
+
+<p>
+<a href="{{ path('activities_diary_by_date', {'date': yesterday|date('Y-m-d')}) }}"
+title="Yesterday"
+accesskey="p">
+&larr;
+</a>
+{{ date|date('F j, Y') }}
+<a href="{{ path('activities_diary_by_date', {'date': tomorrow|date('Y-m-d')}) }}"
+title="Tomorrow"
+accesskey="n">
+&rarr;
+</a>
+</p>
+
+<p>
+<a href="{{ path('activities_browse') }}">
+Browse
+</a>
+</p>
+
+<p>Calories burned: {{ calories }}</p>
+<p>Fudge factor: {{ fudgeFactor|format_percent }}</p>
+<p>Adjusted calories: {{ adjustedCalories|round }}</p>
+
+<table border="1" cellpadding="3" cellspacing="3">
+<thead>
+<tr>
+<th>Exercise</th>
+<th>Minutes</th>
+<th>Calories</th>
+</tr>
+</thead>
+
+<tbody>
+{% for entry in entries %}
+<tr>
+<th>
+{% if entry.link %}
+<a href="{{ path('activities_browse_by_category', {'category': entry.name.category.id}) }}">
+{{ entry.name.category.name }}
+</a> &gt; <a href="{{ path('activities_view', {'activity': entry.name.id}) }}">
+{{ entry.name.name }}
+</a>
+{% else %}
+{{ entry.name }}
+{% endif %}
+</th>
+<td>{{ entry.minutes|duration }}</td>
+<td>{{ entry.calories }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}

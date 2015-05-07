@@ -1,0 +1,124 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}Weight Diary for {{ month|date("F, Y") }}{% endblock %}
+
+{% block body %}
+<h1>Weight Diary for {{ month|date("F, Y") }}</h1>
+
+<p>
+<a href="{{ path('weight_diary_by_date', {'month': lastMonth|date('Y-m-d')}) }}"
+accesskey="p"
+title="{{ lastMonth|date('F, Y') }}">
+&larr;
+</a>
+{{ month|date('F, Y') }}
+<a href="{{ path('weight_diary_by_date', {'month': nextMonth|date('Y-m-d')}) }}"
+accesskey="n"
+title="{{ nextMonth|date('F, Y') }}">
+&rarr;
+</a>
+</p>
+
+{% if entries is empty %}
+<p>You have not entered a weight yet. <a href="{{ url('weight_diary_new') }}">Log your starting weight here.</a></p>
+{% else %}
+<p><a href="{{ path('weight_diary_new') }}">Weigh In</a></p>
+
+<div id="chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+<br class="clear">
+
+<div id="progressbar"></div>
+
+<p>You've lost {{ weightLost|weight(app.user) }} of {{ totalWeightToLose|weight(app.user) }}.</p>
+
+<p>You have {{ weightToLose|weight(app.user) }} to go.</p>
+
+<table border="1" cellpadding="3" cellspacing="3">
+<thead>
+<tr>
+<th>Date</th>
+<th>Weight</th>
+<th>Trend</th>
+<th>BMI</th>
+<th>Comment</th>
+</tr>
+</thead>
+
+<tbody>
+{% for entry in entries %}
+<tr>
+<th>{{ entry.date|date('F j, Y') }}</th>
+<td>{{ entry.weight|weight(app.user) }}</td>
+<td>{{ entry.trend|weight(app.user) }}</td>
+<td>{{ entry.BMI|round(1) }}</td>
+<td>{{ entry.comment }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript" src="{{ asset("bundles/count2healthapp/js/highcharts.js") }}"></script>
+<script type="text/javascript" src="{{ asset("bundles/count2healthapp/js/modules/exporting.js") }}"></script>
+<script type="text/javascript">
+$(function()
+{
+    $('#chart').highcharts({
+        chart: {
+            type: 'spline'
+        },
+        title: {
+            text: 'Weight for April 2015',
+            x: -20 //center
+        },
+        xAxis: {
+            type: 'datetime',
+            tickInterval: 24 * 3600 * 1000,
+            min: {{ minDate }},
+            max: {{ maxDate }}
+        },
+        yAxis: {
+            title: {
+                text: 'Weight (lb)'
+            },
+            labels: {
+                formatter: function ()
+                {
+                    return this.value + ' {{ app.user.setting.weightUnits }}';
+                }
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            valueSuffix: 'lb'
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
+        },
+        series: [{
+            name: 'Trend',
+            data: {{ trendJson|raw }}
+        }, {
+            name: 'Actual Weight',
+            data: {{ weightJson|raw }}
+        }]
+    });
+
+    $('#progressbar').progressbar({
+value: {{ weightLost.toUnit(app.user.setting.weightUnits) }},
+max: {{ totalWeightToLose.toUnit(app.user.setting.weightUnits) }}
+            });
+
+});
+</script>
+{% endblock %}

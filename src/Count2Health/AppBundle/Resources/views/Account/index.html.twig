@@ -1,0 +1,100 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}Account{% endblock %}
+
+{% block body %}
+<h1>Account</h1>
+
+{% if steps is not empty %}
+<div class="span-6">
+<div class="span-6 last">
+<h2>Getting Started</h2>
+</div>
+{% for step in steps %}
+<div class="span-1">{{ loop.index }}</div>
+<div class="span-1">
+{%- if step.completed == true -%}
+&#9745;
+{%- else -%}
+&#9744;
+{%- endif -%}
+</div>
+<div class="span-4 last">
+{%- if step.url is not empty -%}
+<a href="{{ step.url }}">
+{%- endif -%}
+{{ step.objective }}
+{%- if step.url is not empty -%}
+</a>
+{%- endif -%}
+</div>
+{% endfor %}
+</div>
+
+<div class="span-14 last">
+{% endif %}
+
+{% if steps is not empty %}
+<div class="span-10 prepend-4 last append-bottom">
+{% else %}
+<div class="span-10 prepend-5 append-5 last append-bottom">
+{% endif %}
+<div class="span-10 last">
+<h2>Your Health Journey At A Glance</h2>
+</div>
+{% if weightLossPerWeek is defined %}
+<div class="span-6 text-right">Weight Loss<br>Per Week</div>
+<div class="span-4 last">{{ weightLossPerWeek|weight(app.user) }}</div>
+{% endif %}
+{% if weightLossLast7Days is defined %}
+<div class="span-6 text-right">Weight Loss<br>(Last 7 Days)</div>
+<div class="span-4 last">{{ weightLossLast7Days|weight(app.user) }}</div>
+{% endif %}
+{% if weightLossLast30Days is defined %}
+<div class="span-6 text-right">Weight Loss<br>(Last 30 Days)</div>
+<div class="span-4 last">{{ weightLossLast30Days|weight(app.user) }}</div>
+{% endif %}
+{% if caloriesConsumedPerDay is defined %}
+<div class="span-6 text-right">Calories Consumed<br>Per Day</div>
+<div class="span-4 last">{{ caloriesConsumedPerDay }}</div>
+{% endif %}
+{% if dailyCalorieDeficit is defined %}
+<div class="span-6 text-right">Daily Calorie Deficit</div>
+<div class="span-4 last">{{ dailyCalorieDeficit }}</div>
+{% endif %}
+{% if bmr is defined %}
+<div class="span-6 text-right">Estimated BMR</div>
+<div class="span-4 last">{{ bmr|round }}</div>
+{% endif %}
+{% if tdee is defined %}
+<div class="span-6 text-right">Estimated TDEE</div>
+<div class="span-4 last">{{ tdee|round }}</div>
+{% endif %}
+{% if caloriesConsumedPerDay is defined and dailyCalorieDeficit is defined %}
+<div class="span-6 text-right">Inferred TDEE</div>
+<div class="span-4 last">{{ inferredTdee }}</div>
+{% endif %}
+<div class="span-6 text-right">Goal Weight</div>
+<div class="span-4 last">{{ profile.goal_weight|weight(app.user) }}</div>
+<div class="span-6 text-right">Weight to Lose</div>
+<div class="span-4 last">{{ weightToLose|weight(app.user) }}</div>
+{% if dateReached is defined %}
+<div class="span-6 text-right">Goal Reached On</div>
+<div class="span-4 last">{{ dateReached|date('F j, Y') }}</div>
+{% endif %}
+</div>
+
+{% if steps is not empty %}
+</div>
+{% endif %}
+
+<div class="span-20">
+{% if weigh_in_form is defined %}
+<h2>Weigh In</h2>
+{{ form_start(weigh_in_form) }}
+{{ form_widget(weigh_in_form) }}
+{{ form_end(weigh_in_form) }}
+{% endif %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,253 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}{{ recipe.recipe_name }}{% endblock %}
+
+{% block body %}
+<h1>{{ recipe.recipe_name }}</h1>
+
+<p><a href="{{ path('recipes_search') }}">Back to Search</a></p>
+
+<div class="span-20 last">
+<div class="span-9 colborder">
+<div class="span-9 last">{{ recipe.recipe_description }}</div>
+{% if recipe.recipe_images is defined %}
+{% for image in recipe.recipe_images.recipe_image %}
+<div class="span-9 last text-center">
+<img src="{{ image|raw }}" alt="{{ recipe.recipe_name }}">
+</div>
+{% endfor %}
+{% endif %}
+</div>
+<div class="span-10 last">
+<div class="span-5 text-right">Yield</div>
+<div class="span-5 last">{{ recipe.number_of_servings|round }} serving{% if recipe.number_of_servings > 1 %}s{% endif %}</div>
+{% if recipe.preparation_time_min is defined %}
+<div class="span-5 text-right">Preparation Time</div>
+<div class="span-5 last">{{ recipe.preparation_time_min }} minutes</div>
+{% endif %}
+{% if recipe.cooking_time_min is defined %}
+<div class="span-5 text-right">Cooking Time</div>
+<div class="span-5 last">{{ recipe.cooking_time_min }} minutes</div>
+{% endif %}
+<div class="span-5 text-right">Rating</div>
+<div class="span-5 last">{{ recipe.rating }}/5</div>
+{% if recipe.recipe_types is defined %}
+<div class="span-5 text-right">Recipe Types</div>
+<div class="span-5 last">{% for type in recipe.recipe_types.recipe_type %}{% if loop.index > 1 %}, {% endif %}{{ type }}{% endfor %}</div>
+{% endif %}
+</div>
+</div>
+
+<hr />
+
+<h2 class="prepend-6">Ingredients</h2>
+
+{% for ingredient in recipe.ingredients.ingredient %}
+<div class="span-1 prepend-3 text-right">&bull;</div>
+<div class="span-10 append-6 last">
+<a href="{{ path("food_view", {'id': ingredient.food_id}) }}">
+{{ ingredient.ingredient_description }}
+</a>
+</div>
+{% endfor %}
+
+<h2 class="prepend-6">Directions</h2>
+
+{% for step in recipe.directions.direction %}
+<div class="prepend-3 span-1 text-right">
+{{ step.direction_number }}
+</div>
+<div class="span-16 last">
+{{ step.direction_description }}
+</div>
+{% endfor %}
+
+<h2 class="prepend-6">Nutritional Information</h2>
+
+    <div class="span-5 text-right">Calories</div>
+    <div class="span-4 append-1 border" id="calories">&nbsp;</div>
+<div class="prepend-1 span-5 text-right">Serving Size</div>
+<div class="span-4 last" id="serving-size">&nbsp;</div>
+
+<div class="span-5 text-right">Carbohydrates</div>
+<div class="span-4 append-1 border" id="carbohydrate">&nbsp;</div>
+<div class="prepend-1 span-5 text-right">Protein</div>
+<div class="span-4 last" id="protein">&nbsp;</div>
+
+<div class="span-5 text-right">Fat</div>
+<div class="span-4 append-1 border" id="fat">&nbsp;</div>
+<div class="prepend-1 span-5 text-right">Saturated Fat</div>
+<div class="span-4 last" id="saturated-fat">&nbsp;</div>
+
+<div class="span-5 text-right">Polyunsaturated Fat</div>
+<div class="span-4 append-1 border" id="polyunsaturated-fat">&nbsp;</div>
+<div class="prepend-1 span-5 text-right">Monounsaturated Fat</div>
+<div class="span-4 last" id="monounsaturated-fat">&nbsp;</div>
+
+<div class="span-5 text-right">Trans Fat</div>
+<div class="span-4 append-1 border" id="trans-fat">&nbsp;</div>
+<div class="prepend-1 span-5 text-right">Cholesterol</div>
+<div class="span-4 last" id="cholesterol">&nbsp;</div>
+
+<div class="span-5 text-right">Sodium</div>
+<div class="span-4 append-1 border" id="sodium">&nbsp;</div>
+<div class="prepend-1 span-5 text-right">Potassium</div>
+<div class="span-4 last" id="potassium">&nbsp;</div>
+
+<div class="span-5 text-right">Fiber</div>
+<div class="span-4 append-1 border" id="fiber">&nbsp;</div>
+<div class="prepend-1 span-5 text-right">Sugar</div>
+<div class="span-4 last" id="sugar">&nbsp;</div>
+
+<div class="span-5 text-right">Vitamin A</div>
+<div class="span-4 append-1 border" id="vitamin-a">&nbsp;</div>
+<div class="prepend-1 span-5 text-right">Vitamin C</div>
+<div class="span-4 last" id="vitamin-c">&nbsp;</div>
+
+<div class="span-5 text-right">Calcium</div>
+<div class="span-4 append-1 border" id="calcium">&nbsp;</div>
+<div class="prepend-1 span-5 text-right">Iron</div>
+<div class="span-4 last" id="iron">&nbsp;</div>
+
+            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+<hr />
+
+<h2>Add To Food Diary</h2>
+<div class="span-12 append-4 prepend-4 last">
+{{ form_start(form) }}
+{{ form_row(form.name) }}
+{{ form_row(form.date) }}
+<p>{{ form_label(form.units) }}
+{{ form_widget(form.units) }} x {{ form_widget(form.servings) }}</p>
+<p>{{ form_label(form.meal) }}
+{{ form_widget(form.meal) }}</p>
+{{ form_end(form) }}
+</div>
+{% else %}
+<p><a href="{{ path('fos_user_security_login') }}">Login</a> or <a href="{{ path('fos_user_registration_register') }}">register</a> to add this food and more to your food diary.</p>
+{% endif %}
+
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript">
+var servings = {{ servings|raw }};
+
+$(function ()
+        {
+        populate();
+        });
+
+$('#count2health_appbundle_food_servings').change(function()
+        {
+        populate();
+        });
+
+$('#count2health_appbundle_food_units').on('input', function()
+        {
+        populate();
+        });
+
+$('#count2health_appbundle_food_units').change(function()
+        {
+        $(this).val(fractionToFloat($(this).val()).round(3));
+        });
+
+function populate()
+{
+        // Find current serving
+        var unit = fractionToFloat($('#count2health_appbundle_food_units').val());
+        var serving = $('#count2health_appbundle_food_servings').val();
+
+        // Search for serving
+        for (var i = 0; i < servings.length; i++)
+        {
+                $('#calories').html((unit * servings[i].calories).round(0));
+                var servingSize = servings[i].serving_size;
+                $('#serving-size').html(servingSize);
+                $('#carbohydrate').html((unit * servings[i].carbohydrate).round(1) + ' g');
+                $('#protein').html((unit * servings[i].protein).round(1) + ' g');
+                $('#fat').html((unit * servings[i].fat).round(1) + ' g');
+                if (servings[i].saturated_fat) {
+                $('#saturated-fat').html((unit * servings[i].saturated_fat).round(1) + ' g');
+                }
+                else {
+                    $('#saturated-fat').html('0 g');
+                }
+                if (servings[i].polyunsaturated_fat) {
+                $('#polyunsaturated-fat').html((unit * servings[i].polyunsaturated_fat).round(1) + ' g');
+                }
+                else {
+                    $('#polyunsaturated-fat').html('0 g');
+                }
+                if (servings[i].monounsaturated_fat) {
+                $('#monounsaturated-fat').html((unit * servings[i].monounsaturated_fat).round(1) + ' g');
+                }
+                else {
+                    $('#monounsaturated-fat').html('0 g');
+                }
+                if (servings[i].trans_fat) {
+                $('#trans-fat').html((unit * servings[i].trans_fat).round(1) + ' g');
+                }
+                else {
+                    $('#trans-fat').html('0 g');
+                }
+                if (servings[i].cholesterol) {
+                $('#cholesterol').html((unit * servings[i].cholesterol).round(0) + ' mg');
+                }
+                else {
+                    $('#cholesterol').html('0 mg');
+                }
+                if (servings[i].sodium) {
+                $('#sodium').html((unit * servings[i].sodium).round(0) + ' mg');
+                }
+                else {
+                    $('#sodium').html('0 mg');
+                }
+                if (servings[i].potassium) {
+                $('#potassium').html((unit * servings[i].potassium).round(0) + ' mg');
+                }
+                else {
+                    $('#potassium').html('0 mg');
+                }
+                if (servings[i].fiber) {
+                $('#fiber').html((unit * servings[i].fiber).round(1) + ' g');
+                }
+                else {
+                    $('#fiber').html('0 g');
+                }
+                if (servings[i].sugar) {
+                $('#sugar').html((unit * servings[i].sugar).round(1) + ' g');
+                }
+                else {
+                    $('#sugar').html('0 g');
+                }
+                if (servings[i].vitamin_a) {
+                $('#vitamin-a').html((unit * servings[i].vitamin_a).round(0) + '%');
+                }
+                else {
+                    $('#vitamin-a').html('0%');
+                }
+                if (servings[i].vitamin_c) {
+                $('#vitamin-c').html((unit * servings[i].vitamin_c).round(0) + '%');
+                }
+                else {
+                    $('#vitamin-c').html('0%');
+                }
+                if (servings[i].calcium) {
+                $('#calcium').html((unit * servings[i].calcium).round(0) + '%');
+                }
+                else {
+                    $('#calcium').html('0%');
+                }
+                if (servings[i].iron) {
+                $('#iron').html((unit * servings[i].iron).round(0) + '%');
+                }
+                else {
+                    $('#iron').html('0%');
+                }
+                break;
+        }
+}
+</script>
+{% endblock %}

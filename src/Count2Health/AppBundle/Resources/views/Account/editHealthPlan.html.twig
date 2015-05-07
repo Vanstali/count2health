@@ -1,0 +1,275 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Enter Health Plan Details{% endblock %}
+
+{% block body %}
+<h1>Enter Health Plan Details</h1>
+<h2>Plan: {% if type == "loss" -%}
+Weight Loss
+{%- elseif type == "maintenance" -%}
+Weight Maintenance
+{%- elseif type == "gain" -%}
+Weight Gain
+{%- endif %} (<a href="{{ path('account_health_plan_select') }}">Change Type</a>)</h2>
+
+{{ form_start(form) }}
+{{ form_errors(form) }}
+
+<div>
+{{ form_label(form.goalWeight) }}
+{{ form_errors(form.goalWeight) }}
+{{ form_widget(form.goalWeight) }}
+{% if type == "maintenance" -%}
+<p>Because you are maintaining your weight, your &ldquo;goal weight&rdquo; is simply the weight you'd like to maintain.</p>
+{%- endif %}
+</div>
+
+<div id="bmi"></div>
+
+{% if type != "maintenance" %}
+<p><a href="#" id="recommended-goal-weight">Get Recommendation</a></p>
+{% endif %}
+
+<div>
+<p>Your total daily energy expenditure is {{ tdee|round }} calories. This is an estimate of how many calories you burn daily. Note that this is only an estimate. As you log your calories, Count2Health will adjust your estimated TDEE based on your weight trend.</p>
+
+<p>{% if type == "loss" -%}
+To lose weight, you will need to keep a calorie deficit, meaning you eat fewer calories than your estimated TDEE.
+{%- elseif type == "maintenance" -%}
+To maintain your current weight, you will need to eat as many calories as you burn.
+{%- elseif type == "gain" -%}
+To gain weight, you will need to maintain a positive calorie excess.
+{%- endif -%}
+{%- if type != "maintenance" %} A healthy {% if type == "loss" -%}
+ rate of weight loss
+{%- elseif type == "gain" -%}
+rate of weight gain
+{%- endif %} for most people is between {% if app.user.setting.weightUnits == "lb" -%}
+0.5-2.0 lb{% else -%}
+0.25-1.0 kg{% endif %} per week.
+{%- endif %}</p>
+</div>
+
+{% if type != 'maintenance' %}
+<p>How much weight would you like to {% if type == "loss" -%}
+lose
+{%- elseif type == "gain" -%}
+gain
+{%- endif %} per week?</p>
+{% for preset in presets %}
+<div style="float:left;">
+<a href="#" onclick="setCalorieDeficit({{ preset.calories }});">
+{{ preset.weight|weight(app.user, 2) }}
+</a>
+</div>
+{% endfor %}
+<div style="float:left;">
+<a href="#" onclick="setManualCalories();">Manual</a>
+</div>
+
+<div class="clear">
+{{ form_label(form.targetCalorieDeficit) }}
+{{ form_errors(form.targetCalorieDeficit) }}
+{{ form_widget(form.targetCalorieDeficit) }} calories
+</div>
+
+<div id="calories-to-consume"></div>
+
+<div>
+<p>
+<a href="#" id="set-goal-date">
+Set Goal Date Based On Target Calories
+</a>
+</p>
+</div>
+
+<div>
+{{ form_label(form.goalDate) }}
+{{ form_errors(form.goalDate) }}
+{{ form_widget(form.goalDate) }}
+</div>
+
+<p>
+<a href="#" id="set-target-calories">
+Set Target Calories Based on Goal Date
+</a>
+</p>
+{% endif %}
+{{ form_end(form) }}
+{% if type != "maintenance" %}
+
+<div id="manual-calories-dialog" style="display:none;" title="{% if type == "loss" -%}
+Weight Loss Per Week
+{%- elseif type == "gain" -%}
+Weight Gain Per Week
+{%- endif %}">
+<p>How much weight would you like to {% if type == "loss" -%}
+lose
+{%- elseif type == "gain" -%}
+gain
+{%- endif %} per week?</p>
+
+<p><input type="text" length="3"> {{ app.user.setting.weightUnits }}</p>
+</div>
+<div id="error-dialog" style="display:none;" title="Error"></div>
+{% endif %}
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript">
+$('#recommended-goal-weight').click(function()
+        {
+        $.ajax({
+url: Routing.generate('account_get_recommended_weight'),
+type: "post",
+success: function (html)
+{
+$('#count2health_appbundle_healthplan_goalWeight_weight').val(html);
+$('#count2health_appbundle_healthplan_goalWeight_weight').focus();
+$('#count2health_appbundle_healthplan_goalWeight_weight').trigger('change');
+}
+            });
+        });
+
+function setCalorieDeficit(calories)
+{
+$('#count2health_appbundle_healthplan_targetCalorieDeficit').val(calories);
+$('#count2health_appbundle_healthplan_targetCalorieDeficit').focus();
+$('#count2health_appbundle_healthplan_targetCalorieDeficit').trigger('change');
+}
+
+$('#count2health_appbundle_healthplan_targetCalorieDeficit').on('change keyup',
+function()
+{
+$('#calories-to-consume').html(
+'With this calorie {% if type == "loss" -%}
+deficit
+{%- elseif type == "gain" -%}
+excess
+{%- endif %}, you must consume about ' +
+({{ tdee|round }}-$(this).val()) + ' calories per day.');
+});
+
+$('#set-goal-date').click(function()
+{
+$.ajax({
+url: Routing.generate('account_calculate_goal_date'),
+type: 'post',
+data: {
+"calories": $('#count2health_appbundle_healthplan_targetCalorieDeficit').val(),
+"goalWeight": $('#count2health_appbundle_healthplan_goalWeight_weight').val(),
+type: '{{ type }}'
+},
+success: function (result)
+{
+if (result.status == 'success') {
+$('#count2health_appbundle_healthplan_goalDate_year').val(result.year);
+$('#count2health_appbundle_healthplan_goalDate_month').val(result.month);
+$('#count2health_appbundle_healthplan_goalDate_day').val(result.day);
+$('#count2health_appbundle_healthplan_goalDate_month').focus();
+}
+else {
+$('#error-dialog').html(result.error);
+$('#error-dialog').dialog('open');
+}
+}
+});
+});
+
+$('#set-target-calories').click(function ()
+{
+var data = {};
+data['goalWeight'] = $('#count2health_appbundle_healthplan_goalWeight_weight').val();
+data['goalDate'] = {
+year: $('#count2health_appbundle_healthplan_goalDate_year').val(),
+month: $('#count2health_appbundle_healthplan_goalDate_month').val(),
+day: $('#count2health_appbundle_healthplan_goalDate_day').val(),
+};
+data['type'] = '{{ type }}';
+
+$.ajax({
+url: Routing.generate('account_calculate_target_calories'),
+type: 'post',
+data: data,
+success: function(result)
+{
+if (result.status == 'success') {
+$('#count2health_appbundle_healthplan_targetCalorieDeficit').val(result.calories);
+$('#count2health_appbundle_healthplan_targetCalorieDeficit').focus();
+}
+else {
+$('#error-dialog').html(result.error);
+$('#error-dialog').dialog("open");
+}
+}
+});
+});
+
+$('#count2health_appbundle_healthplan_goalWeight_weight').on('change keyup', function ()
+{
+$.ajax({
+url: Routing.generate('account_calculate_bmi'),
+type: 'post',
+data: {
+weight: $(this).val()
+},
+success: function (result)
+{
+$('#bmi').html('Your BMI at this goal weight is ' + result.bmi + '. ' +
+'This is generally considered ' + result.categorization + ', ' +
+'but it depends on your personal body composition.');
+}
+});
+});
+
+function setManualCalories()
+{
+$('#manual-calories-dialog').dialog({
+modal: true,
+buttons: {
+Calculate: function ()
+{
+var $this = $(this);
+$.ajax({
+url: Routing.generate('account_calculate_calorie_deficit_from_weight_rate'),
+type: 'post',
+data: {
+weight: $(this).find('input').val(),
+type: '{{ type }}'
+},
+success: function (result)
+{
+$this.find('input').val('');
+
+if (result.status == 'success') {
+$this.dialog("close");
+
+$('#count2health_appbundle_healthplan_targetCalorieDeficit').val(result.calories);
+$('#count2health_appbundle_healthplan_targetCalorieDeficit').focus();
+$('#count2health_appbundle_healthplan_targetCalorieDeficit').trigger('change');
+}
+else {
+$('#error-dialog').html('This would be an unhealthy rate of weightloss.');
+$('#error-dialog').dialog("open");
+}
+},
+});
+}
+}
+});
+}
+
+$(document).ready(function()
+{
+$('#error-dialog').dialog({
+autoOpen: false,
+buttons: {
+Ok: function ()
+{
+$(this).dialog("close");
+}
+}
+});
+});
+</script>
+{% endblock %}

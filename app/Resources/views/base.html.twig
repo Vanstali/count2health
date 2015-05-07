@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>{% block title %}{% endblock %} | Count2Health</title>
+<link rel="stylesheet" href="{{ asset('bundles/count2healthapp/css/blueprint/blueprint/screen.css') }}" type="text/css" media="screen, projection">
+<link rel="stylesheet" href="{{ asset('bundles/count2healthapp/css/blueprint/blueprint/print.css') }}" type="text/css" media="print"> 
+<!--[if lt IE 8]>
+  <link rel="stylesheet" href="{{ asset('bundles/count2healthapp/css/blueprint/blueprint/ie.css') }}" type="text/css" media="screen, projection">
+<![endif]-->
+<link href="{{ asset('bundles/count2healthapp/js/jquery-ui.css') }}" rel="stylesheet">
+<link href="{{ asset('bundles/count2healthapp/css/main.css') }}" rel="stylesheet">
+        {% block stylesheets %}{% endblock %}
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    </head>
+    <body>
+    <div class="container">
+    <div class="span-24" id="header">
+<p><a href="{{ url("homepage") }}">Count2Health</a></p>
+</div>
+
+<div class="span-24">
+        <div class="span-4" id="sidebar">
+        <div class="span-4 last">
+            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
+                <a href="{{ path('fos_user_security_logout') }}">
+                    {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
+                </a>
+            {% else %}
+                You are not currently logged in. <a href="{{ path('fos_user_security_login') }}">
+Login now
+</a> or <a href="{{ path('fos_user_registration_register') }}">
+create a new account
+</a>.
+            {% endif %}
+            </div>
+
+            <div class="span-4 last">
+            <ul style="list-style: none;">
+            <li><a href="{{ path('homepage') }}" accesskey="h">Home</a></li>
+            <li><a href="{{ path('food_search') }}" accesskey="s">Search</a></li>
+{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+            <li><a href="{{ url('account') }}" accesskey="a">Account</a></li>
+            <li><a href="{{ path('food_diary') }}" accesskey="f">Food Diary</a></li>
+            <li><a href="{{ path('activities_diary') }}" accesskey="e">Exercise Diary</a></li>
+            <li><a href="{{ path('weight_diary') }}" accesskey="w">Weight Diary</a></li>
+            <li><a href="{{ url('fos_user_security_logout') }}">Logout</a></li>
+{% else %}
+<li><a href="{{ url('fos_user_security_login') }}">Login</a></li>
+<li><a href="{{ url('fos_user_registration_register') }}">Register</a></li>
+{% endif %}
+            </ul>
+            </div>
+        </div>
+
+<div class="span-20 last">
+        {% for type, messages in app.session.flashbag.all() %}
+            {% for message in messages %}
+                <div class="flash-{{ type }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+<div id="content">
+        {% block body %}{% endblock %}
+</div>
+</div>
+</div>
+
+<div class="span-8">
+<p>
+<a href="http://platform.fatsecret.com">
+<img src="http://platform.fatsecret.com/api/static/images/fatsecret_platform_120_17.gif" border="0">
+</a>
+</p>
+</div>
+
+<div class="span-16 last">
+<p>&copy; 2015 Count2Health. All rights reserved.</p>
+</div>
+        </div>
+
+{# Javascripts #}
+        <script type="text/javascript" src="{{ asset('bundles/count2healthapp/js/jquery.min.js') }}"></script>
+<script src="{{ asset('bundles/count2healthapp/js/jquery-ui.js') }}"></script>
+<script src="{{ asset('bundles/count2healthapp/js/count2health.js') }}"></script>
+<script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+<script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
+{% block javascripts %}{% endblock %}
+    </body>
+</html>

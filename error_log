@@ -1,0 +1,10 @@
+[29-Apr-2015 13:37:22 UTC] PHP Strict Standards:  Declaration of Count2Health\AppBundle\Command\CacheGetCommand::execute() should be compatible with Symfony\Component\Console\Command\Command::execute(Symfony\Component\Console\Input\InputInterface $input, Symfony\Component\Console\Output\OutputInterface $output) in /home/brandono/count2health/src/Count2Health/AppBundle/Command/CacheGetCommand.php on line 28
+[29-Apr-2015 13:37:22 UTC] PHP Fatal error:  Undefined constant 'Count2Health\AppBundle\Command\Symfony\Component\Console\Output\OutputInterface' in /home/brandono/count2health/src/Count2Health/AppBundle/Command/CacheGetCommand.php on line 8
+[01-May-2015 16:30:28 UTC] PHP Parse error:  syntax error, unexpected ';' in - on line 36
+[01-May-2015 16:30:50 UTC] PHP Parse error:  syntax error, unexpected ';' in - on line 41
+[01-May-2015 16:31:07 UTC] PHP Fatal error:  Call to undefined function getTrend() in - on line 48
+[01-May-2015 16:31:17 UTC] PHP Warning:  array_sum() expects parameter 1 to be array, integer given in - on line 32
+[01-May-2015 16:42:53 UTC] PHP Parse error:  syntax error, unexpected '297.0' (T_DNUMBER), expecting ')' in - on line 24
+[03-May-2015 22:53:36 UTC] PHP Fatal error:  Cannot redeclare class Count2Health\AppBundle\Controller\ActivitiesController in /home/brandono/count2health/src/Count2Health/AppBundle/Controller/ActivitiesDiaryController.php on line 143
+[03-May-2015 22:53:55 UTC] PHP Fatal error:  Cannot redeclare class Count2Health\AppBundle\Controller\ActivitiesController in /home/brandono/count2health/src/Count2Health/AppBundle/Controller/ActivitiesDiaryController.php on line 143
+[03-May-2015 22:54:07 UTC] PHP Fatal error:  Cannot redeclare class Count2Health\AppBundle\Controller\ActivitiesController in /home/brandono/count2health/src/Count2Health/AppBundle/Controller/ActivitiesDiaryController.php on line 143
