@@ -1,0 +1,29 @@
+{% block height_widget %}
+{% spaceless %}
+<div {{ block('widget_container_attributes') }}>
+{% if units == "imperial" %}
+{{ form_widget(form.feet) }} {{ form_label(form.feet) }} 
+{{ form_widget(form.inches) }} {{ form_label(form.inches) }}
+{% elseif units == "metric" %}
+{{ form_widget(form.height) }} {{ form_label(form.height) }}
+{% else %}
+<p>Select height units.</p>
+{% endif %}
+</div>
+{% endspaceless %}
+{% endblock %}
+
+{% block weight_widget %}
+{% spaceless %}
+<div {{ block('widget_container_attributes') }}>
+{% if units == "lb" %}
+{{ form_widget(form.weight) }} {{ form_label(form.weight) }}
+{% elseif units == "kg" %}
+{{ form_widget(form.weight) }} {{ form_label(form.weight) }}
+{% else %}
+<p>Select weight units.</p>
+{% endif %}
+</div>
+{% endspaceless %}
+{% endblock %}
+
