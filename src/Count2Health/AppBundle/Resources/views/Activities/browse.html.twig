@@ -1,0 +1,36 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Browse Activities{% endblock %}
+
+{% block body %}
+<h1>Browse Activities</h1>
+{% if category is defined %}
+<h2>
+<a href="{{ path('activities_browse') }}">Browse</a>
+&gt; {{ category.name }}
+</h2>
+{% endif %}
+
+{% if categories is defined %}
+<ul>
+{% for category in categories %}
+<li>
+<a href="{{ path('activities_browse_by_category', {'category': category.id}) }}">
+{{ category.name }}
+</a>
+</li>
+{% endfor %}
+</ul>
+{% else %}
+<ul>
+{% for activity in activities %}
+<li>
+<a href="{{ path('activities_view', {'activity': activity.id}) }}">
+{{ activity.name }}
+</a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;MET value: {{ activity.mets|number_format(1) }}
+</li>
+{% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

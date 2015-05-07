@@ -1,0 +1,98 @@
+<p>You've eaten: <span id="calories">{{ calories }}</span> of <span id="rdi">{{ rdi }}</span> calories</p>
+<p>Calories remaining: {{ rdi-calories }}</p>
+<p>Target deficit: {{ targetDeficit|round }} calories</p>
+<p>Deficit so far: {{ deficitToday|round }} calories</p>
+
+<div class="clear">
+
+{% if calories == 0 %}
+<p>There are no foods logged for today.</p>
+{% else %}
+<div class="prepend-4 span-3">
+Calories
+</div>
+<div class="span-3">
+Carbohydrates
+</div>
+<div class="span-3">
+Protein
+</div>
+<div class="span-3 append-4 last">
+Fat
+</div>
+
+<div class="span-3 prepend-4">
+{{ calories }}
+</div>
+<div class="span-3">
+{{ carbohydrate|round(1) }} g
+({{ (carbohydrate*4/calories*100)|round }}%
+</div>
+<div class="span-3">
+{{ protein|round(1) }} g
+({{ (protein*4/calories*100)|round }}%
+</div>
+<div class="span-3 append-4 last">
+{{ fat|round(1) }} g
+({{ (fat*9/calories*100)|round }}%
+</div>
+
+{% for meal, mealArray in entries %}
+<h3>{{ meal }}</h3>
+
+{% if mealArray.entries is defined %}
+<div class="span-20 last">
+{% for entry in mealArray.entries %}
+<div class="span-8 prepend-3">
+{{ entry.food_entry_description }}
+</div>
+<div class="span-4">
+{{ entry.calories }} calories
+</div>
+<div class="span-2 append-3 last">
+<a href="#"
+onclick="edit({{ entry.food_entry_id }});"
+tabindex="-1"
+id="{{ entry.food_entry_id }}-edit">
+Edit
+</a> |
+<a href="{{ path('food_diary_delete', {'id': entry.food_entry_id}) }}"
+onclick="return confirm('Do you really want to delete this entry?');">
+Delete
+</a>
+</div>
+{% endfor %}
+
+<div class="prepend-2 span-4">
+Calories
+</div>
+<div class="span-4">
+Carbohydrates
+</div>
+<div class="span-4">
+Protein
+</div>
+<div class="span-4 append-2 last">
+Fat
+</div>
+
+<div class="prepend-2 span-4">
+{{ mealArray.calories|round(1) }}
+</div>
+<div class="span-4">
+{{ mealArray.carbohydrate }} g
+</div>
+<div class="span-4">
+{{ mealArray.protein }} g
+    </div>
+    <div class="span-4 append-2 last">
+{{ mealArray.fat }} g
+    </div>
+    </div>
+{% else %}
+<p>There are no entries for this meal.</p>
+{% endif %}
+{% endfor %}
+
+{% endif %}
+</div>

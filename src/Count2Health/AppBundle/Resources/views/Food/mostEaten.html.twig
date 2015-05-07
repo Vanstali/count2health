@@ -1,0 +1,56 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Most Eaten Foods{% endblock %}
+
+{% block body %}
+<h1>Most Eaten Foods</h1>
+{% if meal %}
+<h2>{{ meal|capitalize }}</h2>
+{% endif %}
+
+{{ include('Count2HealthAppBundle:Food:actions.html.twig') }}
+
+<p>Browse by meal:</p>
+
+<div class="left">
+<a href="{{ path('food_most_eaten') }}">
+All
+</a>
+</div>
+<div class="left">
+<a href="{{ path('food_most_eaten_by_meal', {'meal': 'breakfast'}) }}">
+Breakfast
+</a>
+</div>
+<div class="left">
+<a href="{{ path('food_most_eaten_by_meal', {'meal': 'lunch'}) }}">
+Lunch
+</a>
+</div>
+<div class="left">
+<a href="{{ path('food_most_eaten_by_meal', {'meal': 'dinner'}) }}">
+Dinner
+</a>
+</div>
+<div class="left">
+<a href="{{ path('food_most_eaten_by_meal', {'meal': 'other'}) }}">
+Other
+</a>
+</div>
+
+<div class="clear">
+{% if results.food is defined %}
+<ul>
+{% for food in results.food %}
+<li>
+<a href="{{ path('food_view', {'id': food.food_id}) }}">
+{{ food.food_name }}
+</a>{% if food.food_type == "Brand" %}<br>({{ food.brand_name }}){% endif %}
+</li>
+{% endfor %}
+</ul>
+{% else %}
+<p>No results at this time.</p>
+{% endif %}
+</div>
+{% endblock %}

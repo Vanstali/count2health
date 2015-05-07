@@ -10,3 +10,4 @@
 /composer.phar
 /vendor/
 /web/bundles/
+.DS_Store

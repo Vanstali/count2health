@@ -15,15 +15,23 @@ security:
 
     firewalls:
         main:
+            remember_me:
+                key: %secret%
+                lifetime: 2592000 # 1 month
+                path: /
             pattern: ^/
             form_login:
                 provider: fos_userbundle
+                default_target_path: account
+                login_path: /login.html
+                check_path: /login/check.html
                 csrf_provider: form.csrf_provider
-            logout:       true
+            logout:
+                path: /logout.html
             anonymous:    true
 
     access_control:
-        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login\.html$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/, role: ROLE_ADMIN }

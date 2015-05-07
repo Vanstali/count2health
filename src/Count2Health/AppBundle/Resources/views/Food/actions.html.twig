@@ -1,0 +1,21 @@
+<div class="left">
+<a href="{{ path('food_search') }}">
+Search
+</a>
+</div>
+
+{% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+<div class="left">
+<a href="{{ path('food_most_eaten') }}">
+Most Eaten
+</a>
+</div>
+<div class="left">
+<a href="{{ path('food_recently_eaten') }}">
+Recently Eaten
+</a>
+</div>
+{% endif %}
+
+<br class="clear">
+

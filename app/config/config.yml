@@ -27,6 +27,8 @@ framework:
 
 # Twig Configuration
 twig:
+    form_themes:
+        - ':Form:fields.html.twig'
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
 
@@ -46,6 +48,9 @@ assetic:
 # Doctrine Configuration
 doctrine:
     dbal:
+        types:
+            length: Count2Health\AppBundle\Type\LengthType
+            mass: Count2Health\AppBundle\Type\MassType
         driver:   "%database_driver%"
 #        host:     "%database_host%"
 #        port:     "%database_port%"
@@ -77,3 +82,17 @@ fos_user:
     firewall_name: main
     user_class: Count2Health\UserBundle\Entity\User
 
+jms_di_extra:
+    locations:
+        all_bundles: false
+        bundles: [Count2HealthAppBundle]
+        directories: ["%kernel.root_dir%/../src"]
+
+    automatic_controller_injections:
+        properties:
+            request: "@request"
+            router: "@router"
+
+        method_calls:
+            setRequest: ["@request"]
+            setRouter: ["@router"]

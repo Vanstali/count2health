@@ -1,0 +1,80 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Food Diary for {{ date|date('F j, Y') }}{% endblock %}
+
+{% block body %}
+<h1>Food Diary</h1>
+
+{{ include('Count2HealthAppBundle:Food:actions.html.twig') }}
+
+<p>
+<a href="{{ path('food_diary_by_date', {'date': yesterday|date('Y-m-d')}) }}"
+title="Yesterday"
+accesskey="p">
+&larr;
+</a>
+{{ date|date('F j, Y') }}
+<a href="{{ path('food_diary_by_date', {'date': tomorrow|date('Y-m-d')}) }}"
+title="Tomorrow"
+accesskey="n">
+&rarr;
+</a>
+</p>
+
+<div id="progress"></div>
+
+<div id="day">
+{{ render(controller('Count2HealthAppBundle:FoodDiary:showDayInfo', {'date': date})) }}
+</div>
+
+<div id="edit-dialog"></div>
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript">
+$(function()
+{
+$('#progress').progressbar({
+value: parseInt($('#calories').text()),
+max: parseInt($('#rdi').text())
+});
+
+$('#edit-dialog').dialog({
+autoOpen: false,
+buttons: {
+Modify: function()
+{
+var id = $('#count2health_appbundle_foodedit_entryId').val();
+var data = $(this).find('form').serialize();
+$.ajax({
+url: Routing.generate('food_diary_edit', {'id': id}),
+type: 'post',
+data: data,
+success: function (html)
+{
+$('#day').html(html);
+$('#progress').progressbar('value', parseInt($('#calories').text()));
+$('#edit-dialog').dialog("close");
+$('#'+id+'-edit').focus();
+},
+});
+}}
+});
+});
+
+function edit(id)
+{
+$.ajax({
+url: Routing.generate('food_diary_edit', {'id': id}),
+type: 'post',
+success: function (html)
+{
+var $dialog = $('#edit-dialog');
+$dialog.html(html);
+$dialog.dialog("open");
+}
+});
+}
+
+</script>
+{% endblock %}

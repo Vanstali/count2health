@@ -17,6 +17,9 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
 new FOS\UserBundle\FOSUserBundle(),
+new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
+new JMS\DiExtraBundle\JMSDiExtraBundle($this),
+new JMS\AopBundle\JMSAopBundle(),
 new Count2Health\AppBundle\Count2HealthAppBundle(),
             new Count2Health\UserBundle\Count2HealthUserBundle(),
         );

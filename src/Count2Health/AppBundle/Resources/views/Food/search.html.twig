@@ -1,0 +1,78 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}Search{% endblock %}
+
+{% block body %}
+<h1>Search</h1>
+
+{{ include('Count2HealthAppBundle:Food:actions.html.twig') }}
+
+{{ form_start(form) }}
+{{ form_widget(form) }}
+{{ form_end(form) }}
+
+<div id="search-results"></div>
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript">
+$(document).ready(function()
+        {
+            $input = $('#count2health_appbundle_foodsearch_search');
+            $input.focus();
+        $('#count2health_appbundle_foodsearch_submit').click(function (event)
+            {
+            event.stopPropagation();
+            event.preventDefault();
+            doSearch();
+            });
+
+        $(document).find('form').on('submit', function(e)
+            {
+            event.stopPropagation();
+            event.preventDefault();
+            doSearch();
+            });
+        });
+
+function doSearch()
+{
+            $input = $('#count2health_appbundle_foodsearch_search');
+            if ('' == $input.val()) {
+            $('#search-results').html('');
+            }
+            else {
+            $.ajax({
+url: Routing.generate('food_search_ajax'),
+type: 'post',
+data: {
+search: $input.val()
+},
+success: function (html)
+{
+$('#search-results').html(html);
+$('#first-search-result').focus();
+$input.val('');
+},
+                });
+            }
+}
+
+function showPage(page)
+{
+            $.ajax({
+url: Routing.generate('food_search_ajax'),
+type: 'post',
+data: {
+search: $input.val(),
+page: page
+},
+success: function (html)
+{
+$('#search-results').html(html);
+$('#first-search-result').focus();
+},
+                });
+}
+</script>
+{% endblock %}
