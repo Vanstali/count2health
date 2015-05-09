@@ -2,6 +2,7 @@
 
 namespace Count2Health\UserBundle\Entity;
 
+use Symfony\Component\Validator\Constraints as Assert;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Criteria;
@@ -51,6 +52,15 @@ class User extends BaseUser
      *     mappedBy="user")
      */
     private $healthPlan;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="timeZone", type="string", length=255)
+     * @Assert\NotBlank(message="Please select your timezone.",
+     *     groups={"Registration", "Profile"})
+     */
+    private $timeZone;
 
     /**
      * @var string
@@ -457,5 +467,28 @@ public function getEstimatedTDEE()
     public function getRequestSecret()
     {
         return $this->requestSecret;
+    }
+
+    /**
+     * Set timeZone
+     *
+     * @param string $timeZone
+     * @return User
+     */
+    public function setTimeZone($timeZone)
+    {
+        $this->timeZone = $timeZone;
+
+        return $this;
+    }
+
+    /**
+     * Get timeZone
+     *
+     * @return string 
+     */
+    public function getTimeZone()
+    {
+        return $this->timeZone;
     }
 }
