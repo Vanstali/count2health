@@ -491,4 +491,14 @@ public function getEstimatedTDEE()
     {
         return $this->timeZone;
     }
+
+/**
+ * Returns the DateTimeZone object for this user's timezone.
+ *
+ * @return \DateTimeZone
+ */
+public function getDateTimeZone()
+{
+    return new \DateTimeZone($this->getTimeZone());
+}
 }
