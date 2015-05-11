@@ -58,4 +58,12 @@ Browse
 {% endfor %}
 </tbody>
 </table>
+
+{% if canCommit == true %}
+<p>
+<a href="{{ path('activities_diary_commit', {'date': date|date('Y-m-d')}) }}">
+Commit
+</a>
+</p>
+{% endif %}
 {% endblock %}

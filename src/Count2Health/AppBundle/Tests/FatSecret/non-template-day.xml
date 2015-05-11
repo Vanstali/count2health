@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<exercise_entries>
+    <exercise_entry>
+        <is_template_value>0</is_template_value>
+        <exercise_id>2</exercise_id>
+        <exercise_name>Resting</exercise_name>
+        <minutes>960</minutes>
+        <calories>1349</calories>
+    </exercise_entry>
+    <exercise_entry>
+        <is_template_value>0</is_template_value>
+        <exercise_id>1</exercise_id>
+        <exercise_name>Sleeping</exercise_name>
+        <minutes>480</minutes>
+        <calories>641</calories>
+    </exercise_entry>
+</exercise_entries>

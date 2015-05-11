@@ -86,4 +86,27 @@ return intval($prevEntries[0]->calories);
 }
     }
 
+public function isTemplate(\SimpleXMLElement $entries)
+{
+    $template = true;
+
+    foreach ($entries->exercise_entry as $entry)
+    {
+        if (0 == intval($entry->is_template_value)) {
+            $template = false;
+        }
+    }
+
+    return $template;
+}
+
+public function commitDay(\DateTime $date, User $user)
+{
+    $date = $this->fatSecret->dateTimeToDateInt($date);
+
+    $this->fatSecret->doApiCall('exercise_entries.commit_day', array(
+                'date' => $date,
+                ), 'exercise', $user);
+}
+
 }
