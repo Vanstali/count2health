@@ -87,10 +87,8 @@ new \DateTimeZone($user->getSetting()->getTimeZone()));
         $profile = $this->get('fatsecret.profile')->get($user);
         $vars['profile'] = $profile;
 
-        $lastWeight = $profile['last_weight'];
-        if (!$lastWeight) {
-            $lastWeight = $user->getSetting()->getStartWeight();
-        }
+            $lastWeight = $this->get('fatsecret.weight')
+                ->calculateTrend($date, $user);
 
         $goalWeight = $profile['goal_weight'];
 
