@@ -4,12 +4,14 @@ namespace Count2Health\AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use PhpUnitsOfMeasure\PhysicalQuantity\Mass;
 use Count2Health\AppBundle\Entity\WeightDiaryEntry;
 use Count2Health\AppBundle\Form\WeightDiaryEntryType;
+use Count2Health\AppBundle\Form\WeightPredictionType;
 
 /**
  * @Route("/diary/weight")
@@ -192,5 +194,109 @@ $weightToLose = new Mass(
         return array(
                 'form' => $form->createView(),
             );    }
+
+        /**
+         * @Route("/predict.html", name="weight_diary_predict")
+         * @Template
+         * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+         */
+public function predictAction()
+{
+    $user = $this->getUser();
+
+    $form = $this->createForm(new WeightPredictionType($user))
+        ->add('submit', 'submit', array(
+                    'label' => 'Predict',
+                    ));
+
+    return array(
+            'form' => $form->createView(),
+            );
+}
+
+/**
+ * @Route("/predict/ajax.json", name="weight_diary_predict_ajax",
+ *     options={"expose": true})
+ * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+ */
+public function predictAjaxAction(Request $request)
+{
+    $user = $this->getUser();
+    $date = new \DateTime('today',
+            new \DateTimeZone($user->getSetting()->getTimeZone()));
+
+    $form = $this->createForm(new WeightPredictionType($user))
+        ->add('submit', 'submit', array(
+                    'label' => 'Predict',
+                    ));
+    $form->handleRequest($request);
+
+    $data = $form->getData();
+
+    $response = array();
+
+    if (!isset($data['date']) && !isset($data['weight']) && !isset($data['bmi'])) {
+        $response['status'] = 'error';
+        $response['message'] = 'Either date, weight, or BMI must be ' .
+            'filled in.';
+    }
+    else {
+        try
+        {
+            if ($data['weight']) {
+                $weight = $data['weight'];
+                $bmi = $this->get('bmi_calculator')
+                    ->calculateBMI($weight, $user);
+                $goalDate = $this->get('weight_predictor')
+                    ->predictDate($weight, $user);
+            }
+            elseif ($data['bmi']) {
+                $bmi = $data['bmi'];
+                $weight = $this->get('bmi_calculator')
+                    ->calculateWeight($bmi, $user);
+                $goalDate = $this->get('weight_predictor')
+                    ->predictDate($weight, $user);
+            }
+            elseif ($data['date']) {
+                $goalDate = $data['date'];
+                $weight = $this->get('weight_predictor')
+                    ->predictWeight($goalDate, $user);
+                $bmi = $this->get('bmi_calculator')
+                    ->calculateBMI($weight, $user);
+            }
+            else {
+                $response['status'] = 'error';
+                $response['message'] = 'ONe of date, weight, or BMI must be ' .
+                    'entered.';
+            }
+        }
+        catch (\Exception $e)
+        {
+            $response['status'] = 'error';
+            $response['message'] = $e->getMessage();
+        }
+
+        if (isset($goalDate) && isset($weight) && isset($bmi)) {
+            $response['status'] = 'success';
+
+            $response['date'] = array(
+                    'year' => $goalDate->format('Y'),
+                    'month' => $goalDate->format('n'),
+                    'day' => $goalDate->format('j'),
+                    );
+
+            $response['weight'] = number_format(round($weight->toUnit(
+                            $user->getSetting()->getWeightUnits()), 1), 1);
+
+            $response['bmi'] = number_format(round($bmi, 1), 1);
+        }
+    }
+
+    $r = new Response;
+    $r->headers->set('Content-Type', 'application/json');
+    $r->setContent(json_encode($response));
+
+    return $r;
+}
 
 }
