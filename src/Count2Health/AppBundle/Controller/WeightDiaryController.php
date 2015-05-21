@@ -286,7 +286,7 @@ public function predictAjaxAction(Request $request)
                     );
 
             $response['weight'] = number_format(round($weight->toUnit(
-                            $user->getSetting()->getWeightUnits()), 1), 1);
+                            $user->getSetting()->getWeightUnits()), 2), 2);
 
             $response['bmi'] = number_format(round($bmi, 1), 1);
         }
