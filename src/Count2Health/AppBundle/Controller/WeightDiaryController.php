@@ -231,9 +231,9 @@ public function predictAjaxAction(Request $request)
                     ));
     $form->handleRequest($request);
 
-    $data = $form->getData();
-
     $response = array();
+
+    $data = $form->getData();
 
     if (!isset($data['date']) && !isset($data['weight']) && !isset($data['bmi'])) {
         $response['status'] = 'error';
@@ -245,10 +245,12 @@ public function predictAjaxAction(Request $request)
         {
             if ($data['weight']) {
                 $weight = $data['weight'];
-                $bmi = $this->get('bmi_calculator')
-                    ->calculateBMI($weight, $user);
                 $goalDate = $this->get('weight_predictor')
                     ->predictDate($weight, $user);
+                $weight = $this->get('weight_predictor')
+                    ->predictWeight($goalDate, $user);
+                $bmi = $this->get('bmi_calculator')
+                    ->calculateBMI($weight, $user);
             }
             elseif ($data['bmi']) {
                 $bmi = $data['bmi'];
@@ -256,6 +258,10 @@ public function predictAjaxAction(Request $request)
                     ->calculateWeight($bmi, $user);
                 $goalDate = $this->get('weight_predictor')
                     ->predictDate($weight, $user);
+                $weight = $this->get('weight_predictor')
+                    ->predictWeight($goalDate, $user);
+                $bmi = $this->get('bmi_calculator')
+                    ->calculateBMI($weight, $user);
             }
             elseif ($data['date']) {
                 $goalDate = $data['date'];

@@ -23,9 +23,13 @@ class WeightPredictionType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $tz = $this->user->getSetting()->getTimeZone();
+
         $builder
             ->add('date', 'date', array(
                         'format' => 'MMMM d, yyyy',
+                        'model_timezone' => $tz,
+                        'view_timezone' => $tz,
                         'years' => range(date('Y'), date('Y')+4),
                         'required' => false,
                         ))
