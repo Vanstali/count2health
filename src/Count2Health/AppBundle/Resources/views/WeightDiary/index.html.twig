@@ -5,6 +5,8 @@
 {% block body %}
 <h1>Weight Diary for {{ month|date("F, Y") }}</h1>
 
+{{ include('Count2HealthAppBundle:WeightDiary:actions.html.twig') }}
+
 <p>
 <a href="{{ path('weight_diary_by_date', {'month': lastMonth|date('Y-m-d')}) }}"
 accesskey="p"
@@ -22,8 +24,6 @@ title="{{ nextMonth|date('F, Y') }}">
 {% if entries is empty %}
 <p>You have not entered a weight yet. <a href="{{ url('weight_diary_new') }}">Log your starting weight here.</a></p>
 {% else %}
-<p><a href="{{ path('weight_diary_new') }}">Weigh In</a></p>
-
 <div id="chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 
 <br class="clear">

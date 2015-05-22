@@ -1,0 +1,113 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Weight Predictor{% endblock %}
+
+{% block body %}
+<h1>Weight Predictor</h1>
+
+{{ include('Count2HealthAppBundle:WeightDiary:actions.html.twig') }}
+
+<p>Below, enter one of date, weight, or BMI. When you press &ldquo;Calculate&rdquo; the other two fields will be filled in for you.</p>
+
+<div id="calculate-errors" class="error" tabindex="-1"></div>
+{{ form_start(form) }}
+{{ form_widget(form) }}
+{{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript">
+$(function ()
+        {
+        $('#count2health_appbundle_weightprediction_submit').click(function (event)
+            {
+            event.stopPropagation();
+            event.preventDefault();
+            doPost();
+            });
+
+        $(document).find('form').on('submit', function (event)
+            {
+            event.stopPropagation();
+            event.preventDefault();
+            doPost();
+            });
+
+        $('#count2health_appbundle_weightprediction_date_year').change(function ()
+            {
+            clearWeight();
+            clearBMI();
+            });
+
+        $('#count2health_appbundle_weightprediction_date_month').change(function ()
+            {
+            clearWeight();
+            clearBMI();
+            });
+
+        $('#count2health_appbundle_weightprediction_date_day').change(function ()
+            {
+            clearWeight();
+            clearBMI();
+            });
+
+        $('#count2health_appbundle_weightprediction_weight_weight').change(function ()
+            {
+            clearDate();
+            clearBMI();
+            });
+
+        $('#count2health_appbundle_weightprediction_bmi').change(function ()
+            {
+            clearDate();
+            clearWeight();
+            });
+        });
+
+function doPost()
+{
+    var data = $(document).find('form').serialize();
+
+    $.ajax({
+url: Routing.generate('weight_diary_predict_ajax'),
+type: 'post',
+data: data,
+success: function (response)
+{
+if (response.status == 'error') {
+$('#calculate-errors').html(response.message);
+$('#calculate-errors').focus();
+}
+else {
+$('#calculate-errors').html('');
+
+$('#count2health_appbundle_weightprediction_date_year').val(response.date.year);
+$('#count2health_appbundle_weightprediction_date_month').val(response.date.month);
+$('#count2health_appbundle_weightprediction_date_day').val(response.date.day);
+$('#count2health_appbundle_weightprediction_weight_weight').val(response.weight);
+$('#count2health_appbundle_weightprediction_bmi').val(response.bmi);
+
+$('#count2health_appbundle_weightprediction_date_month').focus();
+}
+}
+            });
+}
+
+function clearDate()
+{
+    $('#count2health_appbundle_weightprediction_date_year').val('');
+    $('#count2health_appbundle_weightprediction_date_month').val('');
+    $('#count2health_appbundle_weightprediction_date_day').val('');
+}
+
+function clearWeight()
+{
+    $('#count2health_appbundle_weightprediction_weight_weight').val('');
+}
+
+function clearBMI()
+{
+    $('#count2health_appbundle_weightprediction_bmi').val('');
+}
+</script>
+{% endblock %}

@@ -14,7 +14,7 @@ if (complexParts.length == 1) {
     f = complexParts[0];
 }
 else {
-    result += parseInt(complexParts[0]);
+    result += parseFloat(complexParts[0]);
     f = complexParts[1];
 }
 
@@ -25,7 +25,7 @@ if (parts.length == 1) {
     return str;
 }
 else {
-    result += parseInt(parts[0]) / parseInt(parts[1]);
+    result += parseFloat(parts[0]) / parseFloat(parts[1]);
 }
 
 return result;

@@ -5,6 +5,8 @@
 {% block body %}
 <h1>Weigh In</h1>
 
+{{ include('Count2HealthAppBundle:WeightDiary:actions.html.twig') }}
+
 {{ form_start(form) }}
 {{ form_widget(form) }}
 {{ form_end(form) }}

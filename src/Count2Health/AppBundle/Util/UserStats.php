@@ -268,13 +268,16 @@ $tdee += $difference;
     return $tdee;
 }
 
-    public function getInferredTDEE(\DateTime $date, User $user)
+    public function getInferredTDEE(\DateTime $date, User $user,
+            $fudgeFactor = null)
     {
             // What did we burn today?
             $burnedToday = $this->fatSecretExerciseEntries
                 ->getTotalCalories($date, $user);
 
+            if (null == $fudgeFactor) {
 $fudgeFactor = $this->getFudgeFactor($date, $user);
+            }
 
 if (1.0 == $fudgeFactor) {
 return $this->getCalculatedTDEE($date, $user);
@@ -345,6 +348,7 @@ $tdeeType = 'inferred';
 
         $targetDeficit = $user->getHealthPlan()->getTargetCalorieDeficit();
         $type = $user->getHealthPlan()->getType();
+        $fudgeFactor = $this->getFudgeFactor($date, $user);
 
 $foodDiaryEntries = $this->fatSecretFoodEntries
     ->getEntries($date, $user, 15, false);
@@ -373,7 +377,7 @@ if ('estimated' == $tdeeType) {
 $thisTdee = $this->getEstimatedTDEE($thisDate, $user);
 }
 elseif ('inferred' == $tdeeType) {
-$thisTdee = $this->getInferredTDEE($thisDate, $user, false);
+$thisTdee = $this->getInferredTDEE($thisDate, $user, $fudgeFactor);
 }
 
 $deficit += ($thisTdee - $calories);

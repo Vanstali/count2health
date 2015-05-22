@@ -34,7 +34,8 @@ Browse
 <tr>
 <th>Exercise</th>
 <th>Minutes</th>
-<th>Calories</th>
+<th>Calories Burned</th>
+<th>Adjusted Calories</th>
 </tr>
 </thead>
 
@@ -54,8 +55,17 @@ Browse
 </th>
 <td>{{ entry.minutes|duration }}</td>
 <td>{{ entry.calories }}</td>
+<td>{{ (entry.calories * fudgeFactor)|round }}</td>
 </tr>
 {% endfor %}
 </tbody>
 </table>
+
+{% if canCommit == true %}
+<p>
+<a href="{{ path('activities_diary_commit', {'date': date|date('Y-m-d')}) }}">
+Commit
+</a>
+</p>
+{% endif %}
 {% endblock %}

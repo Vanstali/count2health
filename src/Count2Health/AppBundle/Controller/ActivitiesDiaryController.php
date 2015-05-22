@@ -49,6 +49,9 @@ $session->set('date', $date);
         $tomorrow->add(new \DateInterval('P1D'));
 
         $entries = $this->get('fatsecret.exercise_entries')->get($date, $user);
+
+        $canCommit = $this->get('fatsecret.exercise_entries')
+        ->isTemplate($entries);
 $activities = array();
 
         $calories = 0;
@@ -80,6 +83,7 @@ $adjustedCalories = round($calories * $fudgeFactor);
         return array(
                 'entries' => $activities,
                 'date' => $date,
+                'canCommit' => $canCommit,
                 'calories' => $calories,
 'fudgeFactor' => $fudgeFactor,
 'adjustedCalories' => $adjustedCalories,
@@ -155,5 +159,25 @@ $adjustedCalories = round($calories * $fudgeFactor);
                     'types' => json_encode($typeArray),
                     );
         }
+
+/**
+ * @Route("/commit/{date}.html", name="activities_diary_commit")
+     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+ */
+public function commitAction($date)
+{
+    $user = $this->getUser();
+
+$date = new \DateTime($date,
+        new \DateTimeZone($user->getSetting()->getTimeZone()));
+
+$this->get('fatsecret.exercise_entries')->commitDay($date, $user);
+
+$this->get('memcache')->invalidateNamespace('exercise', $user);
+
+return $this->redirectToRoute('activities_diary_by_date', array(
+            'date' => $date->format('Y-m-d'),
+            ));
+}
 
 }
