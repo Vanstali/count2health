@@ -153,11 +153,11 @@ class WeightDiaryEntry
     public function getBMI()
     {
         if (null === $this->getUser()
-                || null === $this->getUser()->getSetting()) {
+                || null === $this->getUser()->getPersonalDetails()) {
             return;
         }
 
-        $height = $this->getUser()->getSetting()->getHeight();
+        $height = $this->getUser()->getPersonalDetails()->getHeight();
         $weight = $this->getWeight();
 
         return $weight->toUnit('kg') / pow($height->toUnit('m'), 2);

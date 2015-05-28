@@ -60,7 +60,7 @@ if ($term == $numTerms
 return new Mass(floatval($prevEntries[0]->weight_kg), 'kg');
 }
 elseif (empty($prevEntries)) {
-    return $user->getSetting()->getStartWeight();
+    return $user->getPersonalDetails()->getStartWeight();
 }
 
 $yesterday = $this->fatSecret->dateIntToDateTime($prevEntries[0]->date_int, $user);

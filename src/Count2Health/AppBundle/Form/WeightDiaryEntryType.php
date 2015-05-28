@@ -28,7 +28,7 @@ class WeightDiaryEntryType extends AbstractType
                         'format' => 'MMMM d, yyyy',
                         ))
             ->add('weight', 'weight', array(
-                        'units' => $this->user->getSetting()->getWeightUnits(),
+                        'units' => $this->user->getPersonalDetails()->getWeightUnits(),
                         ))
             ->add('comment', 'text', array(
                         'required' => false,

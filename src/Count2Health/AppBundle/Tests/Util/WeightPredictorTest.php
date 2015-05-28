@@ -20,15 +20,9 @@ class WeightPredictorTest extends \PHPUnit_Framework_TestCase
         $this->user = $this->getMockBuilder('Count2Health\UserBundle\Entity\User')
             ->getMock();
 
-        $setting = $this->getMockBuilder(
-                'Count2Health\AppBundle\Entity\Setting')
-            ->getMock();
-
-        $setting->method('getTimeZone')
-            ->will($this->returnValue('America/New_York'));
-
-        $this->user->method('getSetting')
-            ->will($this->returnValue($setting));
+        $this->user
+            ->method('getDateTimeZone')
+            ->will($this->returnValue(new \DateTimeZone('America/New_York')));
 
         $this->weight = $this->getMockBuilder(
                 'Count2Health\AppBundle\FatSecret\Weight')

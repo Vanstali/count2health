@@ -10,7 +10,7 @@ Weight Loss
 Weight Maintenance
 {%- elseif type == "gain" -%}
 Weight Gain
-{%- endif %} (<a href="{{ path('account_health_plan_select') }}">Change Type</a>)</h2>
+{%- endif %} (<a href="{{ path('profile_health_plan_select') }}">Change Type</a>)</h2>
 
 {{ form_start(form) }}
 {{ form_errors(form) }}
@@ -44,7 +44,7 @@ To gain weight, you will need to maintain a positive calorie excess.
  rate of weight loss
 {%- elseif type == "gain" -%}
 rate of weight gain
-{%- endif %} for most people is between {% if app.user.setting.weightUnits == "lb" -%}
+{%- endif %} for most people is between {% if app.user.personalDetails.weightUnits == "lb" -%}
 0.5-2.0 lb{% else -%}
 0.25-1.0 kg{% endif %} per week.
 {%- endif %}</p>
@@ -109,7 +109,7 @@ lose
 gain
 {%- endif %} per week?</p>
 
-<p><input type="text" length="3"> {{ app.user.setting.weightUnits }}</p>
+<p><input type="text" length="3"> {{ app.user.personalDetails.weightUnits }}</p>
 </div>
 <div id="error-dialog" style="display:none;" title="Error"></div>
 {% endif %}
@@ -120,25 +120,25 @@ gain
 $('#recommended-goal-weight').click(function()
         {
         $.ajax({
-url: Routing.generate('account_get_recommended_weight'),
+url: Routing.generate('profile_get_recommended_weight'),
 type: "post",
 success: function (html)
 {
-$('#count2health_appbundle_healthplan_goalWeight_weight').val(html);
-$('#count2health_appbundle_healthplan_goalWeight_weight').focus();
-$('#count2health_appbundle_healthplan_goalWeight_weight').trigger('change');
+$('#count2health_userbundle_healthplan_goalWeight_weight').val(html);
+$('#count2health_userbundle_healthplan_goalWeight_weight').focus();
+$('#count2health_userbundle_healthplan_goalWeight_weight').trigger('change');
 }
             });
         });
 
 function setCalorieDeficit(calories)
 {
-$('#count2health_appbundle_healthplan_targetCalorieDeficit').val(calories);
-$('#count2health_appbundle_healthplan_targetCalorieDeficit').focus();
-$('#count2health_appbundle_healthplan_targetCalorieDeficit').trigger('change');
+$('#count2health_userbundle_healthplan_targetCalorieDeficit').val(calories);
+$('#count2health_userbundle_healthplan_targetCalorieDeficit').focus();
+$('#count2health_userbundle_healthplan_targetCalorieDeficit').trigger('change');
 }
 
-$('#count2health_appbundle_healthplan_targetCalorieDeficit').on('change keyup',
+$('#count2health_userbundle_healthplan_targetCalorieDeficit').on('change keyup',
 function()
 {
 $('#calories-to-consume').html(
@@ -153,20 +153,20 @@ excess
 $('#set-goal-date').click(function()
 {
 $.ajax({
-url: Routing.generate('account_calculate_goal_date'),
+url: Routing.generate('profile_calculate_goal_date'),
 type: 'post',
 data: {
-"calories": $('#count2health_appbundle_healthplan_targetCalorieDeficit').val(),
-"goalWeight": $('#count2health_appbundle_healthplan_goalWeight_weight').val(),
+"calories": $('#count2health_userbundle_healthplan_targetCalorieDeficit').val(),
+"goalWeight": $('#count2health_userbundle_healthplan_goalWeight_weight').val(),
 type: '{{ type }}'
 },
 success: function (result)
 {
 if (result.status == 'success') {
-$('#count2health_appbundle_healthplan_goalDate_year').val(result.year);
-$('#count2health_appbundle_healthplan_goalDate_month').val(result.month);
-$('#count2health_appbundle_healthplan_goalDate_day').val(result.day);
-$('#count2health_appbundle_healthplan_goalDate_month').focus();
+$('#count2health_userbundle_healthplan_goalDate_year').val(result.year);
+$('#count2health_userbundle_healthplan_goalDate_month').val(result.month);
+$('#count2health_userbundle_healthplan_goalDate_day').val(result.day);
+$('#count2health_userbundle_healthplan_goalDate_month').focus();
 }
 else {
 $('#error-dialog').html(result.error);
@@ -179,23 +179,23 @@ $('#error-dialog').dialog('open');
 $('#set-target-calories').click(function ()
 {
 var data = {};
-data['goalWeight'] = $('#count2health_appbundle_healthplan_goalWeight_weight').val();
+data['goalWeight'] = $('#count2health_userbundle_healthplan_goalWeight_weight').val();
 data['goalDate'] = {
-year: $('#count2health_appbundle_healthplan_goalDate_year').val(),
-month: $('#count2health_appbundle_healthplan_goalDate_month').val(),
-day: $('#count2health_appbundle_healthplan_goalDate_day').val(),
+year: $('#count2health_userbundle_healthplan_goalDate_year').val(),
+month: $('#count2health_userbundle_healthplan_goalDate_month').val(),
+day: $('#count2health_userbundle_healthplan_goalDate_day').val(),
 };
 data['type'] = '{{ type }}';
 
 $.ajax({
-url: Routing.generate('account_calculate_target_calories'),
+url: Routing.generate('profile_calculate_target_calories'),
 type: 'post',
 data: data,
 success: function(result)
 {
 if (result.status == 'success') {
-$('#count2health_appbundle_healthplan_targetCalorieDeficit').val(result.calories);
-$('#count2health_appbundle_healthplan_targetCalorieDeficit').focus();
+$('#count2health_userbundle_healthplan_targetCalorieDeficit').val(result.calories);
+$('#count2health_userbundle_healthplan_targetCalorieDeficit').focus();
 }
 else {
 $('#error-dialog').html(result.error);
@@ -205,10 +205,10 @@ $('#error-dialog').dialog("open");
 });
 });
 
-$('#count2health_appbundle_healthplan_goalWeight_weight').on('change keyup', function ()
+$('#count2health_userbundle_healthplan_goalWeight_weight').on('change keyup', function ()
 {
 $.ajax({
-url: Routing.generate('account_calculate_bmi'),
+url: Routing.generate('profile_calculate_bmi'),
 type: 'post',
 data: {
 weight: $(this).val()
@@ -231,7 +231,7 @@ Calculate: function ()
 {
 var $this = $(this);
 $.ajax({
-url: Routing.generate('account_calculate_calorie_deficit_from_weight_rate'),
+url: Routing.generate('profile_calculate_calorie_deficit_from_weight_rate'),
 type: 'post',
 data: {
 weight: $(this).find('input').val(),
@@ -244,9 +244,9 @@ $this.find('input').val('');
 if (result.status == 'success') {
 $this.dialog("close");
 
-$('#count2health_appbundle_healthplan_targetCalorieDeficit').val(result.calories);
-$('#count2health_appbundle_healthplan_targetCalorieDeficit').focus();
-$('#count2health_appbundle_healthplan_targetCalorieDeficit').trigger('change');
+$('#count2health_userbundle_healthplan_targetCalorieDeficit').val(result.calories);
+$('#count2health_userbundle_healthplan_targetCalorieDeficit').focus();
+$('#count2health_userbundle_healthplan_targetCalorieDeficit').trigger('change');
 }
 else {
 $('#error-dialog').html('This would be an unhealthy rate of weightloss.');

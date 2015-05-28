@@ -14,11 +14,11 @@ class BMICalculatorTest extends \PHPUnit_Framework_TestCase
         $user = $this->getMockBuilder('Count2Health\UserBundle\Entity\User')
             ->getMock();
 
-        $setting = $this->getMockBuilder(
-                'Count2Health\AppBundle\Entity\Setting')
+        $personalDetails = $this->getMockBuilder(
+                'Count2Health\UserBundle\Entity\PersonalDetails')
             ->getMock();
 
-        $setting
+        $personalDetails
             ->expects($this->once())
             ->method('getHeight')
             ->will($this->returnValue(new Length(72, 'in')))
@@ -26,8 +26,8 @@ class BMICalculatorTest extends \PHPUnit_Framework_TestCase
 
         $user
             ->expects($this->exactly(2))
-            ->method('getSetting')
-            ->will($this->returnValue($setting))
+            ->method('getPersonalDetails')
+            ->will($this->returnValue($personalDetails))
             ;
 
         $weight = new Mass(160, 'lb');
@@ -48,7 +48,7 @@ class BMICalculatorTest extends \PHPUnit_Framework_TestCase
 
         $user
             ->expects($this->once())
-            ->method('getSetting')
+            ->method('getPersonalDetails')
             ;
 
         $weight = new Mass(160, 'lb');
@@ -62,11 +62,11 @@ class BMICalculatorTest extends \PHPUnit_Framework_TestCase
         $user = $this->getMockBuilder('Count2Health\UserBundle\Entity\User')
             ->getMock();
 
-        $setting = $this->getMockBuilder(
-                'Count2Health\AppBundle\Entity\Setting')
+        $personalDetails = $this->getMockBuilder(
+                'Count2Health\UserBundle\Entity\PersonalDetails')
             ->getMock();
 
-        $setting
+        $personalDetails
             ->expects($this->once())
             ->method('getHeight')
             ->will($this->returnValue(new Length(72, 'in')))
@@ -74,8 +74,8 @@ class BMICalculatorTest extends \PHPUnit_Framework_TestCase
 
         $user
             ->expects($this->exactly(2))
-            ->method('getSetting')
-            ->will($this->returnValue($setting))
+            ->method('getPersonalDetails')
+            ->will($this->returnValue($personalDetails))
             ;
 
         $bmi = 21.7;
@@ -96,7 +96,7 @@ class BMICalculatorTest extends \PHPUnit_Framework_TestCase
 
         $user
             ->expects($this->once())
-            ->method('getSetting')
+            ->method('getPersonalDetails')
             ;
 
         $bmi = 21.7;

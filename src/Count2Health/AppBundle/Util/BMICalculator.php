@@ -14,24 +14,24 @@ class BMICalculator
 
     public function calculateBMI(Mass $weight, User $user)
     {
-if (null == $user->getSetting()) {
+if (null == $user->getPersonalDetails()) {
     throw new \InvalidArgumentException("The user settings are required " .
             "to calculate BMI.");
 }
 
-        $height = $user->getSetting()->getHeight();
+        $height = $user->getPersonalDetails()->getHeight();
 
         return $weight->toUnit('kg') / pow($height->toUnit('m'), 2);
     }
 
 public function calculateWeight($bmi, User $user)
 {
-if (null == $user->getSetting()) {
+if (null == $user->getPersonalDetails()) {
     throw new \InvalidArgumentException("The user settings are required " .
             "to calculate BMI.");
 }
 
-$height = $user->getSetting()->getHeight();
+$height = $user->getPersonalDetails()->getHeight();
 
 return new Mass($bmi * pow($height->toUnit('m'), 2), 'kg');
 }
