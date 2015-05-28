@@ -139,7 +139,7 @@ public function dateIntToDateTime($dateint, User $user)
     $ts = $dateint * 60 * 60 * 24;
     $d = new \DateTime();
 
-    $timeZone = new \DateTimeZone($user->getSetting()->getTimeZone());
+    $timeZone = $user->getDateTimeZone();
     $offset = $timeZone->getOffset($d);
 
         $ts -= $offset;

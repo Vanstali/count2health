@@ -1,0 +1,82 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+<div class="fos_user_user_show">
+
+<h2>FatSecret</h2>
+
+{% if user.isConnected == true %}
+<p>This account is connected to FatSecret.</p>
+{% else %}
+<p>This account is not connected to FatSecret.
+<a href="{{ path('profile_connect') }}">Connect Now</a></p>
+{% endif %}
+
+<h2>General (<a href="{{ path('fos_user_profile_edit') }}">Edit</a>)</h2>
+
+    <p>{{ 'profile.show.username'|trans }}: {{ user.username }}</p>
+    <p>{{ 'profile.show.email'|trans }}: {{ user.email }}</p>
+    <p>Timezone: {{ user.timeZone|tzabbr }}</p>
+
+    <h2>Personal (<a href="{{ path('profile_personal_details') }}">Edit</a>)</h2>
+
+{% if user.personalDetails is not empty %}
+    <p>Gender: {{ user.personalDetails.gender }}</p>
+
+    <p>Height: {{ user.personalDetails.height|height(app.user) }}</p>
+
+    <p>Starting weight: {{ user.personalDetails.startWeight|weight(app.user) }}</p>
+
+    <p>Birth date: {{ user.personalDetails.birthDate|date('F j, Y') }}</p>
+
+    <p>Activity level: {% if user.personalDetails.activityLevel == 's' -%}
+    sedentary
+{%- elseif user.personalDetails.activityLevel == 'l' -%}
+lightly active
+{%- elseif user.personalDetails.activityLevel == 'm' %}
+moderately active
+{%- elseif user.personalDetails.activityLevel == 'v' -%}
+very active
+{%- elseif user.personalDetails.activityLevel == 'e' -%}
+extremely active
+{%- endif %}</p>
+{% endif %}
+
+<h2>
+Health Plan ({% if user.healthPlan is empty -%}
+<a href="{{ path('profile_health_plan_select') }}">Select</a>
+{%- else -%}
+<a href="{{ path('profile_health_plan', {'type': user.healthPlan.type}) }}">Edit</a>
+{%- endif %})
+</h2>
+
+{% if user.healthPlan is empty %}
+<p>
+<a href="{{ path('profile_health_plan_select') }}">
+Create Your Health Plan Now
+</a>
+</p>
+{% else %}
+<p>Type: {% if user.healthPlan.type == 'loss' -%}
+Weight loss
+{%- elseif user.healthPlan.type == 'maintenance' %}
+Weight maintenance
+{%- elseif user.healthPlan.type == 'gain' -%}
+Weight gain
+{%- endif %} (<a href="{{ path('profile_health_plan_select') }}">
+        Change
+        </a>)</p>
+
+<p>Goal weight: {{ user.healthPlan.goalWeight|weight(app.user) }}</p>
+
+{% if user.healthPlan.type != 'maintenance' %}
+<p>Goal date: {{ user.healthPlan.goalDate|date('F j, Y') }}</p>
+
+{% if user.healthPlan.type == 'loss' %}
+<p>Target calorie deficit: {{ user.healthPlan.targetCalorieDeficit }}</p>
+{% elseif user.healthPlan.type == 'gain' %}
+<p>Target calorie excess: {{ user.healthPlan.targetCalorieDeficit }}</p>
+{% endif %}
+{% endif %}
+{% endif %}
+
+</div>

@@ -81,6 +81,9 @@ fos_user:
     registration:
         form:
             type: count2health_userbundle_user
+    profile:
+        form:
+            type: count2health_userbundle_user_profile
     db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
     firewall_name: main
     user_class: Count2Health\UserBundle\Entity\User

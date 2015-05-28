@@ -9,9 +9,9 @@ class GoalWeightWithinFiveLbOfStartWeightValidator extends ConstraintValidator
 {
     public function validate($healthPlan, Constraint $constraint)
     {
-        $startWeight = $healthPlan->getUser()->getSetting()->getStartWeight();
+        $startWeight = $healthPlan->getUser()->getPersonalDetails()->getStartWeight();
         $goalWeight = $healthPlan->getGoalWeight();
-        $units = $healthPlan->getUser()->getSetting()->getWeightUnits();
+        $units = $healthPlan->getUser()->getPersonalDetails()->getWeightUnits();
 
         if (abs($startWeight->toUnit($units) - $goalWeight->toUnit($units)) > 5) {
             $this->context->buildViolation($constraint->message)

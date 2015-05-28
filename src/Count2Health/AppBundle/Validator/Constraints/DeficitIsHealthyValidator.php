@@ -9,7 +9,7 @@ class DeficitIsHealthyValidator extends ConstraintValidator
 {
     public function validate($healthPlan, Constraint $constraint)
     {
-        $gender = $healthPlan->getUser()->getSetting()->getGender();
+        $gender = $healthPlan->getUser()->getPersonalDetails()->getGender();
     $tdee = $healthPlan->getUser()->getEstimatedTDEE();
 
     if ('male' == $gender) {

@@ -35,13 +35,11 @@ if ($session->has('date')) {
 $date = $session->get('date');
 }
 else {
-        $date = new \DateTime('today',
-                new \DateTimeZone($user->getSetting()->getTimeZone()));
+        $date = new \DateTime('today', $user->getDateTimeZone());
 }
         }
         else {
-            $date = new \DateTime($date,
-                    new \DateTimeZone($user->getSetting()->getTimeZone()));
+            $date = new \DateTime($date, $user->getDateTimeZone());
         }
 
 $session->set('date', $date);

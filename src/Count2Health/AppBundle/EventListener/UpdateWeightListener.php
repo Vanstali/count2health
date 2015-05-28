@@ -56,11 +56,11 @@ class UpdateWeightListener
 $arguments = array();
 $arguments['current_weight_kg'] = $weight->getWeight()->toUnit('kg');
 $arguments['date'] = $this->fatSecret->dateTimeToDateInt($weight->getDate());
-$arguments['weight_type'] = $user->getSetting()->getWeightUnits();
-$arguments['height_type'] = $user->getSetting()->getHeightUnits();
+$arguments['weight_type'] = $user->getPersonalDetails()->getWeightUnits();
+$arguments['height_type'] = $user->getPersonalDetails()->getHeightUnits();
 $arguments['goal_weight_kg'] = $user->getHealthPlan()->getGoalWeight()
     ->toUnit('kg');
-$arguments['current_height_cm'] = $user->getSetting()->getHeight()->toUnit('cm');
+$arguments['current_height_cm'] = $user->getPersonalDetails()->getHeight()->toUnit('cm');
 $arguments['comment'] = $weight->getComment();
 
 $this->fatSecret->doApiCall('weight.update', $arguments, $user);

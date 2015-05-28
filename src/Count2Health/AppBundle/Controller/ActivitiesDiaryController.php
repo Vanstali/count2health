@@ -24,7 +24,7 @@ class ActivitiesDiaryController extends Controller
     public function indexAction(Request $request, $date = null)
     {
         $user = $this->getUser();
-        $tz = new \DateTimeZone($user->getSetting()->getTimeZone());
+        $tz = $user->getDateTimeZone();
 
 $session = $request->getSession();
 
@@ -100,7 +100,7 @@ $adjustedCalories = round($calories * $fudgeFactor);
         public function adjustAction($date = null, Request $request)
         {
             $user = $this->getUser();
-            $tz = new \DateTimeZone($user->getSetting()->getTimeZone());
+            $tz = $user->getDateTimeZone();
 
             if (null === $date) {
                 $date = new \DateTime('today', $tz);
@@ -167,9 +167,7 @@ $adjustedCalories = round($calories * $fudgeFactor);
 public function commitAction($date)
 {
     $user = $this->getUser();
-
-$date = new \DateTime($date,
-        new \DateTimeZone($user->getSetting()->getTimeZone()));
+$date = new \DateTime($date, $user->getDateTimeZone());
 
 $this->get('fatsecret.exercise_entries')->commitDay($date, $user);
 

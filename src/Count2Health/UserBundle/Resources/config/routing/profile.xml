@@ -13,4 +13,56 @@
         <default key="_controller">FOSUserBundle:Profile:edit</default>
     </route>
 
+    <route id="profile_personal_details" pattern="/personal.html">
+        <default key="_controller">FOSUserBundle:Profile:editPersonalDetails</default>
+        <option key="expose">true</option>
+    </route>
+
+    <route id="profile_health_plan_select" path="/health-plan/select.html">
+        <default key="_controller">FOSUserBundle:Profile:selectHealthPlanType</default>
+    </route>
+
+    <route id="profile_health_plan" path="/health-plan/{type}.html">
+        <default key="_controller">FOSUserBundle:Profile:editHealthPlan</default>
+    </route>
+
+    <route id="profile_get_recommended_weight" path="/get-recommended-weight.html">
+        <default key="_controller">FOSUserBundle:Profile:getRecommendedWeight</default>
+        <option key="expose">true</option>
+    </route>
+
+    <route id="profile_calculate_goal_date" path="/calculate-goal-date.json">
+        <default key="_controller">FOSUserBundle:Profile:calculateGoalDate</default>
+        <option key="expose">true</option>
+    </route>
+
+    <route id="profile_calculate_target_calories"
+        path="/calculate-target-calories.json">
+        <default key="_controller">FOSUserBundle:Profile:calculateTargetCalories</default>
+        <option key="expose">true</option>
+    </route>
+
+    <route id="profile_calculate_bmi" path="/calculate-bmi.json">
+        <default key="_controller">FOSUserBundle:Profile:calculateBmi</default>
+        <option key="expose">true</option>
+    </route>
+
+    <route id="profile_calculate_calorie_deficit_from_weight_rate"
+        path="/calculate-calorie-deficit-from-weight-rate.json">
+        <default key="_controller">FOSUserBundle:Profile:calculateCalorieDeficitFromWeightRate</default>
+        <option key="expose">true</option>
+    </route>
+
+    <route id="profile_connect" path="/connect.html">
+        <default key="_controller">FOSUserBundle:Profile:connect</default>
+    </route>
+
+        <route id="profile_connect_confirm" path="/connect/confirm.html">
+        <default key="_controller">FOSUserBundle:Profile:connectConfirm</default>
+    </route>
+
+    <route id="profile_connected" path="/connected.html">
+        <default key="_controller">FOSUserBundle:Profile:connected</default>
+    </route>
+
 </routes>

@@ -22,12 +22,12 @@ class User extends BaseUser
     protected $id;
 
     /**
-     * @var Count2Health\AppBundle\Entity\Setting
+     * @var Count2Health\UserBundle\Entity\PersonalDetails
      *
-     * @ORM\OneToOne(targetEntity="Count2Health\AppBundle\Entity\Setting",
+     * @ORM\OneToOne(targetEntity="Count2Health\UserBundle\Entity\PersonalDetails",
      *     mappedBy="user")
      */
-    private $setting;
+    private $personalDetails;
 
     /**
      * @var ArrayCollection
@@ -119,26 +119,27 @@ class User extends BaseUser
 
 
     /**
-     * Set setting
+     * Set personal details
      *
-     * @param \Count2Health\AppBundle\Entity\Setting $setting
+     * @param \Count2Health\UserBundle\Entity\PersonalDetails
+     * $personalDetails
      * @return User
      */
-    public function setSetting(\Count2Health\AppBundle\Entity\Setting $setting = null)
+    public function setPersonalDetails(\Count2Health\UserBundle\Entity\PersonalDetails $personalDetails = null)
     {
-        $this->setting = $setting;
+        $this->personalDetails = $personalDetails;
 
         return $this;
     }
 
     /**
-     * Get setting
+     * Get personal details
      *
-     * @return \Count2Health\AppBundle\Entity\Setting 
+     * @return \Count2Health\UserBundle\Entity\PersonalDetails 
      */
-    public function getSetting()
+    public function getPersonalDetails()
     {
-        return $this->setting;
+        return $this->personalDetails;
     }
 
     /**
@@ -315,21 +316,21 @@ class User extends BaseUser
             $weight = $entry->getTrend();
         }
         else {
-            $weight = $this->getSetting()->getStartWeight();
+            $weight = $this->getPersonalDetails()->getStartWeight();
         }
 
     $bmr = 10 * $weight->toUnit('kg');
-    $bmr += 6.25 * $this->getSetting()->getHeight()->toUnit('cm');
+    $bmr += 6.25 * $this->getPersonalDetails()->getHeight()->toUnit('cm');
 
     // Get years since birth, i.e., age
     $today = new \DateTime();
-    $age = $today->diff($this->getSetting()->getBirthDate());
+    $age = $today->diff($this->getPersonalDetails()->getBirthDate());
     $bmr -= 4.92 * $age->y;
 
-    if ('male' == $this->getSetting()->getGender()) {
+    if ('male' == $this->getPersonalDetails()->getGender()) {
         $bmr += 5;
     }
-    elseif ('female' == $this->getSetting()->getGender()) {
+    elseif ('female' == $this->getPersonalDetails()->getGender()) {
         $bmr -= 161;
     }
 
@@ -340,7 +341,7 @@ public function getEstimatedTDEE()
 {
     $tdee = $this->getBMR();
 
-    switch ($this->getSetting()->getActivityLevel())
+    switch ($this->getPersonalDetails()->getActivityLevel())
     {
         case 's':
             $tdee *= 1.2;
@@ -422,6 +423,16 @@ public function getEstimatedTDEE()
     {
         return $this->connected;
     }
+
+/**
+ * Check if account is connected to FatSecret.
+ *
+ * @return bool
+ */
+public function isConnected()
+{
+    return $this->connected;
+}
 
     /**
      * Set requestToken

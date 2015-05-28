@@ -42,6 +42,7 @@ create a new account
             <li><a href="{{ path('food_search') }}" accesskey="s">Search</a></li>
 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
             <li><a href="{{ url('account') }}" accesskey="a">Account</a></li>
+            <li><a href="{{ path('fos_user_profile_show') }}">Profile</a></li>
             <li><a href="{{ path('food_diary') }}" accesskey="f">Food Diary</a></li>
             <li><a href="{{ path('activities_diary') }}" accesskey="e">Exercise Diary</a></li>
             <li><a href="{{ path('weight_diary') }}" accesskey="w">Weight Diary</a></li>
