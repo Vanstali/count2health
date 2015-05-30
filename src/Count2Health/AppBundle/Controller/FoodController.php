@@ -73,7 +73,7 @@ if ($session->has('date')) {
 $date = $session->get('date');
 }
 else {
-$date = new \DateTime('today', new \DateTimeZone($user->getSetting()->getTimeZone()));
+$date = new \DateTime('today', $user->getDateTimeZone());
 }
 
             $food = $this->get('fatsecret.food')->get($id);

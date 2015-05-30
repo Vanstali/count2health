@@ -1,6 +1,6 @@
 <?php
 
-namespace Count2Health\AppBundle\Form;
+namespace Count2Health\UserBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\FormInterface;
 
-class SettingType extends AbstractType
+class PersonalDetailsType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -57,9 +57,6 @@ class SettingType extends AbstractType
                             'v' => 'Very Active',
                             'e' => 'Extremely Active',
                             ),
-                        ))
-            ->add('timeZone', 'timezone', array(
-                        'placeholder' => '',
                         ))
         ;
 
@@ -139,7 +136,7 @@ $weightModifier($event->getForm()->getParent(), $weightUnits);
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Count2Health\AppBundle\Entity\Setting'
+            'data_class' => 'Count2Health\UserBundle\Entity\PersonalDetails'
         ));
     }
 
@@ -148,6 +145,6 @@ $weightModifier($event->getForm()->getParent(), $weightUnits);
      */
     public function getName()
     {
-        return 'count2health_appbundle_setting';
+        return 'count2health_userbundle_personaldetails';
     }
 }

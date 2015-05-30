@@ -35,13 +35,11 @@ if ($session->has('date')) {
 $date = $session->get('date');
 }
 else {
-        $date = new \DateTime('today',
-                new \DateTimeZone($user->getSetting()->getTimeZone()));
+        $date = new \DateTime('today', $user->getDateTimeZone());
 }
         }
         else {
-            $date = new \DateTime($date,
-                    new \DateTimeZone($user->getSetting()->getTimeZone()));
+            $date = new \DateTime($date, $user->getDateTimeZone());
         }
 
 $session->set('date', $date);
@@ -291,6 +289,76 @@ return array(
 'food' => $food,
 'form' => $form->createView(),
 );
+}
+
+/**
+ * @Route("/month.html", name="food_diary_monthly_log")
+ * @Route("/month/{year}/{month}.html", name="food_diary_monthly_log_by_date")
+ * @Template
+ * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+ */
+public function getMonthlyLogAction(Request $request, $year = null, $month = null)
+{
+    $session = $request->getSession();
+
+    $user = $this->getUser();
+
+    if (!$year || !$month) {
+        if ($session->has('date')) {
+            $year = $session->get('date')->format('Y');
+            $month = $session->get('date')->format('m');
+        }
+        else {
+            $d = new \DateTime('today', $user->getDateTimeZone());
+            $year = $d->format('Y');
+            $month = $d->format('m');
+        }
+    }
+
+    $date = new \DateTime(
+            sprintf('%04d-%02d-01', $year, $month),
+            $user->getDateTimeZone());
+    $today = new \DateTime('today', $user->getDateTimeZone());
+
+    $lastMonth = clone $date;
+    $lastMonth->sub(new \DateInterval('P1M'));
+
+    $nextMonth = clone $date;
+    $nextMonth->add(new \DateInterval('P1M'));
+
+    $entries = $this->get('fatsecret.food_entries')
+        ->getMonth($date, $user);
+
+    $days = array();
+    $fudgeFactor = $this->get('user_stats')
+        ->getFudgeFactor($today, $user);
+
+    foreach ($entries->day as $entry)
+    {
+        $thisDate = $this->get('fatsecret')
+            ->dateIntToDateTime($entry->date_int, $user);
+        $day = array();
+        $day['date'] = $thisDate;
+        $day['calories'] = intval($entry->calories);
+        $day['tdee'] = $this->get('user_stats')
+            ->getInferredTDEE($thisDate, $user, $fudgeFactor);
+        $day['deficit'] = $day['tdee'] - $day['calories'];
+        $day['carbohydrate'] = floatval($entry->carbohydrate);
+        $day['carbohydrate_percent'] = $day['carbohydrate'] * 4 / $day['calories'];
+        $day['protein'] = floatval($entry->protein);
+        $day['protein_percent'] = $day['protein'] * 4 / $day['calories'];
+        $day['fat'] = floatval($entry->fat);
+        $day['fat_percent'] = $day['fat'] * 9 / $day['calories'];
+
+        array_unshift($days, $day);
+    }
+
+    return array(
+            'days' => $days,
+            'date' => $date,
+            'lastMonth' => $lastMonth,
+            'nextMonth' => $nextMonth,
+            );
 }
 
 }

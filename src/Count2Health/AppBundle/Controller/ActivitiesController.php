@@ -115,7 +115,7 @@ $prevEntries = $this->get('fatsecret.weight')
 ->getEntries($date, $user, 1, true);
 
 if (empty($prevEntries)) {
-$weight = $user->getSetting()->getStartWeight();
+$weight = $user->getPersonalDetails()->getStartWeight();
 }
 else {
 $weight = new Mass(floatval($prevEntries[0]->weight_kg), 'kg');

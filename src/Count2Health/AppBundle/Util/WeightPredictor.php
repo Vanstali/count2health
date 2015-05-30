@@ -31,8 +31,7 @@ class WeightPredictor
 
     public function predictDate(Mass $weight, User $user)
     {
-        $date = new \DateTime('today',
-                new \DateTimeZone($user->getSetting()->getTimeZone()));
+        $date = new \DateTime('today', $user->getDateTimeZone());
 
         $weightPerDay = $this->stats
             ->getDailyCalorieDeficit($date, $user) / 3500.0;
@@ -62,8 +61,7 @@ class WeightPredictor
 
     public function predictWeight(\DateTime $date, User $user)
     {
-        $today = new \DateTime('today',
-                new \DateTimeZone($user->getSetting()->getTimeZone()));
+        $today = new \DateTime('today', $user->getDateTimeZone());
 
         if ($date <= $today) {
             // Cannot pass a date in the past

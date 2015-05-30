@@ -71,7 +71,7 @@ class RecipesController extends Controller
 
             $data = array();
             $data['units'] = 1;
-            $data['date'] = new \DateTime('today', new \DateTimeZone($user->getSetting()->getTimeZone()));
+            $data['date'] = new \DateTime('today', $user->getDateTimeZone());
             $data['name'] = "$recipe->recipe_name";
 
             $form = $this->createForm(new FoodType($recipe, 'recipe'), $data, array(

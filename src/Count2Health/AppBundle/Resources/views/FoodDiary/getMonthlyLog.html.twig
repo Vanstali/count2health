@@ -1,0 +1,60 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Monthly Log for {{ date|date('F, Y') }}{% endblock %}
+
+{% block body %}
+<h1>Monthly Log for {{ date|date('F, Y') }}</h1>
+
+{{ include('Count2HealthAppBundle:Food:actions.html.twig') }}
+
+<p>
+<a href="{{ path('food_diary_monthly_log_by_date', {'year': lastMonth|date('Y'),
+    'month': lastMonth|date('m')}) }}"
+accesskey="p"
+title="{{ lastMonth|date('F, Y') }}">
+&larr;
+</a>
+{{ date|date('F, Y') }}
+<a href="{{ path('food_diary_monthly_log_by_date', {'year': nextMonth|date('Y'),
+    'month': nextMonth|date('m')}) }}"
+accesskey="n"
+title="{{ nextMonth|date('F, Y') }}">
+&rarr;
+</a>
+</p>
+
+<table border="1" cellpadding="3" cellspacing="3">
+<thead>
+<tr>
+<th>Date</th>
+<th>Consumed</th>
+<th>Burned</th>
+<th>Deficit</th>
+<th>Carbs</th>
+<th>Protein</th>
+<th>Fat</th>
+</tr>
+</thead>
+
+<tbody>
+{% for day in days %}
+<tr>
+<th>
+<a href="{{ path('food_diary_by_date', {'date': day.date|date('Y-m-d')}) }}">
+{{ day.date|date('j F') }}
+</a>
+</th>
+<td>{{ day.calories }} calories</td>
+<td>{{ day.tdee }} calories</td>
+<td>{{ day.deficit }} calories</td>
+<td>{{ day.carbohydrate|round(1) }} g<br />
+{{ day.carbohydrate_percent|format_percent(0) }}</td>
+<td>{{ day.protein|round(1) }} g<br />
+{{ day.protein_percent|format_percent(0) }}</td>
+<td>{{ day.fat|round(1) }} g<br />
+{{ day.fat_percent|format_percent(0) }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}

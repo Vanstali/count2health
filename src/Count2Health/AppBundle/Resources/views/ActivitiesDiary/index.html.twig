@@ -35,7 +35,6 @@ Browse
 <th>Exercise</th>
 <th>Minutes</th>
 <th>Calories Burned</th>
-<th>Adjusted Calories</th>
 </tr>
 </thead>
 
@@ -54,7 +53,6 @@ Browse
 {% endif %}
 </th>
 <td>{{ entry.minutes|duration }}</td>
-<td>{{ entry.calories }}</td>
 <td>{{ (entry.calories * fudgeFactor)|round }}</td>
 </tr>
 {% endfor %}

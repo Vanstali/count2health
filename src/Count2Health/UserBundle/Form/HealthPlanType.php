@@ -1,6 +1,6 @@
 <?php
 
-namespace Count2Health\AppBundle\Form;
+namespace Count2Health\UserBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -29,7 +29,7 @@ class HealthPlanType extends AbstractType
         $builder
             ->add('type', 'hidden')
             ->add('goalWeight', 'weight', array(
-                        'units' => $this->user->getSetting()->getWeightUnits(),
+                        'units' => $this->user->getPersonalDetails()->getWeightUnits(),
                    ))
             ;
 
@@ -78,6 +78,6 @@ class HealthPlanType extends AbstractType
      */
     public function getName()
     {
-        return 'count2health_appbundle_healthplan';
+        return 'count2health_userbundle_healthplan';
     }
 }

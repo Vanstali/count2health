@@ -87,7 +87,7 @@ $(function()
             labels: {
                 formatter: function ()
                 {
-                    return this.value + ' {{ app.user.setting.weightUnits }}';
+                    return this.value + ' {{ app.user.personalDetails.weightUnits }}';
                 }
             },
             plotLines: [{
@@ -115,8 +115,8 @@ $(function()
     });
 
     $('#progressbar').progressbar({
-value: {{ weightLost.toUnit(app.user.setting.weightUnits) }},
-max: {{ totalWeightToLose.toUnit(app.user.setting.weightUnits) }}
+value: {{ weightLost.toUnit(app.user.personalDetails.weightUnits) }},
+max: {{ totalWeightToLose.toUnit(app.user.personalDetails.weightUnits) }}
             });
 
 });

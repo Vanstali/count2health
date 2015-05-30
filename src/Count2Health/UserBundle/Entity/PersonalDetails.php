@@ -1,6 +1,6 @@
 <?php
 
-namespace Count2Health\AppBundle\Entity;
+namespace Count2Health\UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -8,14 +8,14 @@ use Count2Health\AppBundle\Validator\Constraints\IsUnit;
 use Count2Health\AppBundle\Validator\Constraints\UnitGreaterThan;
 
 /**
- * Setting
+ * Personal Details
  *
  * @ORM\Table()
- * @ORM\Entity(repositoryClass="Count2Health\AppBundle\Entity\SettingRepository")
+ * @ORM\Entity(repositoryClass="Count2Health\UserBundle\Entity\PersonalDetailsRepository")
  * @Assert\GroupSequence(
- *     {"Setting", "Secondary", "Tertiary", "Quaternary", "Quinary"})
+ *     {"PersonalDetails", "Secondary", "Tertiary", "Quaternary", "Quinary"})
  */
-class Setting
+class PersonalDetails
 {
     /**
      * @var integer
@@ -30,8 +30,8 @@ class Setting
      * @var Count2Health\UserBundle\Entity\User
      *
      * @Assert\NotNull()
-     * @ORM\OneToOne(targetEntity="Count2Health\UserBundle\Entity\User",
-     *     inversedBy="setting")
+     * @ORM\OneToOne(targetEntity="User",
+     *     inversedBy="personalDetails")
      */
     private $user;
 
@@ -96,13 +96,6 @@ class Setting
     private $startWeight;
 
     /**
-     * @var float
-     *
-     * @ORM\OneToOne(targetEntity="WeightDiaryEntry")
-     */
-    private $currentWeight;
-
-    /**
      * @var \DateTime
      *
      * @Assert\NotNull(message="Please select your date of birth.")
@@ -123,13 +116,6 @@ class Setting
      * @ORM\Column(name="activityLevel", type="string", length=1)
      */
     private $activityLevel;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="timeZone", type="string", length=100)
-     */
-    private $timeZone;
 
 
     /**
@@ -325,27 +311,5 @@ class Setting
     {
         return $this->startWeight;
     }
-
-    /**
-     * Set currentWeight
-     *
-     * @param \Count2Health\AppBundle\Entity\WeightDiaryEntry $currentWeight
-     * @return Setting
-     */
-    public function setCurrentWeight(\Count2Health\AppBundle\Entity\WeightDiaryEntry $currentWeight = null)
-    {
-        $this->currentWeight = $currentWeight;
-
-        return $this;
-    }
-
-    /**
-     * Get currentWeight
-     *
-     * @return \Count2Health\AppBundle\Entity\WeightDiaryEntry 
-     */
-    public function getCurrentWeight()
-    {
-        return $this->currentWeight;
-    }
 }
+

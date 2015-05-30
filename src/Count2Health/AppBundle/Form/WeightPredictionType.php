@@ -23,19 +23,17 @@ class WeightPredictionType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $tz = $this->user->getSetting()->getTimeZone();
-
         $builder
             ->add('date', 'date', array(
                         'format' => 'MMMM d, yyyy',
-                        'model_timezone' => $tz,
-                        'view_timezone' => $tz,
+                        'model_timezone' => $this->user->getTimeZone(),
+                        'view_timezone' => $this->user->getTimeZone(),
                         'years' => range(date('Y'), date('Y')+4),
                         'required' => false,
                         ))
             ->add('weight', 'weight', array(
                         'required' => false,
-                        'units' => $this->user->getSetting()->getWeightUnits(),
+                        'units' => $this->user->getPersonalDetails()->getWeightUnits(),
                         ))
             ->add('bmi', 'number', array(
                         'precision' => 1,

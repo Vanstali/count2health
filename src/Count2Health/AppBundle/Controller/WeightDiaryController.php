@@ -27,7 +27,7 @@ class WeightDiaryController extends Controller
     public function indexAction(Request $request, $month = null)
     {
         $user = $this->getUser();
-$tz = new \DateTimeZone($user->getSetting()->getTimeZone());
+$tz = $user->getDateTimeZone();
 
 $session = $request->getSession();
 
@@ -76,7 +76,7 @@ $nextMonth->add(new \DateInterval('P1M'));
                 ->calculateTrend($entry['date'], $user);
             $entry['comment'] = "$weight->weight_comment";
             $entry['BMI'] = $entry['trend']->toUnit('kg')
-                / pow($user->getSetting()->getHeight()->toUnit('m'), 2);
+                / pow($user->getPersonalDetails()->getHeight()->toUnit('m'), 2);
 
             $entries[] = $entry;
         }
@@ -100,7 +100,7 @@ $weightData = array();
 
 foreach ($entries as $i => $entry)
 {
-    $unit = $user->getSetting()->getWeightUnits();
+    $unit = $user->getPersonalDetails()->getWeightUnits();
     $trendData[] = round($entry['trend']->toUnit($unit), 1);
     $weightData[] = round($entry['weight']->toUnit($unit), 1);
     $dateData[] = $entry['date']->format('M j');
@@ -110,7 +110,7 @@ $minDate = $entries[count($entries)-1]['date']->getTimestamp() * 1000;
 $maxDate = $entries[0]['date']->getTimestamp() * 1000;
 
 // Get information for progress bar
-$start = $user->getSetting()->getStartWeight();
+$start = $user->getPersonalDetails()->getStartWeight();
 $goal = $user->getHealthPlan()->getGoalWeight();
 
 if (empty($entries)) {
@@ -154,11 +154,11 @@ $weightToLose = new Mass(
     {
         $user = $this->getUser();
 
-        if (null === $user->getSetting()) {
+        if (null === $user->getPersonalDetails()) {
             $request->getSession()->getFlashBag()->add('error',
                     'Please modify your account settings before adding ' .
                     'your first weight.');
-            return $this->redirectToRoute('account_settings');
+            return $this->redirectToRoute('profile_personal_details');
         }
 
         $em = $this->getDoctrine()->getManager();
@@ -170,7 +170,7 @@ $weightToLose = new Mass(
         $entry->setDate(new \DateTime());
 
         if (0 == $repository->getNumberOfWeightDiaryEntries($user)) {
-            $entry->setWeight($user->getSetting()->getStartWeight());
+            $entry->setWeight($user->getPersonalDetails()->getStartWeight());
         }
 
         $form = $this->createForm(new WeightDiaryEntryType($user), $entry)
@@ -222,8 +222,7 @@ public function predictAction()
 public function predictAjaxAction(Request $request)
 {
     $user = $this->getUser();
-    $date = new \DateTime('today',
-            new \DateTimeZone($user->getSetting()->getTimeZone()));
+    $date = new \DateTime('today', $user->getDateTimeZone());
 
     $form = $this->createForm(new WeightPredictionType($user))
         ->add('submit', 'submit', array(
@@ -292,7 +291,7 @@ public function predictAjaxAction(Request $request)
                     );
 
             $response['weight'] = number_format(round($weight->toUnit(
-                            $user->getSetting()->getWeightUnits()), 2), 2);
+                            $user->getPersonalDetails()->getWeightUnits()), 2), 2);
 
             $response['bmi'] = number_format(round($bmi, 1), 1);
         }

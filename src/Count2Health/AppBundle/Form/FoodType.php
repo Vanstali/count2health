@@ -31,8 +31,8 @@ $this->user = $user;
         $builder
             ->add('date', 'date', array(
                         'format' => 'MMMM d, yyyy',
-'model_timezone' => $this->user->getSetting()->getTimeZone(),
-'view_timezone' => $this->user->getSetting()->getTimeZone(),
+'model_timezone' => $this->user->getTimeZone(),
+'view_timezone' => $this->user->getTimeZone(),
                         ))
             ->add('name', 'text', array(
                         'label' => 'Entry Name',

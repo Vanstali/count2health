@@ -47,7 +47,7 @@ class UserStats
 
     public function getWeightLossPerWeek(User $user)
     {
-        $tz = new \DateTimeZone($user->getSetting()->getTimeZone());
+        $tz = $user->getDateTimeZone();
         $today = new \DateTime('today', $tz);
 
         $weights = $this->fatSecretWeight
@@ -80,7 +80,7 @@ return new Mass($rate, 'kg');
 
     public function getLastWeekWeightLoss(User $user)
     {
-        $tz = new \DateTimeZone($user->getSetting()->getTimeZone());
+        $tz = $user->getDateTimeZone();
         $today = new \DateTime('today', $tz);
 
         $weights = $this->fatSecretWeight
@@ -109,7 +109,7 @@ $endTrend = $this->fatSecretWeight
 
     public function getLastMonthWeightLoss(User $user)
     {
-        $tz = new \DateTimeZone($user->getSetting()->getTimeZone());
+        $tz = $user->getDateTimeZone();
         $today = new \DateTime('today', $tz);
 
         $weights = $this->fatSecretWeight
@@ -200,21 +200,21 @@ $weight = $this->fatSecretWeight
 $user);
         }
         else {
-            $weight = $user->getSetting()->getStartWeight();
+            $weight = $user->getPersonalDetails()->getStartWeight();
         }
 
     $bmr = 10 * $weight->toUnit('kg');
-    $bmr += 6.25 * $user->getSetting()->getHeight()->toUnit('cm');
+    $bmr += 6.25 * $user->getPersonalDetails()->getHeight()->toUnit('cm');
 
     // Get years since birth, i.e., age
     $today = new \DateTime();
-    $age = $today->diff($user->getSetting()->getBirthDate());
+    $age = $today->diff($user->getPersonalDetails()->getBirthDate());
     $bmr -= 4.92 * $age->y;
 
-    if ('male' == $user->getSetting()->getGender()) {
+    if ('male' == $user->getPersonalDetails()->getGender()) {
         $bmr += 5;
     }
-    elseif ('female' == $user->getSetting()->getGender()) {
+    elseif ('female' == $user->getPersonalDetails()->getGender()) {
         $bmr -= 161;
     }
 
@@ -225,7 +225,7 @@ public function getEstimatedTDEE(\DateTime $date, User $user)
 {
     $tdee = $this->getBMR($date, $user);
 
-    switch ($user->getSetting()->getActivityLevel())
+    switch ($user->getPersonalDetails()->getActivityLevel())
     {
         case 's':
             $tdee *= 1.2;
@@ -252,7 +252,7 @@ public function getEstimatedTDEE(\DateTime $date, User $user)
 // and the normal template activity.
 // Any extra will be added to TDEE.
 
-$tz = new \DateTimeZone($user->getSetting()->getTimeZone());
+$tz = $user->getDateTimeZone();
 $month = new \DateTime('+1 month', $tz);
 
 $activityCalories = $this->fatSecretExerciseEntries
