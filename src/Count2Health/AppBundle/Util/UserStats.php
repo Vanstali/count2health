@@ -351,13 +351,13 @@ $tdeeType = 'inferred';
         $fudgeFactor = $this->getFudgeFactor($date, $user);
 
 $foodDiaryEntries = $this->fatSecretFoodEntries
-    ->getEntries($date, $user, 15, false);
+    ->getEntries($date, $user, 16, false);
 $numEntries = count($foodDiaryEntries);
 
 // We purposely unset the last element.
-// If there are fewer than 2 weeks, the first (last) entry will be garbage,
+// If there are fewer than 15 days, the first (last) entry will be garbage,
 // because it can't get average calories eaten per day.
-// If it is 15 days, we don't need the 15th day anyway.
+// If it is 16 days, we don't need the 16th day anyway.
 unset($foodDiaryEntries[$numEntries-1]);
 $numEntries--;
 
@@ -383,9 +383,9 @@ $thisTdee = $this->getInferredTDEE($thisDate, $user, $fudgeFactor);
 $deficit += ($thisTdee - $calories);
 }
 
-$deficitToday = $targetDeficit * ($numEntries + 14);
+$deficitToday = $targetDeficit * ($numEntries + 15);
 $deficitToday -= $deficit;
-$deficitToday /= 14.0;
+$deficitToday /= 15.0;
 
 $rdi = $tdee - $deficitToday;
 
