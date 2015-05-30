@@ -48,7 +48,7 @@ class Weight extends FatSecretEntries
 
     public function calculateTrend(\DateTime $date, $user, $term = 0)
     {
-$days = 21;
+$days = 30;
 $multiplier = 2.0 / floatval($days + 1);
 $accuracy = 0.9999;
 $numTerms = round(log(1-$accuracy) / log(1-$multiplier));
