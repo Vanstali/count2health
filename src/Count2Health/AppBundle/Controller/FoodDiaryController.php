@@ -341,7 +341,7 @@ public function getMonthlyLogAction(Request $request, $year = null, $month = nul
         $day['date'] = $thisDate;
         $day['calories'] = intval($entry->calories);
         $day['tdee'] = $this->get('user_stats')
-            ->getInferredTDEE($thisDate, $user, $fudgeFactor);
+            ->getTDEE($thisDate, $user, $fudgeFactor);
         $day['deficit'] = $day['tdee'] - $day['calories'];
         $day['carbohydrate'] = floatval($entry->carbohydrate);
         $day['carbohydrate_percent'] = $day['carbohydrate'] * 4 / $day['calories'];

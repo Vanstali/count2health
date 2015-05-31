@@ -248,27 +248,10 @@ public function getEstimatedTDEE(\DateTime $date, User $user)
             break;
     }
 
-// See the difference between activity today,
-// and the normal template activity.
-// Any extra will be added to TDEE.
-
-$tz = $user->getDateTimeZone();
-$month = new \DateTime('+1 month', $tz);
-
-$activityCalories = $this->fatSecretExerciseEntries
-->getTotalCalories($month, $user);
-
-$activityCaloriesToday = $this->fatSecretExerciseEntries
-->getTotalCalories($date, $user);
-
-$difference = $activityCaloriesToday - $activityCalories;
-
-$tdee += $difference;
-
     return $tdee;
 }
 
-    public function getInferredTDEE(\DateTime $date, User $user,
+    public function getTDEE(\DateTime $date, User $user,
             $fudgeFactor = null)
     {
             // What did we burn today?
@@ -315,44 +298,29 @@ return floatval($expectedTdee) / $averageBurn;
 
 private function getCalculatedTDEE(\DateTime $date, User $user)
 {
-return $this->getCaloriesConsumedPerDay($date, $user)
-                + $this->getDailyCalorieDeficit($date, $user);
+$caloriesConsumedPerDay = $this->getCaloriesConsumedPerDay($date, $user);
+
+if (0 == $caloriesConsumedPerDay) {
+// Not enough data to calculate the TDEE
+return $this->getEstimatedTDEE($date, $user);
 }
 
-public function getTDEE(\DateTime $date, User $user)
-{
-        $results = $this->fatSecretFoodEntries
-            ->getEntries($date, $user, 7, false);
-
-        if (count($results) < 7) {
-return $this->getEstimatedTDEE($date, $user);
-        }
-        else {
-return $this->getInferredTDEE($date, $user);
-        }
+                return $caloriesConsumedPerDay + $this->getDailyCalorieDeficit($date, $user);
 }
 
     public function getRDI(\DateTime $date, User $user)
     {
-        $results = $this->fatSecretFoodEntries
-            ->getEntries($date, $user, 7, false);
-
-        if (count($results) < 7) {
-$tdee = $this->getEstimatedTDEE($date, $user);
-$tdeeType = 'estimated';
-        }
-        else {
-            $tdee = $this->getInferredTDEE($date, $user);
-$tdeeType = 'inferred';
-        }
+$tdee = $this->getTDEE($date, $user);
 
         $targetDeficit = $user->getHealthPlan()->getTargetCalorieDeficit();
-        $type = $user->getHealthPlan()->getType();
-        $fudgeFactor = $this->getFudgeFactor($date, $user);
 
 $foodDiaryEntries = $this->fatSecretFoodEntries
     ->getEntries($date, $user, 16, false);
 $numEntries = count($foodDiaryEntries);
+
+if ($numEntries < 2) {
+return $tdee - $targetDeficit;
+}
 
 // We purposely unset the last element.
 // If there are fewer than 15 days, the first (last) entry will be garbage,
@@ -361,6 +329,8 @@ $numEntries = count($foodDiaryEntries);
 unset($foodDiaryEntries[$numEntries-1]);
 $numEntries--;
 
+        $type = $user->getHealthPlan()->getType();
+        $fudgeFactor = $this->getFudgeFactor($date, $user);
 $deficit = 0;
 
 foreach ($foodDiaryEntries as $entry)
@@ -373,12 +343,7 @@ continue;
 
 $thisDate = $this->fatSecret
 ->dateIntToDateTime($entry->date_int, $user);
-if ('estimated' == $tdeeType) {
-$thisTdee = $this->getEstimatedTDEE($thisDate, $user);
-}
-elseif ('inferred' == $tdeeType) {
-$thisTdee = $this->getInferredTDEE($thisDate, $user, $fudgeFactor);
-}
+$thisTdee = $this->getTDEE($thisDate, $user, $fudgeFactor);
 
 $deficit += ($thisTdee - $calories);
 }

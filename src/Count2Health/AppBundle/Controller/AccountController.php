@@ -45,7 +45,7 @@ $date = new \DateTime('today', $user->getDateTimeZone());
         if (null !== $user->getPersonalDetails()) {
         $vars['bmr'] = $this->get('user_stats')->getBMR($date, $user);
         $vars['tdee'] = $this->get('user_stats')->getEstimatedTDEE($date, $user);
-        $vars['inferredTdee'] = $this->get('user_stats')->getInferredTDEE($date, $user);
+        $vars['inferredTdee'] = $this->get('user_stats')->getTDEE($date, $user);
 
         $weightLossPerWeek = $this->get('user_stats')
             ->getWeightLossPerWeek($user);
