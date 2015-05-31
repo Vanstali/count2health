@@ -10,7 +10,6 @@ use Count2Health\AppBundle\FatSecret;
  */
 class Food
 {
-
     private $fatSecret;
 
     /**
@@ -29,7 +28,6 @@ class Food
                     'food_id' => $foodId,
                     ), 'food');
 
-return $result;
+        return $result;
     }
-
 }

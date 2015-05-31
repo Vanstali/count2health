@@ -8,20 +8,19 @@ use PhpUnitsOfMeasure\PhysicalQuantity\Length;
 
 class MetricHeightTransformer implements DataTransformerInterface
 {
-
     public function transform($data)
     {
         if ($data === null) {
-            return null;
+            return;
         }
 
-if (!($data instanceof Length)) {
-    throw new TransformationFailedException('Height must be of type Length');
-}
+        if (!($data instanceof Length)) {
+            throw new TransformationFailedException('Height must be of type Length');
+        }
 
-$cm = $data->toUnit('cm');
+        $cm = $data->toUnit('cm');
 
-return array(
+        return array(
         'height' => $cm,
         );
     }
@@ -33,7 +32,7 @@ return array(
         }
 
         $cm = $data['height'];
+
         return new Length($cm, 'cm');
     }
-
 }

@@ -8,7 +8,7 @@ use Count2Health\AppBundle\Validator\Constraints\IsUnit;
 use Count2Health\AppBundle\Validator\Constraints\UnitGreaterThan;
 
 /**
- * Personal Details
+ * Personal Details.
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="Count2Health\UserBundle\Entity\PersonalDetailsRepository")
@@ -18,7 +18,7 @@ use Count2Health\AppBundle\Validator\Constraints\UnitGreaterThan;
 class PersonalDetails
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -117,11 +117,10 @@ class PersonalDetails
      */
     private $activityLevel;
 
-
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer 
+     * @return int
      */
     public function getId()
     {
@@ -129,9 +128,10 @@ class PersonalDetails
     }
 
     /**
-     * Set weightUnits
+     * Set weightUnits.
      *
      * @param string $weightUnits
+     *
      * @return Setting
      */
     public function setWeightUnits($weightUnits)
@@ -142,9 +142,9 @@ class PersonalDetails
     }
 
     /**
-     * Get weightUnits
+     * Get weightUnits.
      *
-     * @return string 
+     * @return string
      */
     public function getWeightUnits()
     {
@@ -152,9 +152,10 @@ class PersonalDetails
     }
 
     /**
-     * Set heightUnits
+     * Set heightUnits.
      *
      * @param string $heightUnits
+     *
      * @return Setting
      */
     public function setHeightUnits($heightUnits)
@@ -165,9 +166,9 @@ class PersonalDetails
     }
 
     /**
-     * Get heightUnits
+     * Get heightUnits.
      *
-     * @return string 
+     * @return string
      */
     public function getHeightUnits()
     {
@@ -175,9 +176,10 @@ class PersonalDetails
     }
 
     /**
-     * Set gender
+     * Set gender.
      *
      * @param string $gender
+     *
      * @return Setting
      */
     public function setGender($gender)
@@ -188,9 +190,9 @@ class PersonalDetails
     }
 
     /**
-     * Get gender
+     * Get gender.
      *
-     * @return string 
+     * @return string
      */
     public function getGender()
     {
@@ -198,9 +200,10 @@ class PersonalDetails
     }
 
     /**
-     * Set height
+     * Set height.
      *
      * @param length $height
+     *
      * @return Setting
      */
     public function setHeight($height)
@@ -211,9 +214,9 @@ class PersonalDetails
     }
 
     /**
-     * Get height
+     * Get height.
      *
-     * @return length 
+     * @return length
      */
     public function getHeight()
     {
@@ -221,9 +224,10 @@ class PersonalDetails
     }
 
     /**
-     * Set birthDate
+     * Set birthDate.
      *
      * @param \DateTime $birthDate
+     *
      * @return Setting
      */
     public function setBirthDate($birthDate)
@@ -234,9 +238,9 @@ class PersonalDetails
     }
 
     /**
-     * Get birthDate
+     * Get birthDate.
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getBirthDate()
     {
@@ -244,9 +248,10 @@ class PersonalDetails
     }
 
     /**
-     * Set activityLevel
+     * Set activityLevel.
      *
      * @param string $activityLevel
+     *
      * @return Setting
      */
     public function setActivityLevel($activityLevel)
@@ -257,9 +262,9 @@ class PersonalDetails
     }
 
     /**
-     * Get activityLevel
+     * Get activityLevel.
      *
-     * @return string 
+     * @return string
      */
     public function getActivityLevel()
     {
@@ -267,9 +272,10 @@ class PersonalDetails
     }
 
     /**
-     * Set user
+     * Set user.
      *
      * @param \Count2Health\UserBundle\Entity\User $user
+     *
      * @return Setting
      */
     public function setUser(\Count2Health\UserBundle\Entity\User $user = null)
@@ -280,9 +286,9 @@ class PersonalDetails
     }
 
     /**
-     * Get user
+     * Get user.
      *
-     * @return \Count2Health\UserBundle\Entity\User 
+     * @return \Count2Health\UserBundle\Entity\User
      */
     public function getUser()
     {
@@ -290,9 +296,10 @@ class PersonalDetails
     }
 
     /**
-     * Set startWeight
+     * Set startWeight.
      *
      * @param PhpUnitsOfMeasure\PhysicalQuantity\Mass $startWeight
+     *
      * @return Setting
      */
     public function setStartWeight($startWeight = null)
@@ -303,7 +310,7 @@ class PersonalDetails
     }
 
     /**
-     * Get startWeight
+     * Get startWeight.
      *
      * @return PhpUnitsOfMeasure\PhysicalQuantity\Mass
      */
@@ -312,4 +319,3 @@ class PersonalDetails
         return $this->startWeight;
     }
 }
-

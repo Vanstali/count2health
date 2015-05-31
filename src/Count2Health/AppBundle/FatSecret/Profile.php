@@ -12,7 +12,6 @@ use Count2Health\UserBundle\Entity\User;
  */
 class Profile
 {
-
     private $fatSecret;
 
     /**
@@ -36,10 +35,9 @@ class Profile
         $info['last_weight'] = new Mass("$profile->last_weight_kg", 'kg');
         $info['last_weight_date'] = $this->fatSecret->dateIntToDateTime(
                 $profile->last_weight_date_int, $user);
-$info['last_weight_comment'] = "$profile->last_weight_comment";
+        $info['last_weight_comment'] = "$profile->last_weight_comment";
         $info['goal_weight'] = new Mass("$profile->goal_weight_kg", 'kg');
 
         return $info;
     }
-
 }

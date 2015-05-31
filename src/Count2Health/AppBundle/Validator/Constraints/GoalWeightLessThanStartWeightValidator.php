@@ -16,8 +16,8 @@ class GoalWeightLessThanStartWeightValidator extends ConstraintValidator
         if ($goalWeight->toUnit($units) >= $startWeight->toUnit($units)) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ start_weight }}',
-                        $startWeight->toUnit($units) .
-                        ' ' . $units)
+                        $startWeight->toUnit($units).
+                        ' '.$units)
                 ->atPath('goalWeight')
                 ->addViolation();
         }

@@ -11,7 +11,6 @@ use Count2Health\UserBundle\Entity\User;
  */
 class Foods
 {
-
     private $fatSecret;
 
     /**
@@ -33,7 +32,7 @@ class Foods
                     ),
 'food');
 
-return $result;
+        return $result;
     }
 
     public function getMostEaten($meal, User $user)
@@ -53,5 +52,4 @@ return $result;
 'food',
                 $user);
     }
-
 }

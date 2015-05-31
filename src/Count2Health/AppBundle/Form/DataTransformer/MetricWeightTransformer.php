@@ -8,20 +8,19 @@ use PhpUnitsOfMeasure\PhysicalQuantity\Mass;
 
 class MetricWeightTransformer implements DataTransformerInterface
 {
-
     public function transform($data)
     {
         if ($data === null) {
-            return null;
+            return;
         }
 
-if (!($data instanceof Mass)) {
-    throw new TransformationFailedException('Weight must be of type Mass');
-}
+        if (!($data instanceof Mass)) {
+            throw new TransformationFailedException('Weight must be of type Mass');
+        }
 
-$kg = $data->toUnit('kg');
+        $kg = $data->toUnit('kg');
 
-return array(
+        return array(
         'weight' => $kg,
         );
     }
@@ -33,7 +32,7 @@ return array(
         }
 
         $kg = $data['weight'];
+
         return new Mass($kg, 'kg');
     }
-
 }

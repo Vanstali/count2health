@@ -11,7 +11,6 @@ use Count2Health\UserBundle\Entity\User;
  */
 class FoodEntries extends FatSecretEntries
 {
-
     /**
      * @DI\InjectParams({
      *     "fatSecret" = @DI\Inject("fatsecret")
@@ -28,14 +27,13 @@ class FoodEntries extends FatSecretEntries
 
         if ($param instanceof \DateTime) {
             $arguments['date'] = $this->fatSecret->dateTimeToDateInt($param);
-        }
-        else {
+        } else {
             $arguments['food_entry_id'] = $param;
         }
 
         $entry = $this->fatSecret->doApiCall('food_entries.get', $arguments, 'food', $user);
 
-            return $entry;
+        return $entry;
     }
 
     public function getMonth(\DateTime $date, User $user)
@@ -51,5 +49,4 @@ class FoodEntries extends FatSecretEntries
 
         return $response;
     }
-
 }

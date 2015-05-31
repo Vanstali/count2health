@@ -9,7 +9,6 @@ use Symfony\Component\Form\Extension\Core\ChoiceList\SimpleChoiceList;
 
 class ActivitiesType extends AbstractType
 {
-
     private $exercises;
 
     public function __construct($exercises)
@@ -19,7 +18,7 @@ class ActivitiesType extends AbstractType
 
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -34,7 +33,7 @@ class ActivitiesType extends AbstractType
             ))
         ;
     }
-    
+
     /**
      * @param OptionsResolverInterface $resolver
      */
@@ -55,8 +54,7 @@ class ActivitiesType extends AbstractType
     protected function loadChoiceList()
     {
         $choices = array();
-        foreach ($this->exercises as $exercise)
-        {
+        foreach ($this->exercises as $exercise) {
             $minutes = intval($exercise['minutes']);
             $duration = array();
 
@@ -68,13 +66,13 @@ class ActivitiesType extends AbstractType
             }
 
             if ($minutes > 0) {
-            $duration[] = "{$minutes}m";
+                $duration[] = "{$minutes}m";
             }
 
-            $choices[$exercise['id']] = $exercise['name'] . " (" .
-                implode(' ', $duration) . ')';
+            $choices[$exercise['id']] = $exercise['name'].' ('.
+                implode(' ', $duration).')';
         }
 
-    return new SimpleChoiceList($choices);
+        return new SimpleChoiceList($choices);
     }
 }

@@ -28,7 +28,7 @@ class RecipesController extends Controller
         return array(
                 'form' => $form->createView(),
                 );
-                }
+    }
 
         /**
          * @Route("/search/ajax.html", name="recipes_search_ajax",
@@ -65,16 +65,16 @@ class RecipesController extends Controller
      */
     public function showAction($id)
     {
-            $user = $this->getUser();
+        $user = $this->getUser();
 
-            $recipe = $this->get('fatsecret.recipe')->get($id);
+        $recipe = $this->get('fatsecret.recipe')->get($id);
 
-            $data = array();
-            $data['units'] = 1;
-            $data['date'] = new \DateTime('today', $user->getDateTimeZone());
-            $data['name'] = "$recipe->recipe_name";
+        $data = array();
+        $data['units'] = 1;
+        $data['date'] = new \DateTime('today', $user->getDateTimeZone());
+        $data['name'] = "$recipe->recipe_name";
 
-            $form = $this->createForm(new FoodType($recipe, 'recipe'), $data, array(
+        $form = $this->createForm(new FoodType($recipe, 'recipe'), $data, array(
                         'action' => $this->generateUrl('food_diary_new_by_type', array(
                                 'id' => $id,
                                 'type' => 'recipe',
@@ -84,24 +84,21 @@ class RecipesController extends Controller
                             'label' => 'Add',
                             ));
 
-            $servings = array();
+        $servings = array();
 
-            foreach ($recipe->serving_sizes->serving as $s)
-            {
-                $serving = array();
-                foreach ($s->children() as $child)
-                {
-                    $serving[$child->getName()] = "$child";
-                }
-
-                $servings[] = $serving;
+        foreach ($recipe->serving_sizes->serving as $s) {
+            $serving = array();
+            foreach ($s->children() as $child) {
+                $serving[$child->getName()] = "$child";
             }
 
-            return array(
+            $servings[] = $serving;
+        }
+
+        return array(
                     'recipe' => $recipe,
                     'servings' => json_encode($servings),
                     'form' => $form->createView(),
                     );
-            }
-
+    }
 }

@@ -12,5 +12,4 @@ class FoodControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/search');
     }
-
 }

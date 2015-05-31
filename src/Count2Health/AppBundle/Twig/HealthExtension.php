@@ -25,8 +25,8 @@ class HealthExtension extends \Twig_Extension
 
     public function weightFilter(PhysicalQuantityInterface $unit, User $user, $round = 2)
     {
-        return round($unit->toUnit($user->getPersonalDetails()->getWeightUnits()), $round) .
-            ' ' . $user->getPersonalDetails()->getWeightUnits();
+        return round($unit->toUnit($user->getPersonalDetails()->getWeightUnits()), $round).
+            ' '.$user->getPersonalDetails()->getWeightUnits();
     }
 
     public function heightFilter(PhysicalQuantityInterface $unit, User $user)
@@ -39,11 +39,10 @@ class HealthExtension extends \Twig_Extension
             $feet = floor($height / 12);
             $inches = fmod($height, 12);
 
-            return $feet . '\' ' .
-                round($inches, 1) . '"';
-        }
-        elseif ($heightUnits == 'cm') {
-            return round($user->getPersonalDetails()->getHeight()->toUnit('cm')) . ' cm';
+            return $feet.'\' '.
+                round($inches, 1).'"';
+        } elseif ($heightUnits == 'cm') {
+            return round($user->getPersonalDetails()->getHeight()->toUnit('cm')).' cm';
         }
     }
 
@@ -69,7 +68,7 @@ class HealthExtension extends \Twig_Extension
 
     public function formatPercentFilter($percent, $decimals = 1)
     {
-        return number_format(round($percent * 100, $decimals), $decimals) . '%';
+        return number_format(round($percent * 100, $decimals), $decimals).'%';
     }
 
     public function getName()
@@ -80,27 +79,23 @@ class HealthExtension extends \Twig_Extension
     public function getTimeZoneAbbreviationFilter($tz)
     {
         if ($tz instanceof \DateTimeZone) {
-        $timezone_id = $tz->getName();
-        }
-        else {
+            $timezone_id = $tz->getName();
+        } else {
             $timezone_id = $tz;
         }
 
         $abb_list = \DateTimeZone::listAbbreviations();
 
         $abb_array = array();
-        foreach ($abb_list as $abb_key => $abb_val)
-        {
-            foreach ($abb_val as $key => $value)
-            {
+        foreach ($abb_list as $abb_key => $abb_val) {
+            foreach ($abb_val as $key => $value) {
                 $value['abb'] = $abb_key;
                 array_push($abb_array, $value);
             }
         }
 
-        foreach ($abb_array as $key => $value)
-        {
-            if($value['timezone_id'] == $timezone_id) {
+        foreach ($abb_array as $key => $value) {
+            if ($value['timezone_id'] == $timezone_id) {
                 return strtoupper($value['abb']);
             }
         }

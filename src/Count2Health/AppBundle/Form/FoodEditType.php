@@ -9,7 +9,6 @@ use Symfony\Component\Form\Extension\Core\ChoiceList\SimpleChoiceList;
 
 class FoodEditType extends AbstractType
 {
-
     private $food;
 
     public function __construct($food)
@@ -19,7 +18,7 @@ class FoodEditType extends AbstractType
 
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -33,15 +32,15 @@ class FoodEditType extends AbstractType
                         ))
 ;
 
-if (null != $this->food) {
-$builder
+        if (null != $this->food) {
+            $builder
 ->add('servings', 'choice', array(
             'choice_list' => $this->loadChoiceList(),
             ))
 ;
-}
+        }
 
-$builder
+        $builder
 ->add('meal', 'choice', array(
             'placeholder' => '--- Select One ---',
             'choices' => array(
@@ -53,7 +52,7 @@ $builder
             ))
         ;
     }
-    
+
     /**
      * @param OptionsResolverInterface $resolver
      */
@@ -74,13 +73,12 @@ $builder
     protected function loadChoiceList()
     {
         $choices = array();
-                $servings = $this->food->servings->serving;
+        $servings = $this->food->servings->serving;
 
-        foreach ($servings as $serving)
-        {
+        foreach ($servings as $serving) {
             $choices["$serving->serving_id"] = "$serving->serving_description";
         }
 
-    return new SimpleChoiceList($choices);
+        return new SimpleChoiceList($choices);
     }
 }

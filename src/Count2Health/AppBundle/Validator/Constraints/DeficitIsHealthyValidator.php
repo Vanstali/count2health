@@ -10,25 +10,24 @@ class DeficitIsHealthyValidator extends ConstraintValidator
     public function validate($healthPlan, Constraint $constraint)
     {
         $gender = $healthPlan->getUser()->getPersonalDetails()->getGender();
-    $tdee = $healthPlan->getUser()->getEstimatedTDEE();
+        $tdee = $healthPlan->getUser()->getEstimatedTDEE();
 
-    if ('male' == $gender) {
-        $minimum = 1500;
-    }
-    elseif ('female' == $gender) {
-        $minimum = 1200;
-    }
+        if ('male' == $gender) {
+            $minimum = 1500;
+        } elseif ('female' == $gender) {
+            $minimum = 1200;
+        }
 
-    $consumed = $tdee - $healthPlan->getTargetCalorieDeficit();
+        $consumed = $tdee - $healthPlan->getTargetCalorieDeficit();
 
-    if ($consumed < $minimum) {
-        $maximumDeficit = round($tdee - $minimum);
+        if ($consumed < $minimum) {
+            $maximumDeficit = round($tdee - $minimum);
 
-        $this->context->buildViolation($constraint->message)
+            $this->context->buildViolation($constraint->message)
             ->setParameter('{{ healthy_calories }}', $minimum)
             ->setParameter('{{ maximum_deficit }}', $maximumDeficit)
             ->atPath('targetCalorieDeficit')
             ->addViolation();
-    }
+        }
     }
 }

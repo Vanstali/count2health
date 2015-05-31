@@ -14,7 +14,6 @@ use Count2Health\AppBundle\FatSecret;
  */
 class UpdateWeightListener
 {
-
     private $fatSecret;
 
     /**
@@ -53,16 +52,16 @@ class UpdateWeightListener
     {
         $user = $weight->getUser();
 
-$arguments = array();
-$arguments['current_weight_kg'] = $weight->getWeight()->toUnit('kg');
-$arguments['date'] = $this->fatSecret->dateTimeToDateInt($weight->getDate());
-$arguments['weight_type'] = $user->getPersonalDetails()->getWeightUnits();
-$arguments['height_type'] = $user->getPersonalDetails()->getHeightUnits();
-$arguments['goal_weight_kg'] = $user->getHealthPlan()->getGoalWeight()
+        $arguments = array();
+        $arguments['current_weight_kg'] = $weight->getWeight()->toUnit('kg');
+        $arguments['date'] = $this->fatSecret->dateTimeToDateInt($weight->getDate());
+        $arguments['weight_type'] = $user->getPersonalDetails()->getWeightUnits();
+        $arguments['height_type'] = $user->getPersonalDetails()->getHeightUnits();
+        $arguments['goal_weight_kg'] = $user->getHealthPlan()->getGoalWeight()
     ->toUnit('kg');
-$arguments['current_height_cm'] = $user->getPersonalDetails()->getHeight()->toUnit('cm');
-$arguments['comment'] = $weight->getComment();
+        $arguments['current_height_cm'] = $user->getPersonalDetails()->getHeight()->toUnit('cm');
+        $arguments['comment'] = $weight->getComment();
 
-$this->fatSecret->doApiCall('weight.update', $arguments, $user);
+        $this->fatSecret->doApiCall('weight.update', $arguments, $user);
     }
 }

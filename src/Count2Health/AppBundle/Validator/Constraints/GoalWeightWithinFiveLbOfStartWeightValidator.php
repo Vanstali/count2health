@@ -16,7 +16,7 @@ class GoalWeightWithinFiveLbOfStartWeightValidator extends ConstraintValidator
         if (abs($startWeight->toUnit($units) - $goalWeight->toUnit($units)) > 5) {
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ start_weight }}',
-                        $startWeight->toUnit($units) . ' ' . $units)
+                        $startWeight->toUnit($units).' '.$units)
                 ->setParameter('{{ units }}', $units)
                 ->atPath('goalWeight')
                 ->addViolation();

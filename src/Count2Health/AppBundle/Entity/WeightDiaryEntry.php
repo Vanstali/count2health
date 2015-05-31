@@ -8,7 +8,7 @@ use Count2Health\AppBundle\Validator\Constraints\IsUnit;
 use Count2Health\AppBundle\Validator\Constraints\UnitGreaterThan;
 
 /**
- * WeightDiaryEntry
+ * WeightDiaryEntry.
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="Count2Health\AppBundle\Entity\WeightDiaryEntryRepository")
@@ -17,7 +17,7 @@ use Count2Health\AppBundle\Validator\Constraints\UnitGreaterThan;
 class WeightDiaryEntry
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -65,11 +65,10 @@ class WeightDiaryEntry
      */
     private $comment;
 
-
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer 
+     * @return int
      */
     public function getId()
     {
@@ -77,9 +76,10 @@ class WeightDiaryEntry
     }
 
     /**
-     * Set date
+     * Set date.
      *
      * @param \DateTime $date
+     *
      * @return WeightDiaryEntry
      */
     public function setDate($date)
@@ -90,9 +90,9 @@ class WeightDiaryEntry
     }
 
     /**
-     * Get date
+     * Get date.
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getDate()
     {
@@ -100,9 +100,10 @@ class WeightDiaryEntry
     }
 
     /**
-     * Set weight
+     * Set weight.
      *
      * @param string $weight
+     *
      * @return WeightDiaryEntry
      */
     public function setWeight($weight)
@@ -113,9 +114,9 @@ class WeightDiaryEntry
     }
 
     /**
-     * Get weight
+     * Get weight.
      *
-     * @return string 
+     * @return string
      */
     public function getWeight()
     {
@@ -123,9 +124,10 @@ class WeightDiaryEntry
     }
 
     /**
-     * Set trend
+     * Set trend.
      *
      * @param string $trend
+     *
      * @return WeightDiaryEntry
      */
     public function setTrend($trend)
@@ -136,9 +138,9 @@ class WeightDiaryEntry
     }
 
     /**
-     * Get trend
+     * Get trend.
      *
-     * @return string 
+     * @return string
      */
     public function getTrend()
     {
@@ -146,7 +148,7 @@ class WeightDiaryEntry
     }
 
     /**
-     * Get BMI
+     * Get BMI.
      *
      * @return float
      */
@@ -164,9 +166,10 @@ class WeightDiaryEntry
     }
 
     /**
-     * Set user
+     * Set user.
      *
      * @param \Count2Health\UserBundle\Entity\User $user
+     *
      * @return WeightDiaryEntry
      */
     public function setUser(\Count2Health\UserBundle\Entity\User $user = null)
@@ -177,9 +180,9 @@ class WeightDiaryEntry
     }
 
     /**
-     * Get user
+     * Get user.
      *
-     * @return \Count2Health\UserBundle\Entity\User 
+     * @return \Count2Health\UserBundle\Entity\User
      */
     public function getUser()
     {
@@ -197,5 +200,4 @@ class WeightDiaryEntry
     {
         return $this->comment;
     }
-
 }

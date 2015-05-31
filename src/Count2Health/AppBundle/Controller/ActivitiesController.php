@@ -8,7 +8,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use PhpUnitsOfMeasure\PhysicalQuantity\Mass;
-use Count2Health\AppBundle\Form\ExerciseType;
 use Count2Health\AppBundle\Entity\ActivityCategory;
 use Count2Health\AppBundle\Entity\Activity;
 use Count2Health\AppBundle\Form\ActivitiesType;
@@ -26,27 +25,26 @@ class ActivitiesController extends Controller
      */
     public function browseAction(ActivityCategory $category = null)
     {
-$em = $this->getDoctrine()->getManager();
-if (null == $category) {
-$categories = $em
+        $em = $this->getDoctrine()->getManager();
+        if (null == $category) {
+            $categories = $em
 ->getRepository('Count2HealthAppBundle:ActivityCategory')
 ->findAll();
 
-return array(
+            return array(
 'categories' => $categories,
 );
-}
-else {
-$activities = $em
+        } else {
+            $activities = $em
 ->getRepository('Count2HealthAppBundle:Activity')
 ->findByCategory($category);
 
-return array(
+            return array(
 'activities' => $activities,
 'category' => $category,
 );
-}
-            }
+        }
+    }
 
     /**
      * @Route("/view/{activity}.html", name="activities_view")
@@ -54,166 +52,153 @@ return array(
      */
     public function showAction(Activity $activity, Request $request)
     {
-$em = $this->getDoctrine()->getManager();
+        $em = $this->getDoctrine()->getManager();
 
-$vars = array(
+        $vars = array(
 'activity' => $activity,
 );
 
-if ($this->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
-$user = $this->getUser();
+        if ($this->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
+            $user = $this->getUser();
 
-$session = $request->getSession();
+            $session = $request->getSession();
 
-if ($session->has('date')) {
-$date = $session->get('date');
-}
-else {
-$this->addFlash('error', 'Please select a date.');
-return $this->redirectToRoute('activities_diary');
-}
+            if ($session->has('date')) {
+                $date = $session->get('date');
+            } else {
+                $this->addFlash('error', 'Please select a date.');
 
-$exerciseEntries = $this->get('fatsecret.exercise_entries')->get($date, $user);
-$exercises = array();
+                return $this->redirectToRoute('activities_diary');
+            }
 
-foreach ($exerciseEntries->exercise_entry as $entry)
-{
-$exercise = array();
-$exercise['minutes'] = intval($entry->minutes);
+            $exerciseEntries = $this->get('fatsecret.exercise_entries')->get($date, $user);
+            $exercises = array();
 
-$id = intval($entry->exercise_id);
-$name = "$entry->exercise_name";
+            foreach ($exerciseEntries->exercise_entry as $entry) {
+                $exercise = array();
+                $exercise['minutes'] = intval($entry->minutes);
 
-$parsedName = $this->get('activity_name_parser')->parse($id, $name);
+                $id = intval($entry->exercise_id);
+                $name = "$entry->exercise_name";
 
-if ($parsedName instanceof Activity) {
-if (0 == $id) {
-$exercise['id'] = "$parsedName";
-}
-else {
-$exercise['id'] = $id;
-}
+                $parsedName = $this->get('activity_name_parser')->parse($id, $name);
 
-$exercise['name'] = "$parsedName";
-}
-else {
-$exercise['id'] = $id;
-$exercise['name'] = $name;
-}
+                if ($parsedName instanceof Activity) {
+                    if (0 == $id) {
+                        $exercise['id'] = "$parsedName";
+                    } else {
+                        $exercise['id'] = $id;
+                    }
 
-$exercises[] = $exercise;
-}
+                    $exercise['name'] = "$parsedName";
+                } else {
+                    $exercise['id'] = $id;
+                    $exercise['name'] = $name;
+                }
 
-$form = $this->createForm(new ActivitiesType($exercises))
+                $exercises[] = $exercise;
+            }
+
+            $form = $this->createForm(new ActivitiesType($exercises))
 ->add('submit', 'submit', array(
 'label' => 'Add',
 ));
 
-$vars['form'] = $form->createView();
+            $vars['form'] = $form->createView();
 
-$prevEntries = $this->get('fatsecret.weight')
+            $prevEntries = $this->get('fatsecret.weight')
 ->getEntries($date, $user, 1, true);
 
-if (empty($prevEntries)) {
-$weight = $user->getPersonalDetails()->getStartWeight();
-}
-else {
-$weight = new Mass(floatval($prevEntries[0]->weight_kg), 'kg');
-}
+            if (empty($prevEntries)) {
+                $weight = $user->getPersonalDetails()->getStartWeight();
+            } else {
+                $weight = new Mass(floatval($prevEntries[0]->weight_kg), 'kg');
+            }
 
-$form->handleRequest($request);
+            $form->handleRequest($request);
 
-if ($form->isValid()) {
-$data = $form->getData();
-$minutes = $data['time']['hour'] * 60 + $data['time']['minute'];
+            if ($form->isValid()) {
+                $data = $form->getData();
+                $minutes = $data['time']['hour'] * 60 + $data['time']['minute'];
 
-if (null == $activity->getFatsecretEntryId()) {
-$calories = $activity->getCaloriesBurned($weight, $minutes);
+                if (null == $activity->getFatsecretEntryId()) {
+                    $calories = $activity->getCaloriesBurned($weight, $minutes);
 
 // Add existing calories
-foreach ($exerciseEntries->exercise_entry as $exercise)
-{
-if ("$exercise->exercise_name" == "$activity"
+foreach ($exerciseEntries->exercise_entry as $exercise) {
+    if ("$exercise->exercise_name" == "$activity"
 || "$exercise->exercise_id" == $activity->getFatsecretEntryId()) {
-$calories += intval($exercise->calories);
-}
-}
-
-$toId = 0;
-$toName = "$activity";
-}
-else {
-$calories = 0;
-$toId = $activity->getFatsecretEntryId();
-$toName = null;
+        $calories += intval($exercise->calories);
+    }
 }
 
-if (is_numeric($data['from'])) {
-$fromId = $data['from'];
-$fromName = null;
-}
-else {
-$fromId = 0;
-$fromName = $data['from'];
-}
+                    $toId = 0;
+                    $toName = "$activity";
+                } else {
+                    $calories = 0;
+                    $toId = $activity->getFatsecretEntryId();
+                    $toName = null;
+                }
 
-if (0 == $fromId) {
-$fromNameParts = explode(' > ', $fromName);
-$fromActivity = $em
+                if (is_numeric($data['from'])) {
+                    $fromId = $data['from'];
+                    $fromName = null;
+                } else {
+                    $fromId = 0;
+                    $fromName = $data['from'];
+                }
+
+                if (0 == $fromId) {
+                    $fromNameParts = explode(' > ', $fromName);
+                    $fromActivity = $em
 ->getRepository('Count2HealthAppBundle:Activity')
 ->findOneByName($fromNameParts[1]);
-$fromMinutes = 0;
+                    $fromMinutes = 0;
 
-foreach ($exerciseEntries->exercise_entry as $exercise)
-{
-if ("$exercise->exercise_name" == "$fromActivity"
+                    foreach ($exerciseEntries->exercise_entry as $exercise) {
+                        if ("$exercise->exercise_name" == "$fromActivity"
 || "$exercise->exercise_id" == $fromActivity->getFatsecretEntryId()) {
-$fromMinutes = intval($exercise->minutes);
-}
-}
+                            $fromMinutes = intval($exercise->minutes);
+                        }
+                    }
 
-$fromMinutes -= $minutes;
-$fromCalories = $fromActivity->getCaloriesBurned($weight, $fromMinutes);
-}
+                    $fromMinutes -= $minutes;
+                    $fromCalories = $fromActivity->getCaloriesBurned($weight, $fromMinutes);
+                }
 
-if (0 == $toId && 0 == $fromId) {
-// Move minutes to rest first, because of bug in API
+                if (0 == $toId && 0 == $fromId) {
+                    // Move minutes to rest first, because of bug in API
 $this->get('fatsecret.exercise_entry')
 ->edit($date, 2, null, $fromId, $fromName, $fromMinutes + $minutes, null, $user);
-$this->get('fatsecret.exercise_entry')
+                    $this->get('fatsecret.exercise_entry')
 ->edit($date, $toId, $toName, 2, null, $minutes, $calories, $user);
 
-if ($fromMinutes > 0) {
-$this->get('fatsecret.exercise_entry')
+                    if ($fromMinutes > 0) {
+                        $this->get('fatsecret.exercise_entry')
 ->edit($date, $fromId, $fromName, 2, null, $fromMinutes, $fromCalories, $user);
-}
-}
-elseif (0 == $fromId) {
-$this->get('fatsecret.exercise_entry')
+                    }
+                } elseif (0 == $fromId) {
+                    $this->get('fatsecret.exercise_entry')
 ->edit($date, $toId, null, $fromId, $fromName, $fromMinutes + $minutes, null, $user);
-$this->get('fatsecret.exercise_entry')
+                    $this->get('fatsecret.exercise_entry')
 ->edit($date, $fromId, $fromName, $toId, null, $fromMinutes, $fromCalories, $user);
-}
-else {
-$this->get('fatsecret.exercise_entry')
+                } else {
+                    $this->get('fatsecret.exercise_entry')
 ->edit($date, $toId, $toName, $fromId, $fromName, $minutes, $calories, $user);
-}
+                }
 
-$this->get('memcache')->invalidateNamespace('exercise', $user);
+                $this->get('memcache')->invalidateNamespace('exercise', $user);
 
-$this->addFlash('success', 'The activity has been added to your diary.');
+                $this->addFlash('success', 'The activity has been added to your diary.');
 
-return $this->redirectToRoute('activities_diary');
-}
+                return $this->redirectToRoute('activities_diary');
+            }
+        } else {
+            $weight = new Mass('150', 'lb');
+        }
 
-}
-else {
-$weight = new Mass('150', 'lb');
-}
+        $vars['weight'] = $weight;
 
-$vars['weight'] = $weight;
-
-return $vars;
+        return $vars;
     }
-
 }

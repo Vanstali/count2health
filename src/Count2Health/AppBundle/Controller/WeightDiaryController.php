@@ -27,41 +27,37 @@ class WeightDiaryController extends Controller
     public function indexAction(Request $request, $month = null)
     {
         $user = $this->getUser();
-$tz = $user->getDateTimeZone();
+        $tz = $user->getDateTimeZone();
 
-$session = $request->getSession();
+        $session = $request->getSession();
 
         // Get all entries for this month
 if (null == $month) {
-if ($session->has('date')) {
-$month = clone $session->get('date');
-$month->modify('first day of this month');
-}
-else {
+    if ($session->has('date')) {
+        $month = clone $session->get('date');
+        $month->modify('first day of this month');
+    } else {
         $month = new \DateTime('first day of this month', $tz);
-}
-}
-else {
-$month = new \DateTime($month, $tz);
+    }
+} else {
+    $month = new \DateTime($month, $tz);
 }
 
-$lastMonth = clone $month;
-$lastMonth->sub(new \DateInterval('P1M'));
+        $lastMonth = clone $month;
+        $lastMonth->sub(new \DateInterval('P1M'));
 
-$nextMonth = clone $month;
-$nextMonth->add(new \DateInterval('P1M'));
+        $nextMonth = clone $month;
+        $nextMonth->add(new \DateInterval('P1M'));
 
         $weights = $this->get('fatsecret.weight')->getMonth($month, $user);
 
         // Format entries
         $entries = array();
 
-        foreach ($weights->day as $weight)
-        {
+        foreach ($weights->day as $weight) {
             $d = $this->get('fatsecret')
                 ->dateIntToDateTime($weight->date_int, $user);
-            foreach ($entries as $e)
-            {
+            foreach ($entries as $e) {
                 if ($d == $e['date']) {
                     continue 2;
                 }
@@ -81,52 +77,47 @@ $nextMonth->add(new \DateInterval('P1M'));
             $entries[] = $entry;
         }
 
-        usort($entries, function ($a, $b)
-                {
+        usort($entries, function ($a, $b) {
                 if ($a['date'] < $b['date']) {
-                return 1;
-                }
-                elseif ($a['date'] > $b['date']) {
-                return -1;
-                }
-                else {
-                return 0;
+                    return 1;
+                } elseif ($a['date'] > $b['date']) {
+                    return -1;
+                } else {
+                    return 0;
                 }
                 });
 
-$dateData = array();
-$trendData = array();
-$weightData = array();
+        $dateData = array();
+        $trendData = array();
+        $weightData = array();
 
-foreach ($entries as $i => $entry)
-{
-    $unit = $user->getPersonalDetails()->getWeightUnits();
-    $trendData[] = round($entry['trend']->toUnit($unit), 1);
-    $weightData[] = round($entry['weight']->toUnit($unit), 1);
-    $dateData[] = $entry['date']->format('M j');
-}
+        foreach ($entries as $i => $entry) {
+            $unit = $user->getPersonalDetails()->getWeightUnits();
+            $trendData[] = round($entry['trend']->toUnit($unit), 1);
+            $weightData[] = round($entry['weight']->toUnit($unit), 1);
+            $dateData[] = $entry['date']->format('M j');
+        }
 
-$minDate = $entries[count($entries)-1]['date']->getTimestamp() * 1000;
-$maxDate = $entries[0]['date']->getTimestamp() * 1000;
+        $minDate = $entries[count($entries) - 1]['date']->getTimestamp() * 1000;
+        $maxDate = $entries[0]['date']->getTimestamp() * 1000;
 
 // Get information for progress bar
 $start = $user->getPersonalDetails()->getStartWeight();
-$goal = $user->getHealthPlan()->getGoalWeight();
+        $goal = $user->getHealthPlan()->getGoalWeight();
 
-if (empty($entries)) {
-    $trend = $start;
-}
-else {
-    $trend = $entries[0]['trend'];
-}
+        if (empty($entries)) {
+            $trend = $start;
+        } else {
+            $trend = $entries[0]['trend'];
+        }
 
-$totalWeightToLose = new Mass(
+        $totalWeightToLose = new Mass(
         $start->toUnit('kg') - $goal->toUnit('kg'),
         'kg');
-$weightLost = new Mass(
+        $weightLost = new Mass(
         $start->toUnit('kg') - $trend->toUnit('kg'),
         'kg');
-$weightToLose = new Mass(
+        $weightToLose = new Mass(
         $trend->toUnit('kg') - $goal->toUnit('kg'),
         'kg');
 
@@ -143,7 +134,8 @@ $weightToLose = new Mass(
                 'totalWeightToLose' => $totalWeightToLose,
                 'weightLost' => $weightLost,
                 'weightToLose' => $weightToLose,
-            );    }
+            );
+    }
 
     /**
      * @Route("/new.html", name="weight_diary_new")
@@ -156,8 +148,9 @@ $weightToLose = new Mass(
 
         if (null === $user->getPersonalDetails()) {
             $request->getSession()->getFlashBag()->add('error',
-                    'Please modify your account settings before adding ' .
+                    'Please modify your account settings before adding '.
                     'your first weight.');
+
             return $this->redirectToRoute('profile_personal_details');
         }
 
@@ -165,7 +158,7 @@ $weightToLose = new Mass(
         $repository = $em->getRepository(
                 'Count2HealthAppBundle:WeightDiaryEntry');
 
-        $entry = new WeightDiaryEntry;
+        $entry = new WeightDiaryEntry();
         $entry->setUser($user);
         $entry->setDate(new \DateTime());
 
@@ -188,18 +181,20 @@ $weightToLose = new Mass(
 
             $request->getSession()->getFlashBag()
                 ->add('success', 'Your weight has been added.');
+
             return $this->redirectToRoute('weight_diary');
         }
 
         return array(
                 'form' => $form->createView(),
-            );    }
+            );
+    }
 
-        /**
-         * @Route("/predict.html", name="weight_diary_predict")
-         * @Template
-         * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
-         */
+/**
+ * @Route("/predict.html", name="weight_diary_predict")
+ * @Template
+ * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+ */
 public function predictAction()
 {
     $user = $this->getUser();
@@ -236,12 +231,10 @@ public function predictAjaxAction(Request $request)
 
     if (!isset($data['date']) && !isset($data['weight']) && !isset($data['bmi'])) {
         $response['status'] = 'error';
-        $response['message'] = 'Either date, weight, or BMI must be ' .
+        $response['message'] = 'Either date, weight, or BMI must be '.
             'filled in.';
-    }
-    else {
-        try
-        {
+    } else {
+        try {
             if ($data['weight']) {
                 $weight = $data['weight'];
                 $goalDate = $this->get('weight_predictor')
@@ -250,8 +243,7 @@ public function predictAjaxAction(Request $request)
                     ->predictWeight($goalDate, $user);
                 $bmi = $this->get('bmi_calculator')
                     ->calculateBMI($weight, $user);
-            }
-            elseif ($data['bmi']) {
+            } elseif ($data['bmi']) {
                 $bmi = $data['bmi'];
                 $weight = $this->get('bmi_calculator')
                     ->calculateWeight($bmi, $user);
@@ -261,22 +253,18 @@ public function predictAjaxAction(Request $request)
                     ->predictWeight($goalDate, $user);
                 $bmi = $this->get('bmi_calculator')
                     ->calculateBMI($weight, $user);
-            }
-            elseif ($data['date']) {
+            } elseif ($data['date']) {
                 $goalDate = $data['date'];
                 $weight = $this->get('weight_predictor')
                     ->predictWeight($goalDate, $user);
                 $bmi = $this->get('bmi_calculator')
                     ->calculateBMI($weight, $user);
-            }
-            else {
+            } else {
                 $response['status'] = 'error';
-                $response['message'] = 'ONe of date, weight, or BMI must be ' .
+                $response['message'] = 'ONe of date, weight, or BMI must be '.
                     'entered.';
             }
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             $response['status'] = 'error';
             $response['message'] = $e->getMessage();
         }
@@ -297,11 +285,10 @@ public function predictAjaxAction(Request $request)
         }
     }
 
-    $r = new Response;
+    $r = new Response();
     $r->headers->set('Content-Type', 'application/json');
     $r->setContent(json_encode($response));
 
     return $r;
 }
-
 }

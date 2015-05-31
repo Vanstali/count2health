@@ -13,7 +13,6 @@ use Count2Health\AppBundle\Util\Memcache;
  */
 class FatSecret
 {
-
     private $key;
     private $secret;
     private $base;
@@ -40,152 +39,148 @@ class FatSecret
 
         // Does it exist in cache?
 $namespace = $this->cache->getNamespace($category, $user);
-$key = $namespace . http_build_query($arguments);
+        $key = $namespace.http_build_query($arguments);
 
-$shouldCache = false;
+        $shouldCache = false;
 
         if (!$response = $this->cache->get($key)) {
-        $oauth_token = null;
-        $oauth_secret = null;
-        if (null !== $user) {
-            $oauth_token = $user->getAuthToken();
-            $oauth_secret = $user->getAuthSecret();
-        }
+            $oauth_token = null;
+            $oauth_secret = null;
+            if (null !== $user) {
+                $oauth_token = $user->getAuthToken();
+                $oauth_secret = $user->getAuthSecret();
+            }
 
-        $url = $this->base .
+            $url = $this->base.
             http_build_query($arguments);
 
-$oauth = new OAuthBase;
+            $oauth = new OAuthBase();
 
-$signature = $oauth->generateSignature($url, $this->key, $this->secret,
+            $signature = $oauth->generateSignature($url, $this->key, $this->secret,
         $oauth_token, $oauth_secret, $normalizedUrl, $normalizedRequestParameters);
 
-$response = $this->doRequest($normalizedUrl, $normalizedRequestParameters,
+            $response = $this->doRequest($normalizedUrl, $normalizedRequestParameters,
         $signature);
 
-$shouldCache = true;
-        }
-        else {
-if ($this->cache->get('cached-calls')) {
-$this->cache->increment('cached-calls', 1);
-}
-else {
-$this->cache->set('cached-calls', 1, 0, 0);
-}
+            $shouldCache = true;
+        } else {
+            if ($this->cache->get('cached-calls')) {
+                $this->cache->increment('cached-calls', 1);
+            } else {
+                $this->cache->set('cached-calls', 1, 0, 0);
+            }
         }
 
-$doc = new \SimpleXmlElement($response);
+        $doc = new \SimpleXmlElement($response);
 
-$this->checkError($doc);
+        $this->checkError($doc);
 
-if (true == $shouldCache) {
-$this->cache->set($key, $response, MEMCACHE_COMPRESSED, 3600);
-if ($this->cache->get('uncached-calls')) {
-$this->cache->increment('uncached-calls', 1);
-}
-else {
-$this->cache->set('uncached-calls', 1, 0, 0);
-}
-}
+        if (true == $shouldCache) {
+            $this->cache->set($key, $response, MEMCACHE_COMPRESSED, 3600);
+            if ($this->cache->get('uncached-calls')) {
+                $this->cache->increment('uncached-calls', 1);
+            } else {
+                $this->cache->set('uncached-calls', 1, 0, 0);
+            }
+        }
 
-return $doc;
+        return $doc;
     }
 
     public function getRequestToken($callback)
-{
-    $arguments = array();
-    $arguments['oauth_callback'] = $callback;
+    {
+        $arguments = array();
+        $arguments['oauth_callback'] = $callback;
 
-        $url = 'http://www.fatsecret.com/oauth/request_token?' .
+        $url = 'http://www.fatsecret.com/oauth/request_token?'.
             http_build_query($arguments);
 
-$oauth = new OAuthBase;
+        $oauth = new OAuthBase();
 
-$signature = $oauth->generateSignature($url, $this->key, $this->secret,
+        $signature = $oauth->generateSignature($url, $this->key, $this->secret,
         null, null, $normalizedUrl, $normalizedRequestParameters);
 
-$response = $this->doRequest($normalizedUrl, $normalizedRequestParameters,
+        $response = $this->doRequest($normalizedUrl, $normalizedRequestParameters,
         $signature);
 
-parse_str($response, $tokens);
+        parse_str($response, $tokens);
 
-return $tokens;
-}
+        return $tokens;
+    }
 
     public function getAccessToken(User $user, $verifier)
-{
-    $arguments = array(
+    {
+        $arguments = array(
             'oauth_verifier' => $verifier,
             );
 
-        $url = 'http://www.fatsecret.com/oauth/access_token?' .
+        $url = 'http://www.fatsecret.com/oauth/access_token?'.
             http_build_query($arguments);
 
-$oauth = new OAuthBase;
+        $oauth = new OAuthBase();
 
-$signature = $oauth->generateSignature($url, $this->key, $this->secret,
+        $signature = $oauth->generateSignature($url, $this->key, $this->secret,
         $user->getRequestToken(), $user->getRequestSecret(), $normalizedUrl, $normalizedRequestParameters);
 
-$response = $this->doRequest($normalizedUrl, $normalizedRequestParameters,
+        $response = $this->doRequest($normalizedUrl, $normalizedRequestParameters,
         $signature);
 
-parse_str($response, $tokens);
+        parse_str($response, $tokens);
 
-return $tokens;
-}
+        return $tokens;
+    }
 
-public function dateIntToDateTime($dateint, User $user)
-{
-    $ts = $dateint * 60 * 60 * 24;
-    $d = new \DateTime();
+    public function dateIntToDateTime($dateint, User $user)
+    {
+        $ts = $dateint * 60 * 60 * 24;
+        $d = new \DateTime();
 
-    $timeZone = $user->getDateTimeZone();
-    $offset = $timeZone->getOffset($d);
+        $timeZone = $user->getDateTimeZone();
+        $offset = $timeZone->getOffset($d);
 
         $ts -= $offset;
 
-    $d->setTimestamp($ts);
-    $d->setTimeZone($timeZone);
+        $d->setTimestamp($ts);
+        $d->setTimeZone($timeZone);
 
-    return $d;
-}
-
-public function dateTimeToDateInt(\DateTime $date)
-{
-    $dt = clone $date;
-    $offset = $dt->getTimeZone()->getOffset($dt);
-    if ($offset < 0) {
-        $dt->sub(new \DateInterval('PT'.abs($offset).'S'));
-    }
-    else {
-        $dt->add(new \DateInterval('PT'.$offset.'S'));
+        return $d;
     }
 
-    $ts = $dt->getTimestamp();
-    return floor($ts / 60 / 60 / 24);
-}
+    public function dateTimeToDateInt(\DateTime $date)
+    {
+        $dt = clone $date;
+        $offset = $dt->getTimeZone()->getOffset($dt);
+        if ($offset < 0) {
+            $dt->sub(new \DateInterval('PT'.abs($offset).'S'));
+        } else {
+            $dt->add(new \DateInterval('PT'.$offset.'S'));
+        }
 
-private function doRequest($normalizedUrl, $normalizedRequestParameters, $signature)
-{
- $ch = curl_init();
- curl_setopt($ch, CURLOPT_URL, $normalizedUrl);
- curl_setopt($ch, CURLOPT_HEADER, false);
- curl_setopt($ch, CURLOPT_POST, true);
- curl_setopt($ch, CURLOPT_POSTFIELDS, 
-         $normalizedRequestParameters . '&' . OAuthBase::$OAUTH_SIGNATURE .
-         '=' . urlencode($signature));
-         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-         $response = curl_exec($ch);
-         curl_close($ch);
+        $ts = $dt->getTimestamp();
 
-return $response;
-}
+        return floor($ts / 60 / 60 / 24);
+    }
 
-private function checkError(\SimpleXmlElement $doc)
-{
-if ($doc->getName() == 'error') {
-    throw new FatSecretException((int)$doc->code, $doc->message);
-}
-}
+    private function doRequest($normalizedUrl, $normalizedRequestParameters, $signature)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $normalizedUrl);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS,
+         $normalizedRequestParameters.'&'.OAuthBase::$OAUTH_SIGNATURE.
+         '='.urlencode($signature));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        curl_close($ch);
 
+        return $response;
+    }
+
+    private function checkError(\SimpleXmlElement $doc)
+    {
+        if ($doc->getName() == 'error') {
+            throw new FatSecretException((int) $doc->code, $doc->message);
+        }
+    }
 }

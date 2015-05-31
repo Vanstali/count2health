@@ -108,21 +108,21 @@ class User extends BaseUser
     }
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer 
+     * @return int
      */
     public function getId()
     {
         return $this->id;
     }
 
-
     /**
-     * Set personal details
+     * Set personal details.
      *
      * @param \Count2Health\UserBundle\Entity\PersonalDetails
      * $personalDetails
+     *
      * @return User
      */
     public function setPersonalDetails(\Count2Health\UserBundle\Entity\PersonalDetails $personalDetails = null)
@@ -133,9 +133,9 @@ class User extends BaseUser
     }
 
     /**
-     * Get personal details
+     * Get personal details.
      *
-     * @return \Count2Health\UserBundle\Entity\PersonalDetails 
+     * @return \Count2Health\UserBundle\Entity\PersonalDetails
      */
     public function getPersonalDetails()
     {
@@ -143,9 +143,10 @@ class User extends BaseUser
     }
 
     /**
-     * Add weightDiary
+     * Add weightDiary.
      *
      * @param \Count2Health\AppBundle\Entity\WeightDiaryEntry $weightDiaryEntrys
+     *
      * @return User
      */
     public function addWeightDiaryEntry(\Count2Health\AppBundle\Entity\WeightDiaryEntry $weightDiaryEntry)
@@ -156,7 +157,7 @@ class User extends BaseUser
     }
 
     /**
-     * Remove weightDiaryEntry
+     * Remove weightDiaryEntry.
      *
      * @param \Count2Health\AppBundle\Entity\WeightDiaryEntry
      * $weightDiaryEntry
@@ -167,9 +168,9 @@ class User extends BaseUser
     }
 
     /**
-     * Get weightDiary
+     * Get weightDiary.
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getWeightDiary()
     {
@@ -177,7 +178,7 @@ class User extends BaseUser
     }
 
     /**
-     * Gets the last weight
+     * Gets the last weight.
      *
      * @return Count2Health\AppBundle\Entity\WeightDiaryEntry
      */
@@ -215,11 +216,11 @@ class User extends BaseUser
         return $entries[0];
     }
 
-
     /**
-     * Set authToken
+     * Set authToken.
      *
      * @param string $authToken
+     *
      * @return User
      */
     public function setAuthToken($authToken)
@@ -230,9 +231,9 @@ class User extends BaseUser
     }
 
     /**
-     * Get authToken
+     * Get authToken.
      *
-     * @return string 
+     * @return string
      */
     public function getAuthToken()
     {
@@ -240,9 +241,10 @@ class User extends BaseUser
     }
 
     /**
-     * Set authSecret
+     * Set authSecret.
      *
      * @param string $authSecret
+     *
      * @return User
      */
     public function setAuthSecret($authSecret)
@@ -253,9 +255,9 @@ class User extends BaseUser
     }
 
     /**
-     * Get authSecret
+     * Get authSecret.
      *
-     * @return string 
+     * @return string
      */
     public function getAuthSecret()
     {
@@ -263,9 +265,10 @@ class User extends BaseUser
     }
 
     /**
-     * Add weightDiary
+     * Add weightDiary.
      *
      * @param \Count2Health\AppBundle\Entity\WeightDiaryEntry $weightDiary
+     *
      * @return User
      */
     public function addWeightDiary(\Count2Health\AppBundle\Entity\WeightDiaryEntry $weightDiary)
@@ -276,7 +279,7 @@ class User extends BaseUser
     }
 
     /**
-     * Remove weightDiary
+     * Remove weightDiary.
      *
      * @param \Count2Health\AppBundle\Entity\WeightDiaryEntry $weightDiary
      */
@@ -286,9 +289,10 @@ class User extends BaseUser
     }
 
     /**
-     * Set healthPlan
+     * Set healthPlan.
      *
      * @param \Count2Health\AppBundle\Entity\HealthPlan $healthPlan
+     *
      * @return User
      */
     public function setHealthPlan(\Count2Health\AppBundle\Entity\HealthPlan $healthPlan = null)
@@ -299,9 +303,9 @@ class User extends BaseUser
     }
 
     /**
-     * Get healthPlan
+     * Get healthPlan.
      *
-     * @return \Count2Health\AppBundle\Entity\HealthPlan 
+     * @return \Count2Health\AppBundle\Entity\HealthPlan
      */
     public function getHealthPlan()
     {
@@ -314,35 +318,32 @@ class User extends BaseUser
 
         if ($entry) {
             $weight = $entry->getTrend();
-        }
-        else {
+        } else {
             $weight = $this->getPersonalDetails()->getStartWeight();
         }
 
-    $bmr = 10 * $weight->toUnit('kg');
-    $bmr += 6.25 * $this->getPersonalDetails()->getHeight()->toUnit('cm');
+        $bmr = 10 * $weight->toUnit('kg');
+        $bmr += 6.25 * $this->getPersonalDetails()->getHeight()->toUnit('cm');
 
     // Get years since birth, i.e., age
     $today = new \DateTime();
-    $age = $today->diff($this->getPersonalDetails()->getBirthDate());
-    $bmr -= 4.92 * $age->y;
+        $age = $today->diff($this->getPersonalDetails()->getBirthDate());
+        $bmr -= 4.92 * $age->y;
 
-    if ('male' == $this->getPersonalDetails()->getGender()) {
-        $bmr += 5;
+        if ('male' == $this->getPersonalDetails()->getGender()) {
+            $bmr += 5;
+        } elseif ('female' == $this->getPersonalDetails()->getGender()) {
+            $bmr -= 161;
+        }
+
+        return $bmr;
     }
-    elseif ('female' == $this->getPersonalDetails()->getGender()) {
-        $bmr -= 161;
-    }
 
-    return $bmr;
-    }
-
-public function getEstimatedTDEE()
-{
-    $tdee = $this->getBMR();
-
-    switch ($this->getPersonalDetails()->getActivityLevel())
+    public function getEstimatedTDEE()
     {
+        $tdee = $this->getBMR();
+
+        switch ($this->getPersonalDetails()->getActivityLevel()) {
         case 's':
             $tdee *= 1.2;
             break;
@@ -364,14 +365,14 @@ public function getEstimatedTDEE()
             break;
     }
 
-    return $tdee;
-}
-
+        return $tdee;
+    }
 
     /**
-     * Add foodDiary
+     * Add foodDiary.
      *
      * @param \Count2Health\AppBundle\Entity\FoodDiaryEntry $foodDiary
+     *
      * @return User
      */
     public function addFoodDiary(\Count2Health\AppBundle\Entity\FoodDiaryEntry $foodDiary)
@@ -382,7 +383,7 @@ public function getEstimatedTDEE()
     }
 
     /**
-     * Remove foodDiary
+     * Remove foodDiary.
      *
      * @param \Count2Health\AppBundle\Entity\FoodDiaryEntry $foodDiary
      */
@@ -392,9 +393,9 @@ public function getEstimatedTDEE()
     }
 
     /**
-     * Get foodDiary
+     * Get foodDiary.
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getFoodDiary()
     {
@@ -402,9 +403,10 @@ public function getEstimatedTDEE()
     }
 
     /**
-     * Set connected
+     * Set connected.
      *
-     * @param boolean $connected
+     * @param bool $connected
+     *
      * @return User
      */
     public function setConnected($connected)
@@ -415,9 +417,9 @@ public function getEstimatedTDEE()
     }
 
     /**
-     * Get connected
+     * Get connected.
      *
-     * @return boolean 
+     * @return bool
      */
     public function getConnected()
     {
@@ -435,9 +437,10 @@ public function isConnected()
 }
 
     /**
-     * Set requestToken
+     * Set requestToken.
      *
      * @param string $requestToken
+     *
      * @return User
      */
     public function setRequestToken($requestToken)
@@ -448,9 +451,9 @@ public function isConnected()
     }
 
     /**
-     * Get requestToken
+     * Get requestToken.
      *
-     * @return string 
+     * @return string
      */
     public function getRequestToken()
     {
@@ -458,9 +461,10 @@ public function isConnected()
     }
 
     /**
-     * Set requestSecret
+     * Set requestSecret.
      *
      * @param string $requestSecret
+     *
      * @return User
      */
     public function setRequestSecret($requestSecret)
@@ -471,9 +475,9 @@ public function isConnected()
     }
 
     /**
-     * Get requestSecret
+     * Get requestSecret.
      *
-     * @return string 
+     * @return string
      */
     public function getRequestSecret()
     {
@@ -481,9 +485,10 @@ public function isConnected()
     }
 
     /**
-     * Set timeZone
+     * Set timeZone.
      *
      * @param string $timeZone
+     *
      * @return User
      */
     public function setTimeZone($timeZone)
@@ -494,9 +499,9 @@ public function isConnected()
     }
 
     /**
-     * Get timeZone
+     * Get timeZone.
      *
-     * @return string 
+     * @return string
      */
     public function getTimeZone()
     {

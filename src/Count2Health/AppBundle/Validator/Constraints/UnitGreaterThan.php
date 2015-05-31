@@ -9,5 +9,5 @@ use Symfony\Component\Validator\Constraints\AbstractComparison;
  */
 class UnitGreaterThan extends AbstractComparison
 {
-    public $message = "Unit must be greater than {{ compared_value }}.";
+    public $message = 'Unit must be greater than {{ compared_value }}.';
 }

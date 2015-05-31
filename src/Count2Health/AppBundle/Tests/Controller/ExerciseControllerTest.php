@@ -12,5 +12,4 @@ class ExerciseControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '.html');
     }
-
 }

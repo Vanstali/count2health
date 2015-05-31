@@ -8,7 +8,6 @@ use Count2Health\AppBundle\Util\BMICalculator;
 
 class BMICalculatorTest extends \PHPUnit_Framework_TestCase
 {
-
     public function testCalculateBMI()
     {
         $user = $this->getMockBuilder('Count2Health\UserBundle\Entity\User')
@@ -32,7 +31,7 @@ class BMICalculatorTest extends \PHPUnit_Framework_TestCase
 
         $weight = new Mass(160, 'lb');
 
-        $calculator = new BMICalculator;
+        $calculator = new BMICalculator();
         $bmi = $calculator->calculateBMI($weight, $user);
 
         $this->assertEquals(21.700, $bmi, '', 0.001);
@@ -53,7 +52,7 @@ class BMICalculatorTest extends \PHPUnit_Framework_TestCase
 
         $weight = new Mass(160, 'lb');
 
-        $calculator = new BMICalculator;
+        $calculator = new BMICalculator();
         $bmi = $calculator->calculateBMI($weight, $user);
     }
 
@@ -80,7 +79,7 @@ class BMICalculatorTest extends \PHPUnit_Framework_TestCase
 
         $bmi = 21.7;
 
-        $calculator = new BMICalculator;
+        $calculator = new BMICalculator();
         $weight = $calculator->calculateWeight($bmi, $user);
 
         $this->assertEquals(72.576, $weight->toNativeUnit(), '', 0.001);
@@ -101,8 +100,7 @@ class BMICalculatorTest extends \PHPUnit_Framework_TestCase
 
         $bmi = 21.7;
 
-        $calculator = new BMICalculator;
+        $calculator = new BMICalculator();
         $weight = $calculator->calculateWeight($bmi, $user);
     }
-
 }

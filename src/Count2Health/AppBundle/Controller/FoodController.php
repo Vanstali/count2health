@@ -4,7 +4,6 @@ namespace Count2Health\AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -29,7 +28,8 @@ class FoodController extends Controller
 
         return array(
                 'form' => $form->createView(),
-                );    }
+                );
+    }
 
         /**
          * @Route("/search/ajax.html", name="food_search_ajax",
@@ -67,14 +67,13 @@ class FoodController extends Controller
         public function showAction($id, Request $request)
         {
             $user = $this->getUser();
-$session = $request->getSession();
+            $session = $request->getSession();
 
-if ($session->has('date')) {
-$date = $session->get('date');
-}
-else {
-$date = new \DateTime('today', $user->getDateTimeZone());
-}
+            if ($session->has('date')) {
+                $date = $session->get('date');
+            } else {
+                $date = new \DateTime('today', $user->getDateTimeZone());
+            }
 
             $food = $this->get('fatsecret.food')->get($id);
 
@@ -82,9 +81,9 @@ $date = new \DateTime('today', $user->getDateTimeZone());
             $data['units'] = floatval($food->servings->serving[0]->number_of_units);
             $data['date'] = $date;
             $data['name'] = "$food->food_name";
-if ($request->getSession()->has('meal')) {
-$data['meal'] = $request->getSession()->get('meal');
-}
+            if ($request->getSession()->has('meal')) {
+                $data['meal'] = $request->getSession()->get('meal');
+            }
 
             $form = $this->createForm(new FoodType($user, $food), $data, array(
                         'action' => $this->generateUrl('food_diary_new', array('id' => $id)),
@@ -95,11 +94,9 @@ $data['meal'] = $request->getSession()->get('meal');
 
             $servings = array();
 
-            foreach ($food->servings->serving as $s)
-            {
+            foreach ($food->servings->serving as $s) {
                 $serving = array();
-                foreach ($s->children() as $child)
-                {
+                foreach ($s->children() as $child) {
                     $serving[$child->getName()] = "$child";
                 }
 
@@ -148,5 +145,4 @@ $data['meal'] = $request->getSession()->get('meal');
                     'meal' => $meal,
                     );
         }
-
 }

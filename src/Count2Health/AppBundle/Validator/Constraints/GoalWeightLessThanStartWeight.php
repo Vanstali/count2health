@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraint;
  */
 class GoalWeightLessThanStartWeight extends Constraint
 {
-    public $message = "The goal weight must be less than your starting weight of {{ start_weight }}.";
+    public $message = 'The goal weight must be less than your starting weight of {{ start_weight }}.';
 
     public function getTargets()
     {

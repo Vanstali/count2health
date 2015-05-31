@@ -19,10 +19,10 @@ class ExerciseEntriesTest extends \PHPUnit_Framework_TestCase
 
         $ee = new ExerciseEntries($fs);
 
-        $doc = new \SimpleXMLElement(__DIR__ . '/template-day.xml', null, true);
+        $doc = new \SimpleXMLElement(__DIR__.'/template-day.xml', null, true);
         $this->assertEquals(1, $ee->isTemplate($doc));
 
-        $doc = new \SimpleXMLElement(__DIR__ . '/non-template-day.xml', null, true);
+        $doc = new \SimpleXMLElement(__DIR__.'/non-template-day.xml', null, true);
         $this->assertEquals(0, $ee->isTemplate($doc));
     }
 
@@ -56,5 +56,4 @@ class ExerciseEntriesTest extends \PHPUnit_Framework_TestCase
         $ee = new ExerciseEntries($fs);
         $ee->commitDay($date, $user);
     }
-
 }

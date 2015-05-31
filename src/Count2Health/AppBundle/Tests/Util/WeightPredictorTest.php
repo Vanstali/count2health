@@ -7,7 +7,6 @@ use Count2Health\AppBundle\Util\WeightPredictor;
 
 class WeightPredictorTest extends \PHPUnit_Framework_TestCase
 {
-
     private $date;
     private $user;
     private $weight;
@@ -40,7 +39,6 @@ class WeightPredictorTest extends \PHPUnit_Framework_TestCase
                 'Count2Health\AppBundle\Util\UserStats')
             ->disableOriginalConstructor()
             ->getMock();
-        ;
 
         $this->weightPredictor = new WeightPredictor($this->stats, $this->weight);
     }
@@ -210,5 +208,4 @@ class WeightPredictorTest extends \PHPUnit_Framework_TestCase
 
         $this->weightPredictor->predictWeight($date, $this->user);
     }
-
 }

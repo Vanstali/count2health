@@ -33,5 +33,4 @@ class WeightLogControllerControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/delete');
     }
-
 }

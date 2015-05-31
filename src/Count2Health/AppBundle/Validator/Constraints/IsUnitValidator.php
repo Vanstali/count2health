@@ -10,9 +10,9 @@ class IsUnitValidator extends ConstraintValidator
 {
     public function validate($value, Constraint $constraint)
     {
-if (!($value instanceof PhysicalQuantityInterface)) {
-    $this->context->buildViolation($constraint->message)
+        if (!($value instanceof PhysicalQuantityInterface)) {
+            $this->context->buildViolation($constraint->message)
         ->addViolation();
-}
+        }
     }
 }

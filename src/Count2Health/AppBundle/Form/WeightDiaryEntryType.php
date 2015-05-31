@@ -9,7 +9,6 @@ use Count2Health\UserBundle\Entity\User;
 
 class WeightDiaryEntryType extends AbstractType
 {
-
     private $user;
 
     public function __construct(User $user)
@@ -19,7 +18,7 @@ class WeightDiaryEntryType extends AbstractType
 
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -35,14 +34,14 @@ class WeightDiaryEntryType extends AbstractType
                         ))
         ;
     }
-    
+
     /**
      * @param OptionsResolverInterface $resolver
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Count2Health\AppBundle\Entity\WeightDiaryEntry'
+            'data_class' => 'Count2Health\AppBundle\Entity\WeightDiaryEntry',
         ));
     }
 

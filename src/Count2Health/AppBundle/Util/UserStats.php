@@ -4,7 +4,6 @@ namespace Count2Health\AppBundle\Util;
 
 use JMS\DiExtraBundle\Annotation as DI;
 use Doctrine\ORM\EntityManager;
-use Doctrine\Common\Collections\Criteria;
 use PhpUnitsOfMeasure\PhysicalQuantity\Mass;
 use Count2Health\UserBundle\Entity\User;
 use Count2Health\AppBundle\FatSecret\FoodEntries;
@@ -17,7 +16,6 @@ use Count2Health\AppBundle\FatSecret;
  */
 class UserStats
 {
-
     private $entityManager;
     private $fatSecretWeight;
     private $fatSecretFoodEntries;
@@ -59,23 +57,23 @@ class UserStats
             return;
         }
 
-$startWeight = $weights[0];
-$endWeight = $weights[$numWeights-1];
+        $startWeight = $weights[0];
+        $endWeight = $weights[$numWeights - 1];
 
-$startTrend = $this->fatSecretWeight
+        $startTrend = $this->fatSecretWeight
     ->calculateTrend($this->fatSecret->dateIntToDateTime(
                 $startWeight->date_int, $user),
             $user);
-$endTrend = $this->fatSecretWeight
+        $endTrend = $this->fatSecretWeight
     ->calculateTrend($this->fatSecret->dateIntToDateTime(
                 $endWeight->date_int, $user),
             $user);
 
-$rate = floatval($startTrend->toUnit('kg')
+        $rate = floatval($startTrend->toUnit('kg')
         - $endTrend->toUnit('kg'))
     / ($numWeights - 1) * 7;
 
-return new Mass($rate, 'kg');
+        return new Mass($rate, 'kg');
     }
 
     public function getLastWeekWeightLoss(User $user)
@@ -93,12 +91,12 @@ return new Mass($rate, 'kg');
         }
 
         $startWeight = $weights[0];
-        $endWeight = $weights[$numWeights-1];
-$startTrend = $this->fatSecretWeight
+        $endWeight = $weights[$numWeights - 1];
+        $startTrend = $this->fatSecretWeight
     ->calculateTrend($this->fatSecret->dateIntToDateTime(
                 $startWeight->date_int, $user),
             $user);
-$endTrend = $this->fatSecretWeight
+        $endTrend = $this->fatSecretWeight
     ->calculateTrend($this->fatSecret->dateIntToDateTime(
                 $endWeight->date_int, $user),
             $user);
@@ -122,12 +120,12 @@ $endTrend = $this->fatSecretWeight
         }
 
         $startWeight = $weights[0];
-        $endWeight = $weights[$numWeights-1];
-$startTrend = $this->fatSecretWeight
+        $endWeight = $weights[$numWeights - 1];
+        $startTrend = $this->fatSecretWeight
     ->calculateTrend($this->fatSecret->dateIntToDateTime(
                 $startWeight->date_int, $user),
             $user);
-$endTrend = $this->fatSecretWeight
+        $endTrend = $this->fatSecretWeight
     ->calculateTrend($this->fatSecret->dateIntToDateTime(
                 $endWeight->date_int, $user),
             $user);
@@ -153,7 +151,7 @@ $endTrend = $this->fatSecretWeight
                     $user);
         $endWeight = $this->fatSecretWeight
             ->calculateTrend($this->fatSecret
-                    ->dateIntToDateTime($weights[$numWeights-1]->date_int,
+                    ->dateIntToDateTime($weights[$numWeights - 1]->date_int,
                         $user),
                     $user);
 
@@ -172,11 +170,10 @@ $endTrend = $this->fatSecretWeight
             $calories = 0;
             $num = 0;
 
-            foreach ($entries as $day)
-            {
-                    if (intval($day->calories) > 0) {
-                $num++;
-                $calories += intval($day->calories);
+            foreach ($entries as $day) {
+                if (intval($day->calories) > 0) {
+                    $num++;
+                    $calories += intval($day->calories);
                 }
             }
 
@@ -184,7 +181,7 @@ $endTrend = $this->fatSecretWeight
                 return 0;
             }
 
-return round(floatval($calories) / $num);
+            return round(floatval($calories) / $num);
         }
     }
 
@@ -194,39 +191,36 @@ return round(floatval($calories) / $num);
 ->getEntries($date, $user, 7, true);
 
         if (count($entries) > 0) {
-$weight = $this->fatSecretWeight
+            $weight = $this->fatSecretWeight
 ->calculateTrend($this->fatSecret
 ->dateIntToDateTime($entries[0]->date_int, $user),
 $user);
-        }
-        else {
+        } else {
             $weight = $user->getPersonalDetails()->getStartWeight();
         }
 
-    $bmr = 10 * $weight->toUnit('kg');
-    $bmr += 6.25 * $user->getPersonalDetails()->getHeight()->toUnit('cm');
+        $bmr = 10 * $weight->toUnit('kg');
+        $bmr += 6.25 * $user->getPersonalDetails()->getHeight()->toUnit('cm');
 
     // Get years since birth, i.e., age
     $today = new \DateTime();
-    $age = $today->diff($user->getPersonalDetails()->getBirthDate());
-    $bmr -= 4.92 * $age->y;
+        $age = $today->diff($user->getPersonalDetails()->getBirthDate());
+        $bmr -= 4.92 * $age->y;
 
-    if ('male' == $user->getPersonalDetails()->getGender()) {
-        $bmr += 5;
+        if ('male' == $user->getPersonalDetails()->getGender()) {
+            $bmr += 5;
+        } elseif ('female' == $user->getPersonalDetails()->getGender()) {
+            $bmr -= 161;
+        }
+
+        return $bmr;
     }
-    elseif ('female' == $user->getPersonalDetails()->getGender()) {
-        $bmr -= 161;
-    }
 
-    return $bmr;
-    }
-
-public function getEstimatedTDEE(\DateTime $date, User $user)
-{
-    $tdee = $this->getBMR($date, $user);
-
-    switch ($user->getPersonalDetails()->getActivityLevel())
+    public function getEstimatedTDEE(\DateTime $date, User $user)
     {
+        $tdee = $this->getBMR($date, $user);
+
+        switch ($user->getPersonalDetails()->getActivityLevel()) {
         case 's':
             $tdee *= 1.2;
             break;
@@ -248,45 +242,44 @@ public function getEstimatedTDEE(\DateTime $date, User $user)
             break;
     }
 
-    return $tdee;
-}
+        return $tdee;
+    }
 
     public function getTDEE(\DateTime $date, User $user,
             $fudgeFactor = null)
     {
-            // What did we burn today?
+        // What did we burn today?
             $burnedToday = $this->fatSecretExerciseEntries
                 ->getTotalCalories($date, $user);
 
-            if (null == $fudgeFactor) {
-$fudgeFactor = $this->getFudgeFactor($date, $user);
-            }
+        if (null == $fudgeFactor) {
+            $fudgeFactor = $this->getFudgeFactor($date, $user);
+        }
 
-if (1.0 == $fudgeFactor) {
-return $this->getCalculatedTDEE($date, $user);
-}
+        if (1.0 == $fudgeFactor) {
+            return $this->getCalculatedTDEE($date, $user);
+        }
 
         return round($burnedToday * $fudgeFactor);
     }
 
-public function getFudgeFactor(\DateTime $date, User $user)
-{
-$expectedTdee = $this->getCalculatedTDEE($date, $user);
+    public function getFudgeFactor(\DateTime $date, User $user)
+    {
+        $expectedTdee = $this->getCalculatedTDEE($date, $user);
 
             // Get last 14 days of exercise entries
             $entries = $this->fatSecretExerciseEntries
                 ->getEntries($date, $user, 14, false);
 
-if (empty($entries)) {
-        return 1.0;
+        if (empty($entries)) {
+            return 1.0;
         }
 
         // Get total calories
         $calories = 0;
 
-        foreach ($entries as $entry)
-        {
-        $calories += intval($entry->calories);
+        foreach ($entries as $entry) {
+            $calories += intval($entry->calories);
         }
 
         $averageBurn = round(floatval($calories) / count($entries));
@@ -294,67 +287,65 @@ if (empty($entries)) {
 // Now calculate average fudge factor between expected TDEE
         // and average logged burn
 return floatval($expectedTdee) / $averageBurn;
-}
+    }
 
-private function getCalculatedTDEE(\DateTime $date, User $user)
-{
-$caloriesConsumedPerDay = $this->getCaloriesConsumedPerDay($date, $user);
+    private function getCalculatedTDEE(\DateTime $date, User $user)
+    {
+        $caloriesConsumedPerDay = $this->getCaloriesConsumedPerDay($date, $user);
 
-if (0 == $caloriesConsumedPerDay) {
-// Not enough data to calculate the TDEE
+        if (0 == $caloriesConsumedPerDay) {
+            // Not enough data to calculate the TDEE
 return $this->getEstimatedTDEE($date, $user);
-}
+        }
 
-                return $caloriesConsumedPerDay + $this->getDailyCalorieDeficit($date, $user);
-}
+        return $caloriesConsumedPerDay + $this->getDailyCalorieDeficit($date, $user);
+    }
 
     public function getRDI(\DateTime $date, User $user)
     {
-$tdee = $this->getTDEE($date, $user);
+        $tdee = $this->getTDEE($date, $user);
 
         $targetDeficit = $user->getHealthPlan()->getTargetCalorieDeficit();
 
-$foodDiaryEntries = $this->fatSecretFoodEntries
+        $foodDiaryEntries = $this->fatSecretFoodEntries
     ->getEntries($date, $user, 16, false);
-$numEntries = count($foodDiaryEntries);
+        $numEntries = count($foodDiaryEntries);
 
-if ($numEntries < 2) {
-return $tdee - $targetDeficit;
-}
+        if ($numEntries < 2) {
+            return $tdee - $targetDeficit;
+        }
 
 // We purposely unset the last element.
 // If there are fewer than 15 days, the first (last) entry will be garbage,
 // because it can't get average calories eaten per day.
 // If it is 16 days, we don't need the 16th day anyway.
-unset($foodDiaryEntries[$numEntries-1]);
-$numEntries--;
+unset($foodDiaryEntries[$numEntries - 1]);
+        $numEntries--;
 
         $type = $user->getHealthPlan()->getType();
         $fudgeFactor = $this->getFudgeFactor($date, $user);
-$deficit = 0;
+        $deficit = 0;
 
-foreach ($foodDiaryEntries as $entry)
-{
-    $calories = intval($entry->calories);
-if (0 == $calories) {
-$numEntries--;
-continue;
-}
+        foreach ($foodDiaryEntries as $entry) {
+            $calories = intval($entry->calories);
+            if (0 == $calories) {
+                $numEntries--;
+                continue;
+            }
 
-$thisDate = $this->fatSecret
+            $thisDate = $this->fatSecret
 ->dateIntToDateTime($entry->date_int, $user);
-$thisTdee = $this->getTDEE($thisDate, $user, $fudgeFactor);
+            $thisTdee = $this->getTDEE($thisDate, $user, $fudgeFactor);
 
-$deficit += ($thisTdee - $calories);
-}
+            $deficit += ($thisTdee - $calories);
+        }
 
-$deficitToday = $targetDeficit * ($numEntries + 15);
-$deficitToday -= $deficit;
-$deficitToday /= 15.0;
+        $deficitToday = $targetDeficit * ($numEntries + 15);
+        $deficitToday -= $deficit;
+        $deficitToday /= 15.0;
 
-$rdi = $tdee - $deficitToday;
+        $rdi = $tdee - $deficitToday;
 
-return round($rdi);
+        return round($rdi);
     }
-
 }

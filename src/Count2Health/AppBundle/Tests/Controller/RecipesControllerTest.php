@@ -19,5 +19,4 @@ class RecipesControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/show.html');
     }
-
 }

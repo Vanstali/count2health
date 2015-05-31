@@ -20,7 +20,6 @@ use Count2Health\AppBundle\FatSecret\FatSecretException;
  */
 class RegistrationListener implements EventSubscriberInterface
 {
-
     private $router;
     private $fatsecret;
     private $tokenStorage;
@@ -64,15 +63,12 @@ class RegistrationListener implements EventSubscriberInterface
         // Create the profile on FatSecret as well
         $user = $this->tokenStorage->getToken()->getUser();
 
-        try
-        {
-        $response = $this->fatsecret->doApiCall('profile.create', array(
+        try {
+            $response = $this->fatsecret->doApiCall('profile.create', array(
                     'user_id' => $user->getEmail(),
                     ));
-        }
-        catch (FatSecretException $e)
-        {
-        $response = $this->fatsecret->doApiCall('profile.get_auth', array(
+        } catch (FatSecretException $e) {
+            $response = $this->fatsecret->doApiCall('profile.get_auth', array(
                     'user_id' => $user->getEmail(),
                     ));
         }
@@ -81,6 +77,5 @@ class RegistrationListener implements EventSubscriberInterface
         $user->setAuthSecret($response->auth_secret);
 
         $this->entityManager->flush();
-
     }
 }

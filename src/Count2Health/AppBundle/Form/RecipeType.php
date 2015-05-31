@@ -9,7 +9,6 @@ use Symfony\Component\Form\Extension\Core\ChoiceList\SimpleChoiceList;
 
 class RecipeType extends AbstractType
 {
-
     private $recipe;
 
     public function __construct($recipe)
@@ -19,7 +18,7 @@ class RecipeType extends AbstractType
 
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -47,7 +46,7 @@ class RecipeType extends AbstractType
             ))
         ;
     }
-    
+
     /**
      * @param OptionsResolverInterface $resolver
      */
@@ -69,11 +68,10 @@ class RecipeType extends AbstractType
     {
         $choices = array();
 
-        foreach ($this->recipe->serving_sizes->serving as $serving)
-        {
+        foreach ($this->recipe->serving_sizes->serving as $serving) {
             $choices[0] = "$serving->serving_size";
         }
 
-    return new SimpleChoiceList($choices);
+        return new SimpleChoiceList($choices);
     }
 }

@@ -31,10 +31,8 @@ class CalculateTrendListener
                 + 0.1 * ($entity->getWeight()->toUnit('kg')
                         - $prevTrend->toUnit('kg'));
             $entity->setTrend(new Mass($trend, 'kg'));
- }
-        else {
+        } else {
             $entity->setTrend($entity->getWeight());
         }
-
     }
 }

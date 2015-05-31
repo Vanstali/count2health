@@ -9,7 +9,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Count2Health\AppBundle\Entity\Activity;
 
-
 /**
  * @Route("/diary/activities")
  */
@@ -26,21 +25,19 @@ class ActivitiesDiaryController extends Controller
         $user = $this->getUser();
         $tz = $user->getDateTimeZone();
 
-$session = $request->getSession();
+        $session = $request->getSession();
 
         if (null === $date) {
-if ($session->has('date')) {
-$date = $session->get('date');
-}
-else {
-            $date = new \DateTime('today', $tz);
-}
-        }
-            else {
-                $date = new \DateTime($date, $tz);
+            if ($session->has('date')) {
+                $date = $session->get('date');
+            } else {
+                $date = new \DateTime('today', $tz);
             }
+        } else {
+            $date = new \DateTime($date, $tz);
+        }
 
-$session->set('date', $date);
+        $session->set('date', $date);
 
         $yesterday = clone $date;
         $yesterday->sub(new \DateInterval('P1D'));
@@ -52,33 +49,31 @@ $session->set('date', $date);
 
         $canCommit = $this->get('fatsecret.exercise_entries')
         ->isTemplate($entries);
-$activities = array();
+        $activities = array();
 
         $calories = 0;
 
-        foreach ($entries as $entry)
-        {
+        foreach ($entries as $entry) {
             $calories += intval($entry->calories);
 
-$activity = array();
-$activity['minutes'] = intval($entry->minutes);
-$activity['calories'] = intval($entry->calories);
-$activity['name'] = $this->get('activity_name_parser')
+            $activity = array();
+            $activity['minutes'] = intval($entry->minutes);
+            $activity['calories'] = intval($entry->calories);
+            $activity['name'] = $this->get('activity_name_parser')
 ->parse("$entry->exercise_id", "$entry->exercise_name");
-if ($activity['name'] instanceof Activity) {
-$activity['link'] = true;
-}
-else {
-$activity['link'] = false;
-}
+            if ($activity['name'] instanceof Activity) {
+                $activity['link'] = true;
+            } else {
+                $activity['link'] = false;
+            }
 
-$activities[] = $activity;
+            $activities[] = $activity;
         }
 
-$fudgeFactor = $this->get('user_stats')
+        $fudgeFactor = $this->get('user_stats')
 ->getFudgeFactor($date, $user);
 
-$adjustedCalories = round($calories * $fudgeFactor);
+        $adjustedCalories = round($calories * $fudgeFactor);
 
         return array(
                 'entries' => $activities,
@@ -89,13 +84,14 @@ $adjustedCalories = round($calories * $fudgeFactor);
 'adjustedCalories' => $adjustedCalories,
                 'yesterday' => $yesterday,
                 'tomorrow' => $tomorrow,
-            );    }
+            );
+    }
 
         /**
          * @Route("/adjust.html", name="exercise_diary_adjust")
          * @Route("/adjust/{date}.html", name="exercise_diary_adjust_by_date")
          * @Template()
-     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+         * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
          */
         public function adjustAction($date = null, Request $request)
         {
@@ -104,8 +100,7 @@ $adjustedCalories = round($calories * $fudgeFactor);
 
             if (null === $date) {
                 $date = new \DateTime('today', $tz);
-            }
-            else {
+            } else {
                 $date = new \DateTime($date, $tz);
             }
 
@@ -126,9 +121,8 @@ $adjustedCalories = round($calories * $fudgeFactor);
                 $to = $data['to'];
                 $from = $data['from'];
 
-                foreach ($types->exercise as $type)
-                {
-                    if ((string)$type->exercise_name == $to) {
+                foreach ($types->exercise as $type) {
+                    if ((string) $type->exercise_name == $to) {
                         $to = intval($type->exercise_id);
                         break;
                     }
@@ -149,8 +143,7 @@ $adjustedCalories = round($calories * $fudgeFactor);
 
             $typeArray = array();
 
-            foreach ($types->exercise as $exercise)
-            {
+            foreach ($types->exercise as $exercise) {
                 $typeArray[] = "$exercise->exercise_name";
             }
 
@@ -162,20 +155,19 @@ $adjustedCalories = round($calories * $fudgeFactor);
 
 /**
  * @Route("/commit/{date}.html", name="activities_diary_commit")
-     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+ * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
  */
 public function commitAction($date)
 {
     $user = $this->getUser();
-$date = new \DateTime($date, $user->getDateTimeZone());
+    $date = new \DateTime($date, $user->getDateTimeZone());
 
-$this->get('fatsecret.exercise_entries')->commitDay($date, $user);
+    $this->get('fatsecret.exercise_entries')->commitDay($date, $user);
 
-$this->get('memcache')->invalidateNamespace('exercise', $user);
+    $this->get('memcache')->invalidateNamespace('exercise', $user);
 
-return $this->redirectToRoute('activities_diary_by_date', array(
+    return $this->redirectToRoute('activities_diary_by_date', array(
             'date' => $date->format('Y-m-d'),
             ));
 }
-
 }

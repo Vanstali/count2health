@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use PhpUnitsOfMeasure\PhysicalQuantity\Mass;
 
 /**
- * Activity
+ * Activity.
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="Count2Health\AppBundle\Entity\ActivityRepository")
@@ -14,7 +14,7 @@ use PhpUnitsOfMeasure\PhysicalQuantity\Mass;
 class Activity
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -37,7 +37,7 @@ class Activity
     private $name;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="fatsecretEntryId", type="integer", nullable=true)
      */
@@ -50,11 +50,10 @@ class Activity
      */
     private $mets;
 
-
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer 
+     * @return int
      */
     public function getId()
     {
@@ -62,9 +61,10 @@ class Activity
     }
 
     /**
-     * Set name
+     * Set name.
      *
      * @param string $name
+     *
      * @return Activity
      */
     public function setName($name)
@@ -75,9 +75,9 @@ class Activity
     }
 
     /**
-     * Get name
+     * Get name.
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -85,9 +85,10 @@ class Activity
     }
 
     /**
-     * Set fatsecretEntryId
+     * Set fatsecretEntryId.
      *
-     * @param integer $fatsecretEntryId
+     * @param int $fatsecretEntryId
+     *
      * @return Activity
      */
     public function setFatsecretEntryId($fatsecretEntryId)
@@ -98,9 +99,9 @@ class Activity
     }
 
     /**
-     * Get fatsecretEntryId
+     * Get fatsecretEntryId.
      *
-     * @return integer 
+     * @return int
      */
     public function getFatsecretEntryId()
     {
@@ -108,9 +109,10 @@ class Activity
     }
 
     /**
-     * Set mets
+     * Set mets.
      *
      * @param string $mets
+     *
      * @return Activity
      */
     public function setMets($mets)
@@ -121,30 +123,30 @@ class Activity
     }
 
     /**
-     * Get mets
+     * Get mets.
      *
-     * @return string 
+     * @return string
      */
     public function getMets()
     {
         return $this->mets;
     }
 
-public function getCaloriesBurnedPerHour(Mass $weight)
-{
-return $weight->toUnit('kg') * $this->getMets();
-}
+    public function getCaloriesBurnedPerHour(Mass $weight)
+    {
+        return $weight->toUnit('kg') * $this->getMets();
+    }
 
-public function getCaloriesBurned(Mass $weight, $minutes)
-{
-return $weight->toUnit('kg') * $this->getMets() * $minutes / 60.0;
-}
-
+    public function getCaloriesBurned(Mass $weight, $minutes)
+    {
+        return $weight->toUnit('kg') * $this->getMets() * $minutes / 60.0;
+    }
 
     /**
-     * Set category
+     * Set category.
      *
      * @param \Count2Health\AppBundle\Entity\ActivityCategory $category
+     *
      * @return Activity
      */
     public function setCategory(\Count2Health\AppBundle\Entity\ActivityCategory $category = null)
@@ -155,17 +157,17 @@ return $weight->toUnit('kg') * $this->getMets() * $minutes / 60.0;
     }
 
     /**
-     * Get category
+     * Get category.
      *
-     * @return \Count2Health\AppBundle\Entity\ActivityCategory 
+     * @return \Count2Health\AppBundle\Entity\ActivityCategory
      */
     public function getCategory()
     {
         return $this->category;
     }
 
-public function __toString()
-{
-return $this->getCategory()->getName() . ' > ' . $this->getName();
-}
+    public function __toString()
+    {
+        return $this->getCategory()->getName().' > '.$this->getName();
+    }
 }

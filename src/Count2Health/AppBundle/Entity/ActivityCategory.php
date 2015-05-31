@@ -5,7 +5,7 @@ namespace Count2Health\AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * ActivityCategory
+ * ActivityCategory.
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="Count2Health\AppBundle\Entity\ActivityCategoryRepository")
@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 class ActivityCategory
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -33,11 +33,10 @@ class ActivityCategory
      */
     private $name;
 
-
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer 
+     * @return int
      */
     public function getId()
     {
@@ -45,9 +44,10 @@ class ActivityCategory
     }
 
     /**
-     * Set name
+     * Set name.
      *
      * @param string $name
+     *
      * @return ActivityCategory
      */
     public function setName($name)
@@ -58,16 +58,16 @@ class ActivityCategory
     }
 
     /**
-     * Get name
+     * Get name.
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
         return $this->name;
     }
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {
@@ -75,9 +75,10 @@ class ActivityCategory
     }
 
     /**
-     * Add children
+     * Add children.
      *
      * @param \Count2Health\AppBundle\Entity\Activity $children
+     *
      * @return ActivityCategory
      */
     public function addChild(\Count2Health\AppBundle\Entity\Activity $children)
@@ -88,7 +89,7 @@ class ActivityCategory
     }
 
     /**
-     * Remove children
+     * Remove children.
      *
      * @param \Count2Health\AppBundle\Entity\Activity $children
      */
@@ -98,9 +99,9 @@ class ActivityCategory
     }
 
     /**
-     * Get children
+     * Get children.
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getChildren()
     {

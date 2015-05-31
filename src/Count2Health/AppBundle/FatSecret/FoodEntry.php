@@ -11,7 +11,6 @@ use Count2Health\UserBundle\Entity\User;
  */
 class FoodEntry
 {
-
     private $fatSecret;
 
     /**
@@ -43,7 +42,7 @@ class FoodEntry
 'food',
                 $user);
 
-        return (int)$response;
+        return (int) $response;
     }
 
     public function delete($id, User $user)
@@ -55,18 +54,17 @@ class FoodEntry
                 $user);
     }
 
-public function edit($id, $name, $units, $servingId, $meal, User $user)
-{
-$arguments['food_entry_id'] = $id;
-$arguments['food_entry_name'] = $name;
-$arguments['number_of_units'] = $units;
-$arguments['meal'] = $meal;
+    public function edit($id, $name, $units, $servingId, $meal, User $user)
+    {
+        $arguments['food_entry_id'] = $id;
+        $arguments['food_entry_name'] = $name;
+        $arguments['number_of_units'] = $units;
+        $arguments['meal'] = $meal;
 
-if (null != $servings) {
-$arguments['serving_id'] = $servingId;
-}
+        if (null != $servings) {
+            $arguments['serving_id'] = $servingId;
+        }
 
-$this->fatSecret->doApiCall('food_entry.edit', $arguments, 'food', $user);
-}
-
+        $this->fatSecret->doApiCall('food_entry.edit', $arguments, 'food', $user);
+    }
 }

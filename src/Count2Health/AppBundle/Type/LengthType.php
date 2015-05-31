@@ -18,10 +18,10 @@ class LengthType extends Type
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
         if ($value === null) {
-            return null;
+            return;
         }
 
-return new Length($value, 'cm');
+        return new Length($value, 'cm');
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
@@ -33,5 +33,4 @@ return new Length($value, 'cm');
     {
         return self::LENGTH;
     }
-
 }

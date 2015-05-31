@@ -8,20 +8,19 @@ use PhpUnitsOfMeasure\PhysicalQuantity\Mass;
 
 class ImperialWeightTransformer implements DataTransformerInterface
 {
-
     public function transform($data)
     {
         if ($data === null) {
-            return null;
+            return;
         }
 
-if (!($data instanceof Mass)) {
-    throw new TransformationFailedException('Weight must be of type Mass');
-}
+        if (!($data instanceof Mass)) {
+            throw new TransformationFailedException('Weight must be of type Mass');
+        }
 
-$lb = $data->toUnit('lb');
+        $lb = $data->toUnit('lb');
 
-return array(
+        return array(
         'weight' => $lb,
         );
     }
@@ -33,7 +32,7 @@ return array(
         }
 
         $lb = $data['weight'];
+
         return new Mass($lb, 'lb');
     }
-
 }

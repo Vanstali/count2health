@@ -4,14 +4,12 @@ namespace Count2Health\AppBundle\FatSecret;
 
 use JMS\DiExtraBundle\Annotation as DI;
 use Count2Health\AppBundle\FatSecret;
-use Count2Health\UserBundle\Entity\User;
 
 /**
  * @DI\Service("fatsecret.recipes")
  */
 class Recipes
 {
-
     private $fatSecret;
 
     /**
@@ -33,7 +31,6 @@ class Recipes
                     ),
 'food');
 
-return $result;
+        return $result;
     }
-
 }

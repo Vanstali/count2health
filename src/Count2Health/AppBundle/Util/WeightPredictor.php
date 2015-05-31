@@ -14,7 +14,6 @@ use Count2Health\AppBundle\Exception\InvalidDateException;
  */
 class WeightPredictor
 {
-
     private $stats;
 
     /**
@@ -43,12 +42,11 @@ class WeightPredictor
 
         if ($days < 0) {
             if ($weight < $trend) {
-                $message = "Weight is less than current weight, but calorie " .
-                    "deficit is negative.";
-            }
-            else {
-                $message = "Weight is greater than current weight, but calorie " .
-                    "deficit is positive.";
+                $message = 'Weight is less than current weight, but calorie '.
+                    'deficit is negative.';
+            } else {
+                $message = 'Weight is greater than current weight, but calorie '.
+                    'deficit is positive.';
             }
             throw new InvalidWeightException($message);
         }
@@ -65,8 +63,8 @@ class WeightPredictor
 
         if ($date <= $today) {
             // Cannot pass a date in the past
-            throw new InvalidDateException("The given date must be in the " .
-                    "future.");
+            throw new InvalidDateException('The given date must be in the '.
+                    'future.');
         }
 
         $weightPerDay = $this->stats
@@ -82,5 +80,4 @@ class WeightPredictor
 
         return new Mass($trend->toUnit('lb') - $weightDelta, 'lb');
     }
-
 }

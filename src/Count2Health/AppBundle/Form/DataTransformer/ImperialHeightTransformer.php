@@ -8,23 +8,22 @@ use PhpUnitsOfMeasure\PhysicalQuantity\Length;
 
 class ImperialHeightTransformer implements DataTransformerInterface
 {
-
     public function transform($data)
     {
         if ($data === null) {
-            return null;
+            return;
         }
 
-if (!($data instanceof Length)) {
-    throw new TransformationFailedException('Height must be of type Length');
-}
+        if (!($data instanceof Length)) {
+            throw new TransformationFailedException('Height must be of type Length');
+        }
 
-$inches = $data->toUnit('inches');
+        $inches = $data->toUnit('inches');
 
-$ft = floor($inches / 12);
-$in = round(fmod($inches, 12), 1);
+        $ft = floor($inches / 12);
+        $in = round(fmod($inches, 12), 1);
 
-return array(
+        return array(
         'feet' => $ft,
         'inches' => $in,
         );
@@ -37,7 +36,7 @@ return array(
             return;
         }
         $inches = $data['feet'] * 12 + $data['inches'];
+
         return new Length($inches, 'inches');
     }
-
 }

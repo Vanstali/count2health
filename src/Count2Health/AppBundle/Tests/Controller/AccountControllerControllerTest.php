@@ -26,5 +26,4 @@ class AccountControllerControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/update');
     }
-
 }

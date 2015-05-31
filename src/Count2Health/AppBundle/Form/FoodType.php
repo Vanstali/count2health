@@ -10,21 +10,20 @@ use Count2Health\UserBundle\Entity\User;
 
 class FoodType extends AbstractType
 {
-
-private $user;
+    private $user;
     private $food;
     private $type;
 
     public function __construct(User $user, $food, $type = 'food')
     {
-$this->user = $user;
+        $this->user = $user;
         $this->food = $food;
         $this->type = $type;
     }
 
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -54,7 +53,7 @@ $this->user = $user;
             ))
         ;
     }
-    
+
     /**
      * @param OptionsResolverInterface $resolver
      */
@@ -75,8 +74,7 @@ $this->user = $user;
     protected function loadChoiceList()
     {
         $choices = array();
-        switch ($this->type)
-        {
+        switch ($this->type) {
             case 'food':
                 $servings = $this->food->servings->serving;
                 break;
@@ -86,16 +84,14 @@ $this->user = $user;
                 break;
         }
 
-        foreach ($servings as $serving)
-        {
+        foreach ($servings as $serving) {
             if ($this->type == 'food') {
-            $choices["$serving->serving_id"] = "$serving->serving_description";
-            }
-            else {
-            $choices[0] = "$serving->serving_size";
+                $choices["$serving->serving_id"] = "$serving->serving_description";
+            } else {
+                $choices[0] = "$serving->serving_size";
             }
         }
 
-    return new SimpleChoiceList($choices);
+        return new SimpleChoiceList($choices);
     }
 }

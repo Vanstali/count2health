@@ -24,10 +24,9 @@ class HeightType extends AbstractType
             $builder
                 ->add('height', 'hidden')
                 ->addViewTransformer(new NullHeightTransformer());
-        }
-            else {
-        if ($options['units'] == 'imperial') {
-        $builder
+        } else {
+            if ($options['units'] == 'imperial') {
+                $builder
             ->add('feet', 'number', array(
                         'precision' => 0,
                         'error_bubbling' => true,
@@ -38,9 +37,8 @@ class HeightType extends AbstractType
                         ))
             ->addViewTransformer(new ImperialHeightTransformer())
             ;
-        }
-        else {
-            $builder
+            } else {
+                $builder
                 ->add('height', 'number', array(
                             'label' => 'CM',
                             'precision' => 0,
@@ -48,8 +46,8 @@ class HeightType extends AbstractType
                             ))
             ->addViewTransformer(new MetricHeightTransformer())
                 ;
-        }
             }
+        }
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options)
@@ -70,5 +68,4 @@ class HeightType extends AbstractType
                     'error_bubbling' => false,
                     ));
     }
-
 }

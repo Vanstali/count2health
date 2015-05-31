@@ -13,7 +13,7 @@ class PersonalDetailsType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -61,19 +61,16 @@ class PersonalDetailsType extends AbstractType
         ;
 
         // Dynamic modification of height field based on height units
-        $heightModifier = function (FormInterface $form, $units = null)
-        {
+        $heightModifier = function (FormInterface $form, $units = null) {
             if ($units == 'inch') {
                 $form->add('height', 'height', array(
                             'units' => 'imperial',
                             ));
-            }
-            elseif ($units == 'cm') {
+            } elseif ($units == 'cm') {
                 $form->add('height', 'height', array(
                             'units' => 'metric',
                             ));
-            }
-            else {
+            } else {
                 $form->add('height', 'height', array(
                             'hidden' => true,
                             ));
@@ -81,33 +78,28 @@ class PersonalDetailsType extends AbstractType
         };
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA,
-                function (FormEvent $event) use($heightModifier)
-                {
+                function (FormEvent $event) use ($heightModifier) {
                 $data = $event->getData();
                 $heightModifier($event->getForm(), $data->getHeightUnits());
                 });
 
         $builder->get('heightUnits')->addEventListener(FormEvents::POST_SUBMIT,
-                function (FormEvent $event) use($heightModifier)
-                {
+                function (FormEvent $event) use ($heightModifier) {
 $heightUnits = $event->getForm()->getData();
 $heightModifier($event->getForm()->getParent(), $heightUnits);
                 });
 
         // Dynamic modification of weight field based on weight units
-        $weightModifier = function (FormInterface $form, $units = null)
-        {
+        $weightModifier = function (FormInterface $form, $units = null) {
             if ($units == 'lb') {
                 $form->add('startWeight', 'weight', array(
                             'units' => 'lb',
                             ));
-            }
-            elseif ($units == 'kg') {
+            } elseif ($units == 'kg') {
                 $form->add('startWeight', 'weight', array(
                             'units' => 'kg',
                             ));
-            }
-            else {
+            } else {
                 $form->add('startWeight', 'weight', array(
                             'hidden' => true,
                             ));
@@ -115,28 +107,25 @@ $heightModifier($event->getForm()->getParent(), $heightUnits);
         };
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA,
-                function (FormEvent $event) use($weightModifier)
-                {
+                function (FormEvent $event) use ($weightModifier) {
                 $data = $event->getData();
                 $weightModifier($event->getForm(), $data->getWeightUnits());
                 });
 
         $builder->get('weightUnits')->addEventListener(FormEvents::POST_SUBMIT,
-                function (FormEvent $event) use($weightModifier)
-                {
+                function (FormEvent $event) use ($weightModifier) {
 $weightUnits = $event->getForm()->getData();
 $weightModifier($event->getForm()->getParent(), $weightUnits);
                 });
-
     }
-    
+
     /**
      * @param OptionsResolverInterface $resolver
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Count2Health\UserBundle\Entity\PersonalDetails'
+            'data_class' => 'Count2Health\UserBundle\Entity\PersonalDetails',
         ));
     }
 

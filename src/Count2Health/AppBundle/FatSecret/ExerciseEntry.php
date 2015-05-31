@@ -11,7 +11,6 @@ use Count2Health\UserBundle\Entity\User;
  */
 class ExerciseEntry
 {
-
     private $fatSecret;
 
     /**
@@ -27,17 +26,16 @@ class ExerciseEntry
     public function edit(\DateTime $date, $to, $toName, $from, $fromName, $minutes, $calories, User $user)
     {
         $arguments = array();
-            $arguments['date'] = $this->fatSecret->dateTimeToDateInt($date);
-            $arguments['shift_to_id'] = $to;
-$arguments['shift_to_name'] = $toName;
-            $arguments['shift_from_id'] = $from;
-$arguments['shift_from_name'] = $fromName;
-            $arguments['minutes'] = $minutes;
-$arguments['kcal'] = round($calories);
+        $arguments['date'] = $this->fatSecret->dateTimeToDateInt($date);
+        $arguments['shift_to_id'] = $to;
+        $arguments['shift_to_name'] = $toName;
+        $arguments['shift_from_id'] = $from;
+        $arguments['shift_from_name'] = $fromName;
+        $arguments['minutes'] = $minutes;
+        $arguments['kcal'] = round($calories);
 
         $result = $this->fatSecret->doApiCall('exercise_entry.edit', $arguments, 'exercise', $user);
 
-            return $result;
+        return $result;
     }
-
-    }
+}

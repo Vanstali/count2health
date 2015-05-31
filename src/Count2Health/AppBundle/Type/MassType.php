@@ -18,10 +18,10 @@ class MassType extends Type
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
         if ($value === null) {
-            return null;
+            return;
         }
 
-return new Mass($value, 'kg');
+        return new Mass($value, 'kg');
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
@@ -33,5 +33,4 @@ return new Mass($value, 'kg');
     {
         return self::MASS;
     }
-
 }

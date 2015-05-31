@@ -5,7 +5,7 @@ namespace Count2Health\AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * FoodDiaryEntry
+ * FoodDiaryEntry.
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="Count2Health\AppBundle\Entity\FoodDiaryEntryRepository")
@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 class FoodDiaryEntry
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -37,17 +37,16 @@ class FoodDiaryEntry
     private $date;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="calories", type="integer")
      */
     private $calories;
 
-
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer 
+     * @return int
      */
     public function getId()
     {
@@ -55,9 +54,10 @@ class FoodDiaryEntry
     }
 
     /**
-     * Set calories
+     * Set calories.
      *
-     * @param integer $calories
+     * @param int $calories
+     *
      * @return FoodDiaryEntry
      */
     public function setCalories($calories)
@@ -82,9 +82,9 @@ class FoodDiaryEntry
     }
 
     /**
-     * Get calories
+     * Get calories.
      *
-     * @return integer 
+     * @return int
      */
     public function getCalories()
     {
@@ -92,9 +92,10 @@ class FoodDiaryEntry
     }
 
     /**
-     * Set user_id
+     * Set user_id.
      *
      * @param \Count2Health\UserBundle\Entity\User $userId
+     *
      * @return FoodDiaryEntry
      */
     public function setUserId(\Count2Health\UserBundle\Entity\User $userId = null)
@@ -105,9 +106,9 @@ class FoodDiaryEntry
     }
 
     /**
-     * Get user_id
+     * Get user_id.
      *
-     * @return \Count2Health\UserBundle\Entity\User 
+     * @return \Count2Health\UserBundle\Entity\User
      */
     public function getUserId()
     {
@@ -115,9 +116,10 @@ class FoodDiaryEntry
     }
 
     /**
-     * Set date
+     * Set date.
      *
      * @param \DateTime $date
+     *
      * @return FoodDiaryEntry
      */
     public function setDate($date)
@@ -128,9 +130,9 @@ class FoodDiaryEntry
     }
 
     /**
-     * Get date
+     * Get date.
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getDate()
     {
@@ -138,9 +140,10 @@ class FoodDiaryEntry
     }
 
     /**
-     * Set user
+     * Set user.
      *
      * @param \Count2Health\UserBundle\Entity\User $user
+     *
      * @return FoodDiaryEntry
      */
     public function setUser(\Count2Health\UserBundle\Entity\User $user = null)
@@ -151,9 +154,9 @@ class FoodDiaryEntry
     }
 
     /**
-     * Get user
+     * Get user.
      *
-     * @return \Count2Health\UserBundle\Entity\User 
+     * @return \Count2Health\UserBundle\Entity\User
      */
     public function getUser()
     {

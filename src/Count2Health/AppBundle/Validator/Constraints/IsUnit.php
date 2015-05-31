@@ -9,5 +9,5 @@ use Symfony\Component\Validator\Constraint;
  */
 class IsUnit extends Constraint
 {
-    public $message = "Value must be a unit.";
+    public $message = 'Value must be a unit.';
 }

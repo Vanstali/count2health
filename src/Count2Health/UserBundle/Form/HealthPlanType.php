@@ -10,7 +10,6 @@ use Count2Health\UserBundle\Entity\User;
 
 class HealthPlanType extends AbstractType
 {
-
     private $user;
     private $type;
 
@@ -22,7 +21,7 @@ class HealthPlanType extends AbstractType
 
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -36,17 +35,17 @@ class HealthPlanType extends AbstractType
         if ($this->type != 'maintenance') {
             $builder
             ->add('targetCalorieDeficit', 'integer', array(
-                        'label' => 'Target Calorie ' .
+                        'label' => 'Target Calorie '.
                         ($this->type == 'loss' ? 'Deficit' : 'Excess'),
                         ))
             ->add('goalDate', 'date', array(
                         'format' => 'MMMM d, yyyy',
-                        'years' => range(date('Y'), date('Y')+10),
+                        'years' => range(date('Y'), date('Y') + 10),
                         ))
         ;
         }
     }
-    
+
     /**
      * @param OptionsResolverInterface $resolver
      */
@@ -54,12 +53,10 @@ class HealthPlanType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => 'Count2Health\AppBundle\Entity\HealthPlan',
-            'validation_groups' => function(FormInterface $form)
-            {
+            'validation_groups' => function (FormInterface $form) {
             $data = $form->getData();
 
-            switch ($data->getType())
-            {
+            switch ($data->getType()) {
             case 'loss':
             return array('HealthPlan', 'Loss');
 

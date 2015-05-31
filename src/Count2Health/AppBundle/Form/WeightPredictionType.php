@@ -9,7 +9,6 @@ use Count2Health\UserBundle\Entity\User;
 
 class WeightPredictionType extends AbstractType
 {
-
     private $user;
 
     public function __construct(User $user)
@@ -19,7 +18,7 @@ class WeightPredictionType extends AbstractType
 
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -28,7 +27,7 @@ class WeightPredictionType extends AbstractType
                         'format' => 'MMMM d, yyyy',
                         'model_timezone' => $this->user->getTimeZone(),
                         'view_timezone' => $this->user->getTimeZone(),
-                        'years' => range(date('Y'), date('Y')+4),
+                        'years' => range(date('Y'), date('Y') + 4),
                         'required' => false,
                         ))
             ->add('weight', 'weight', array(

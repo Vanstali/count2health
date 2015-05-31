@@ -11,19 +11,19 @@ use Count2Health\AppBundle\Validator\Constraints\GoalWeightWithinFiveLbOfStartWe
 use Count2Health\AppBundle\Validator\Constraints\DeficitIsHealthy;
 
 /**
- * HealthPlan
+ * HealthPlan.
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="Count2Health\AppBundle\Entity\HealthPlanRepository")
-     * @GoalWeightLessThanStartWeight(groups={"Loss"})
-     * @GoalWeightGreaterThanStartWeight(groups={"Gain"})
-     * @GoalWeightWithinFiveLbOfStartWeight(groups={"Maintenance"})
-     * @DeficitIsHealthy(groups={"Loss"})
+ * @GoalWeightLessThanStartWeight(groups={"Loss"})
+ * @GoalWeightGreaterThanStartWeight(groups={"Gain"})
+ * @GoalWeightWithinFiveLbOfStartWeight(groups={"Maintenance"})
+ * @DeficitIsHealthy(groups={"Loss"})
  */
 class HealthPlan
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -68,14 +68,14 @@ class HealthPlan
     private $goalDate;
 
     /**
-     * The target calorie deficit per day
+     * The target calorie deficit per day.
      *
      * The deficit is the difference between the TDEE and calories consumed.
      * If the user is trying to lose weight, the calories consumed will be
      * less than the TDEE. if the user is trying to gain weight, the
      * calories consumed will be higher than the TDEE.
      *
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="targetCalorieDeficit", type="integer")
      * @Assert\NotNull(groups={"Loss", "Gain"})
@@ -83,11 +83,10 @@ class HealthPlan
      */
     private $targetCalorieDeficit;
 
-
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer 
+     * @return int
      */
     public function getId()
     {
@@ -95,9 +94,10 @@ class HealthPlan
     }
 
     /**
-     * Set type
+     * Set type.
      *
      * @param string $type
+     *
      * @return HealthPlan
      */
     public function setType($type)
@@ -108,9 +108,9 @@ class HealthPlan
     }
 
     /**
-     * Get type
+     * Get type.
      *
-     * @return string 
+     * @return string
      */
     public function getType()
     {
@@ -118,9 +118,10 @@ class HealthPlan
     }
 
     /**
-     * Set goalWeight
+     * Set goalWeight.
      *
      * @param mass $goalWeight
+     *
      * @return HealthPlan
      */
     public function setGoalWeight($goalWeight)
@@ -131,9 +132,9 @@ class HealthPlan
     }
 
     /**
-     * Get goalWeight
+     * Get goalWeight.
      *
-     * @return mass 
+     * @return mass
      */
     public function getGoalWeight()
     {
@@ -141,9 +142,10 @@ class HealthPlan
     }
 
     /**
-     * Set goalDate
+     * Set goalDate.
      *
      * @param \DateTime $goalDate
+     *
      * @return HealthPlan
      */
     public function setGoalDate($goalDate)
@@ -154,9 +156,9 @@ class HealthPlan
     }
 
     /**
-     * Get goalDate
+     * Get goalDate.
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getGoalDate()
     {
@@ -164,9 +166,10 @@ class HealthPlan
     }
 
     /**
-     * Set targetCalorieDeficit
+     * Set targetCalorieDeficit.
      *
-     * @param integer $targetCalorieDeficit
+     * @param int $targetCalorieDeficit
+     *
      * @return HealthPlan
      */
     public function setTargetCalorieDeficit($targetCalorieDeficit)
@@ -177,9 +180,9 @@ class HealthPlan
     }
 
     /**
-     * Get targetCalorieDeficit
+     * Get targetCalorieDeficit.
      *
-     * @return integer 
+     * @return int
      */
     public function getTargetCalorieDeficit()
     {
@@ -187,9 +190,10 @@ class HealthPlan
     }
 
     /**
-     * Set user
+     * Set user.
      *
      * @param \Count2Health\UserBundle\Entity\User $user
+     *
      * @return HealthPlan
      */
     public function setUser(\Count2Health\UserBundle\Entity\User $user = null)
@@ -200,9 +204,9 @@ class HealthPlan
     }
 
     /**
-     * Get user
+     * Get user.
      *
-     * @return \Count2Health\UserBundle\Entity\User 
+     * @return \Count2Health\UserBundle\Entity\User
      */
     public function getUser()
     {

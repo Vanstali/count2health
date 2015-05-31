@@ -11,7 +11,6 @@ use Count2Health\UserBundle\Entity\User;
  */
 class ExerciseEntries extends FatSecretEntries
 {
-
     /**
      * @DI\InjectParams({
      *     "fatSecret" = @DI\Inject("fatsecret")
@@ -25,11 +24,11 @@ class ExerciseEntries extends FatSecretEntries
     public function get(\DateTime $date, $user)
     {
         $arguments = array();
-            $arguments['date'] = $this->fatSecret->dateTimeToDateInt($date);
+        $arguments['date'] = $this->fatSecret->dateTimeToDateInt($date);
 
         $entry = $this->fatSecret->doApiCall('exercise_entries.get', $arguments, 'exercise', $user);
 
-            return $entry;
+        return $entry;
     }
 
     public function getMonth(\DateTime $date, User $user)
@@ -48,65 +47,59 @@ $user);
 
     public function getTotalCalories(\DateTime $date, User $user)
     {
-$prevEntries = $this->getEntries($date, $user, 1, true);
+        $prevEntries = $this->getEntries($date, $user, 1, true);
 
-if (empty($prevEntries)) {
-$doCall = true;
-}
-else {
-$d = $this->fatSecret
+        if (empty($prevEntries)) {
+            $doCall = true;
+        } else {
+            $d = $this->fatSecret
 ->dateIntToDateTime($prevEntries[0]->date_int, $user);
 
-if ($d == $date) {
-$doCall = false;
-}
-else {
-$doCall = true;
-}
-}
+            if ($d == $date) {
+                $doCall = false;
+            } else {
+                $doCall = true;
+            }
+        }
 
-if (true == $doCall) {
-        $result = $this->get($date, $user);
+        if (true == $doCall) {
+            $result = $this->get($date, $user);
 
-        $calories = 0;
+            $calories = 0;
 
-        if (!isset($result->exercise_entry)) {
+            if (!isset($result->exercise_entry)) {
                 return 0;
-                }
+            }
 
-                foreach ($result->exercise_entry as $entry)
-                {
+            foreach ($result->exercise_entry as $entry) {
                 $calories += intval($entry->calories);
-                }
+            }
 
-                return $calories;
-}
-else {
-return intval($prevEntries[0]->calories);
-}
-    }
-
-public function isTemplate(\SimpleXMLElement $entries)
-{
-    $template = true;
-
-    foreach ($entries->exercise_entry as $entry)
-    {
-        if (0 == intval($entry->is_template_value)) {
-            $template = false;
+            return $calories;
+        } else {
+            return intval($prevEntries[0]->calories);
         }
     }
 
-    return $template;
-}
+    public function isTemplate(\SimpleXMLElement $entries)
+    {
+        $template = true;
 
-public function commitDay(\DateTime $date, User $user)
-{
-    $date = $this->fatSecret->dateTimeToDateInt($date);
+        foreach ($entries->exercise_entry as $entry) {
+            if (0 == intval($entry->is_template_value)) {
+                $template = false;
+            }
+        }
 
-    $this->fatSecret->doApiCall('exercise_entries.commit_day', array(
+        return $template;
+    }
+
+    public function commitDay(\DateTime $date, User $user)
+    {
+        $date = $this->fatSecret->dateTimeToDateInt($date);
+
+        $this->fatSecret->doApiCall('exercise_entries.commit_day', array(
                 'date' => $date,
                 ), 'exercise', $user);
-}
-
+    }
 }

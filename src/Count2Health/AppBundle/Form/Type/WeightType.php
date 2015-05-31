@@ -24,27 +24,25 @@ class WeightType extends AbstractType
             $builder
                 ->add('weight', 'hidden')
                 ->addViewTransformer(new NullWeightTransformer());
-        }
-        else {
-        if ($options['units'] == 'lb') {
-        $builder
+        } else {
+            if ($options['units'] == 'lb') {
+                $builder
             ->add('weight', 'number', array(
                         'precision' => 1,
                         'label' => 'lb',
                         ))
             ->addViewTransformer(new ImperialWeightTransformer())
             ;
-        }
-        else {
-            $builder
+            } else {
+                $builder
             ->add('weight', 'number', array(
                         'label' => 'kg',
                         'precision' => 1,
                         ))
             ->addViewTransformer(new MetricWeightTransformer())
                 ;
-        }
             }
+        }
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options)
@@ -65,5 +63,4 @@ class WeightType extends AbstractType
                     'error_bubbling' => false,
                     ));
     }
-
 }

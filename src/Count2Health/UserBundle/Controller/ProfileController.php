@@ -2,10 +2,8 @@
 
 namespace Count2Health\UserBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -26,7 +24,7 @@ class ProfileController extends BaseController
         }
 
         return $this->render('FOSUserBundle:Profile:show.html.twig', array(
-                    'user' => $user
+                    'user' => $user,
                     ));
     }
 
@@ -40,7 +38,7 @@ class ProfileController extends BaseController
 
         $personal = $user->getPersonalDetails();
         if (null === $personal) {
-            $personal = new PersonalDetails;
+            $personal = new PersonalDetails();
             $personal->setUser($user);
             $personal->setBirthDate(
                     new \DateTime('today', $user->getDateTimeZone()));
@@ -58,6 +56,7 @@ class ProfileController extends BaseController
 
             $this->addFlash('success',
                     'Your personal details have successfully been modified.');
+
             return $this->redirectToRoute('fos_user_profile_show');
         }
 
@@ -76,9 +75,10 @@ class ProfileController extends BaseController
 
         if (null === $user->getPersonalDetails()) {
             $request->getSession()->getFlashBag()->add('error',
-                    'You must modify your account settings before ' .
+                    'You must modify your account settings before '.
                     'setting your health profile.');
-            return $this->redirectToRoute("profile_personal_details");
+
+            return $this->redirectToRoute('profile_personal_details');
         }
 
         return array(
@@ -96,8 +96,9 @@ class ProfileController extends BaseController
 
         if (null === $user->getPersonalDetails()) {
             $request->getFlashBag()->add('error',
-                    'Please modify your account settings before setting ' .
+                    'Please modify your account settings before setting '.
                     'your health plan.');
+
             return $this->redirectToRoute('profile_personal_details');
         }
 
@@ -106,18 +107,16 @@ class ProfileController extends BaseController
 
         if (null == $user->getHealthPlan()
                 || $type != $user->getHealthPlan()->getType()) {
-        $healthPlan = new HealthPlan;
-        $healthPlan->setUser($user);
-        $healthPlan->setType($type);
+            $healthPlan = new HealthPlan();
+            $healthPlan->setUser($user);
+            $healthPlan->setType($type);
 
-        if ($type == 'maintenance') {
-            $healthPlan->setGoalWeight($user->getPersonalDetails()->getStartWeight());
-        }
-        else {
-        $healthPlan->setGoalDate(new \DateTime());
-        }
-        }
-        else {
+            if ($type == 'maintenance') {
+                $healthPlan->setGoalWeight($user->getPersonalDetails()->getStartWeight());
+            } else {
+                $healthPlan->setGoalDate(new \DateTime());
+            }
+        } else {
             $healthPlan = $user->getHealthPlan();
         }
 
@@ -137,8 +136,7 @@ class ProfileController extends BaseController
             $presets = array();
 
             $options = array();
-                switch ($user->getPersonalDetails()->getWeightUnits())
-                {
+            switch ($user->getPersonalDetails()->getWeightUnits()) {
                     case 'lb':
                         $options = array(
                                 250 => new Mass('0.5', 'lb'),
@@ -161,25 +159,23 @@ class ProfileController extends BaseController
             if ($type == 'loss') {
                 if ($user->getPersonalDetails()->getGender() == 'male') {
                     $minimum = 1500;
-                }
-                elseif ($user->getPersonalDetails()->getGender() == 'female') {
+                } elseif ($user->getPersonalDetails()->getGender() == 'female') {
                     $minimum = 1200;
                 }
             }
 
-foreach ($options as $calories => $weight)
-{
-    if ($type == 'loss'
+            foreach ($options as $calories => $weight) {
+                if ($type == 'loss'
             && ($tdee - $calories) < $minimum) {
-        continue;
-    }
-    $presets[] = array(
+                    continue;
+                }
+                $presets[] = array(
             'calories' => $calories,
             'weight' => $weight,
             );
-}
+            }
 
-$vars['presets'] = $presets;
+            $vars['presets'] = $presets;
         }
 
         if ($form->isValid()) {
@@ -190,7 +186,7 @@ $vars['presets'] = $presets;
             return $this->redirectToRoute('fos_user_profile_show');
         }
 
-return $vars;
+        return $vars;
     }
 
     /**
@@ -205,264 +201,252 @@ return $vars;
 
         $user = $this->getUser();
 
-$height = $user->getPersonalDetails()->getHeight()->toUnit('in');
-$gender = $user->getPersonalDetails()->getGender();
+        $height = $user->getPersonalDetails()->getHeight()->toUnit('in');
+        $gender = $user->getPersonalDetails()->getGender();
 
-if ('male' == $gender) {
-    $weight = 52;
+        if ('male' == $gender) {
+            $weight = 52;
 
-    if ($height > 60) {
-        $weight += 1.9 * floor($height - 60);
-    }
-}
-elseif ('female' == $gender) {
-    $weight = 49;
+            if ($height > 60) {
+                $weight += 1.9 * floor($height - 60);
+            }
+        } elseif ('female' == $gender) {
+            $weight = 49;
 
-    if ($height > 60) {
-        $weight += 1.7 * floor($height - 60);
-    }
-}
+            if ($height > 60) {
+                $weight += 1.7 * floor($height - 60);
+            }
+        }
 
-    $weight = new Mass($weight, 'kg');
-    return new Response(round($weight->toUnit($user->getPersonalDetails()->getWeightUnits()), 1));
+        $weight = new Mass($weight, 'kg');
+
+        return new Response(round($weight->toUnit($user->getPersonalDetails()->getWeightUnits()), 1));
     }
 
 /**
  * Calculate the goal date based on target calorie deficit/excess.
  *
-     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+ * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
  */
 public function calculateGoalDateAction(Request $request)
 {
-        if (!$request->isXmlHttpRequest()) {
-            throw $this->createAccessDeniedException(
+    if (!$request->isXmlHttpRequest()) {
+        throw $this->createAccessDeniedException(
                     'Request must be an ajax request.');
-        }
+    }
 
-        $user = $this->getUser();
-        $date = new \DateTime('today', $user->getDateTimeZone());
+    $user = $this->getUser();
+    $date = new \DateTime('today', $user->getDateTimeZone());
 
-        $result = array();
+    $result = array();
 
-$calories = $request->request->get('calories');
-$tdee = $this->get('user_stats')->getEstimatedTDEE($date, $user);
-$consumed = $tdee - $calories;
+    $calories = $request->request->get('calories');
+    $tdee = $this->get('user_stats')->getEstimatedTDEE($date, $user);
+    $consumed = $tdee - $calories;
 
-if ($request->request->get('goalWeight')) {
-if ($request->request->get('type') == 'loss'
+    if ($request->request->get('goalWeight')) {
+        if ($request->request->get('type') == 'loss'
         && (('male' == $user->getPersonalDetails()->getGender()
             && $consumed < 1500)
             || ('female' == $user->getPersonalDetails()->getGender()
                 && $consumed < 1200))) {
-    $result['status'] = 'error';
-    $result['error'] = 'This is an unhealthy rate of weight loss.';
-}
-else {
-$goalWeight = new Mass($request->request->get('goalWeight'),
+            $result['status'] = 'error';
+            $result['error'] = 'This is an unhealthy rate of weight loss.';
+        } else {
+            $goalWeight = new Mass($request->request->get('goalWeight'),
         $user->getPersonalDetails()->getWeightUnits());
 
 // Does the user have any weight entries?
 $prevEntries = $this->get('fatsecret.weight')
 ->getEntries($date, $user, 1, true);
 
-if (empty($prevEntries)) {
-    $weight = $user->getPersonalDetails()->getStartWeight();
-}
-else {
-    $weight = new Mass(floatval($prevEntries[0]->weight_kg), 'kg');
-}
+            if (empty($prevEntries)) {
+                $weight = $user->getPersonalDetails()->getStartWeight();
+            } else {
+                $weight = new Mass(floatval($prevEntries[0]->weight_kg), 'kg');
+            }
 
-$weightToLose = $weight->subtract($goalWeight);
+            $weightToLose = $weight->subtract($goalWeight);
 
-$days = $weightToLose->toUnit('lb')
+            $days = $weightToLose->toUnit('lb')
 * 3500 / $calories;
 
-$date->add(new \DateInterval('P' . floor($days) . 'D'));
+            $date->add(new \DateInterval('P'.floor($days).'D'));
 
-$result['status'] = 'success';
-                $result['year'] = $date->format('Y');
-                $result['month'] = $date->format('n');
-                $result['day'] = $date->format('j');
-                }
-}
-else {
-    $result['status'] = 'error';
-    $result['error'] = 'Please enter a goal weight.';
-}
+            $result['status'] = 'success';
+            $result['year'] = $date->format('Y');
+            $result['month'] = $date->format('n');
+            $result['day'] = $date->format('j');
+        }
+    } else {
+        $result['status'] = 'error';
+        $result['error'] = 'Please enter a goal weight.';
+    }
 
-$response = new Response;
-$response->headers->set('Content-Type', 'application/json');
-$response->setContent(json_encode($result));
+    $response = new Response();
+    $response->headers->set('Content-Type', 'application/json');
+    $response->setContent(json_encode($result));
 
-return $response;
+    return $response;
 }
 
 /**
-     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+ * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
  */
 public function calculateTargetCaloriesAction(Request $request)
 {
-        if (!$request->isXmlHttpRequest()) {
-            throw $this->createAccessDeniedException(
+    if (!$request->isXmlHttpRequest()) {
+        throw $this->createAccessDeniedException(
                     'Request must be an ajax request.');
-        }
+    }
 
-        $user = $this->getUser();
-        $result = array();
+    $user = $this->getUser();
+    $result = array();
 
-        $requestDate = $request->request->get('goalDate');
+    $requestDate = $request->request->get('goalDate');
 
-        if ($request->request->get('goalWeight')) {
+    if ($request->request->get('goalWeight')) {
         $goalWeight = new Mass($request->request->get('goalWeight'),
                 $user->getPersonalDetails()->getWeightUnits());
-                $goalDate = new \DateTime(
+        $goalDate = new \DateTime(
                     sprintf('%4d-%02d-%02d',
                         $requestDate['year'], $requestDate['month'], $requestDate['day']
                         ), $user->getDateTimeZone());
 
-                    $today = new \DateTime('today', $user->getDateTimeZone());
-                    $interval = $goalDate->diff($today);
+        $today = new \DateTime('today', $user->getDateTimeZone());
+        $interval = $goalDate->diff($today);
 
-$days = $interval->days;
+        $days = $interval->days;
 
 // Is there a weight for today?
 $prevEntries = $this->get('fatsecret.weight')
 ->getEntries($today, $user, 1, true);
 
-if (empty($prevEntries)) {
-$weight = $user->getPersonalDetails()->getStartWeight();
-}
-else {
-$weight = new Mass(floatval($prevEntries[0]->weight_kg), 'kg');
-}
+        if (empty($prevEntries)) {
+            $weight = $user->getPersonalDetails()->getStartWeight();
+        } else {
+            $weight = new Mass(floatval($prevEntries[0]->weight_kg), 'kg');
+        }
 
-$weightToLose = $weight->subtract($goalWeight)->toUnit('lb');
+        $weightToLose = $weight->subtract($goalWeight)->toUnit('lb');
 
-$weightToLose = abs($weightToLose);
+        $weightToLose = abs($weightToLose);
 
-$calories = round($weightToLose / $days * 3500);
-$tdee = $this->get('user_stats')->getEstimatedTDEE($today, $user);
-$consumed = $tdee - $calories;
+        $calories = round($weightToLose / $days * 3500);
+        $tdee = $this->get('user_stats')->getEstimatedTDEE($today, $user);
+        $consumed = $tdee - $calories;
 
-if ($request->request->get('type') == 'loss'
+        if ($request->request->get('type') == 'loss'
         && (('male' == $user->getPersonalDetails()->getGender()
             && $consumed < 1500)
             || ('female' == $user->getPersonalDetails()->getGender()
                 && $consumed < 1200))) {
-    $result['status'] = 'error';
-    $result['error'] = 'This rate of weight loss is unhealthy. Please ' .
+            $result['status'] = 'error';
+            $result['error'] = 'This rate of weight loss is unhealthy. Please '.
         'choose a later date.';
-}
-else {
-    $result['status'] = 'success';
-    $result['calories'] = $calories;
-}
-}
-else {
-    $result['status'] = 'error';
-    $result['error'] = 'Please enter a goal weight.';
-}
+        } else {
+            $result['status'] = 'success';
+            $result['calories'] = $calories;
+        }
+    } else {
+        $result['status'] = 'error';
+        $result['error'] = 'Please enter a goal weight.';
+    }
 
-$response = new Response;
-$response->headers->set('Content-Type', 'application/json');
-$response->setContent(json_encode($result));
+    $response = new Response();
+    $response->headers->set('Content-Type', 'application/json');
+    $response->setContent(json_encode($result));
 
-return $response;
+    return $response;
 }
 
 /**
-     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+ * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
  */
 public function calculateBmiAction(Request $request)
 {
-        if (!$request->isXmlHttpRequest()) {
-            throw $this->createAccessDeniedException(
+    if (!$request->isXmlHttpRequest()) {
+        throw $this->createAccessDeniedException(
                     'Request must be an ajax request.');
-        }
+    }
 
-        $user = $this->getUser();
-        $weight = new Mass($request->request->get('weight'),
+    $user = $this->getUser();
+    $weight = new Mass($request->request->get('weight'),
                 $user->getPersonalDetails()->getWeightUnits());
 
-        $bmi = round(
+    $bmi = round(
                     $weight->toUnit('kg')
                     / pow($user->getPersonalDetails()->getHeight()->toUnit('m'), 2),
                 1);
 
-        if ($bmi < 18.5) {
-            $categorization = 'underweight';
-        }
-        elseif ($bmi < 25) {
-            $categorization = 'healthy';
-        }
-        elseif ($bmi < 30) {
-            $categorization = 'overweight';
-        }
-        elseif ($bmi < 40) {
-            $categorization = 'obese';
-        }
-        else {
-            $categorization = 'morbidly obese';
-        }
+    if ($bmi < 18.5) {
+        $categorization = 'underweight';
+    } elseif ($bmi < 25) {
+        $categorization = 'healthy';
+    } elseif ($bmi < 30) {
+        $categorization = 'overweight';
+    } elseif ($bmi < 40) {
+        $categorization = 'obese';
+    } else {
+        $categorization = 'morbidly obese';
+    }
 
-        $response = new Response;
-        $response->headers->set('Content-Type', 'application/json');
-        $response->setContent(json_encode(array(
+    $response = new Response();
+    $response->headers->set('Content-Type', 'application/json');
+    $response->setContent(json_encode(array(
                         'bmi' => $bmi,
                         'categorization' => $categorization,
                         )));
 
-        return $response;
+    return $response;
 }
 
 /**
-     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+ * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
  */
 public function calculateCalorieDeficitFromWeightRateAction(Request $request)
 {
-        if (!$request->isXmlHttpRequest()) {
-            throw $this->createAccessDeniedException(
+    if (!$request->isXmlHttpRequest()) {
+        throw $this->createAccessDeniedException(
                     'Request must be an ajax request.');
-        }
+    }
 
-        $user = $this->getUser();
-        $date = new \DateTime('today', $user->getDateTimeZone());
+    $user = $this->getUser();
+    $date = new \DateTime('today', $user->getDateTimeZone());
 
-$weight = new Mass($request->request->get('weight'),
+    $weight = new Mass($request->request->get('weight'),
         $user->getPersonalDetails()->getWeightUnits());
 
-$calories = $weight->toUnit('lb') / 7.0 * 3500;
+    $calories = $weight->toUnit('lb') / 7.0 * 3500;
 
-$result = array();
+    $result = array();
 
-if ($request->request->get('type') == 'loss') {
-    $consumed = $this->get('user_stats')->getEstimatedTDEE($date, $user)
+    if ($request->request->get('type') == 'loss') {
+        $consumed = $this->get('user_stats')->getEstimatedTDEE($date, $user)
         - $calories;
 
-if (($user->getPersonalDetails()->getGender() == 'male' && $consumed < 1500)
+        if (($user->getPersonalDetails()->getGender() == 'male' && $consumed < 1500)
         || ($user->getPersonalDetails()->getGender() == 'female' && $consumed < 1200)) {
-    $result['status'] = 'error';
-}
-else {
-    $result['status'] = 'success';
-    $result['calories'] = $calories;
-}
-}
-else {
-    $result['status'] = 'success';
-    $result['calories'] = $calories;
-}
+            $result['status'] = 'error';
+        } else {
+            $result['status'] = 'success';
+            $result['calories'] = $calories;
+        }
+    } else {
+        $result['status'] = 'success';
+        $result['calories'] = $calories;
+    }
 
-$response = new Response;
-$response->headers->set('Content-Type', 'application/json');
-$response->setContent(json_encode($result));
+    $response = new Response();
+    $response->headers->set('Content-Type', 'application/json');
+    $response->setContent(json_encode($result));
 
-return $response;
+    return $response;
 }
 
 /**
  * @Template()
-     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+ * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
  */
 public function connectAction(Request $request)
 {
@@ -470,54 +454,53 @@ public function connectAction(Request $request)
 }
 
 /**
-     * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+ * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
  */
 public function connectConfirmAction()
 {
     $user = $this->getUser();
 
-$response = $this->get('fatsecret')->getRequestToken(
+    $response = $this->get('fatsecret')->getRequestToken(
         $this->generateUrl('profile_connected', array(), true)
         );
-var_dump($response);
+    var_dump($response);
 
-$token = $response['oauth_token'];
-$secret = $response['oauth_token_secret'];
+    $token = $response['oauth_token'];
+    $secret = $response['oauth_token_secret'];
 
-$em = $this->getDoctrine()->getEntityManager();
-$user->setRequestToken($token);
-$user->setRequestSecret($secret);
-$em->flush();
+    $em = $this->getDoctrine()->getEntityManager();
+    $user->setRequestToken($token);
+    $user->setRequestSecret($secret);
+    $em->flush();
 
-$url = 'http://www.fatsecret.com/oauth/authorize?' .
+    $url = 'http://www.fatsecret.com/oauth/authorize?'.
     http_build_query(array(
                 'oauth_token' => $token,
                 ));
 
-return $this->redirect($url);
+    return $this->redirect($url);
 }
 
-public function connectedAction(Request $request)
-{
-$em = $this->getDoctrine()->getManager();
-$token = $request->query->get('oauth_token');
-$verifier = $request->query->get('oauth_verifier');
+    public function connectedAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $token = $request->query->get('oauth_token');
+        $verifier = $request->query->get('oauth_verifier');
 
-$user = $em
+        $user = $em
     ->getRepository('Count2HealthUserBundle:User')
     ->findOneByRequestToken($token);
 
-$response = $this->get('fatsecret')->getAccessToken($user, $verifier);
+        $response = $this->get('fatsecret')->getAccessToken($user, $verifier);
 
-$user->setAuthToken($response['oauth_token']);
-$user->setAuthSecret($response['oauth_token_secret']);
-$user->setConnected(true);
-$em->flush();
+        $user->setAuthToken($response['oauth_token']);
+        $user->setAuthSecret($response['oauth_token_secret']);
+        $user->setConnected(true);
+        $em->flush();
 
-$request->getSession()->getFlashBag()->add('success',
+        $request->getSession()->getFlashBag()->add('success',
         'Your account has been connected to FatSecret.');
 
-return $this->redirectToRoute('fos_user_profile_show');
-}
-
+        return $this->redirectToRoute('fos_user_profile_show');
+    }
 }
