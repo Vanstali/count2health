@@ -4,6 +4,9 @@
 
 {% block body %}
 <h1>Browse Activities</h1>
+
+{{ include('Count2HealthAppBundle:Activities:actions.html.twig') }}
+
 {% if category is defined %}
 <h2>
 <a href="{{ path('activities_browse') }}">Browse</a>
