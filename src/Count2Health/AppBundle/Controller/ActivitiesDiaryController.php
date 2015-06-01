@@ -170,4 +170,79 @@ public function commitAction($date)
             'date' => $date->format('Y-m-d'),
             ));
 }
+
+/**
+ * @Route("/month.html", name="activities_diary_monthly_log")
+ * @Route("/month/{year}/{month}.html",
+ *     name="activities_diary_monthly_log_by_date")
+ * @Template()
+ * @Security("is_granted('IS_AUTHENTICATED_REMEMBERED')")
+ */
+public function getMonthlyLogAction(Request $request, $year = null, $month = null)
+{
+    $user = $this->getUser();
+
+    $session = $request->getSession();
+
+    if (!$year || !$month) {
+        if ($session->has('date')) {
+            $d = $session->get('date');
+        } else {
+            $d = new \DateTime('today', $user->getDateTimeZone());
+        }
+
+        $year = $d->format('Y');
+        $month = $d->format('m');
+    }
+
+    $date = new \DateTime(
+        sprintf('%04d-%02d-01', $year, $month),
+        $user->getDateTimeZone());
+
+    $lastMonth = clone $date;
+    $lastMonth->sub(new \DateInterval('P1M'));
+
+    $nextMonth = clone $date;
+    $nextMonth->add(new \DateInterval('P1M'));
+
+    $entries = $this->get('fatsecret.exercise_entries')
+    ->getMonth($date, $user);
+    $numEntries = count($entries->day);
+
+    $endDate = $this->get('fatsecret')
+    ->dateIntToDateTime($entries->to_date_int, $user);
+
+    $fudgeFactor = $this->get('user_stats')
+    ->getFudgeFactor($endDate, $user);
+
+    $bmr = $this->get('user_stats')
+    ->getBMR($endDate, $user);
+
+    $calories = 0;
+    $days = array();
+
+    foreach ($entries->day as $entry) {
+        $day = array();
+        $day['date'] = $this->get('fatsecret')
+            ->dateIntToDateTime($entry->date_int, $user);
+        $day['calories'] = intval($entry->calories * $fudgeFactor);
+        $calories += $day['calories'];
+        array_unshift($days, $day);
+    }
+
+    $averageCaloriesPerDay = intval(round($calories / floatval($numEntries)));
+    $activityLevel = $averageCaloriesPerDay / floatval($bmr);
+
+    return array(
+            'days' => $days,
+            'date' => $date,
+            'calories' => $calories,
+            'fudgeFactor' => $fudgeFactor,
+            'bmr' => $bmr,
+            'averageCaloriesPerDay' => $averageCaloriesPerDay,
+            'activityLevel' => $activityLevel,
+            'lastMonth' => $lastMonth,
+            'nextMonth' => $nextMonth,
+            );
+}
 }

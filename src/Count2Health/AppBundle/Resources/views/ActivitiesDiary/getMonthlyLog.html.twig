@@ -1,0 +1,55 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Monthly Log for {{ date|date('F, Y') }}{% endblock %}
+
+{% block body %}
+<h1>Monthly Log for {{ date|date('F, Y') }}</h1>
+
+{{ include('Count2HealthAppBundle:Activities:actions.html.twig') }}
+
+<p>
+<a href="{{ path('activities_diary_monthly_log_by_date', {'year': lastMonth|date('Y'),
+    'month': lastMonth|date('m')}) }}"
+accesskey="p"
+title="{{ lastMonth|date('F, Y') }}">
+&larr;
+</a>
+{{ date|date('F, Y') }}
+<a href="{{ path('activities_diary_monthly_log_by_date', {'year': nextMonth|date('Y'),
+    'month': nextMonth|date('m')}) }}"
+accesskey="n"
+title="{{ nextMonth|date('F, Y') }}">
+&rarr;
+</a>
+</p>
+
+<p>BMR: {{ bmr|round }} calories</p>
+
+<p>Average calories burned per day: {{ averageCaloriesPerDay }} calories</p>
+
+<p>Fudge factor: {{ fudgeFactor|format_percent }}</p>
+
+<p>Activity level ratio: {{ activityLevel|round(2) }}</p>
+
+<table border="1" cellpadding="3" cellspacing="3">
+<thead>
+<tr>
+<th>Date</th>
+<th>Calories</th>
+</tr>
+</thead>
+
+<tbody>
+{% for day in days %}
+<tr>
+<th>
+<a href="{{ path('activities_diary_by_date', {'date': day.date|date('Y-m-d')}) }}">
+{{ day.date|date('j F') }}
+</a>
+</th>
+<td>{{ day.calories }} calories</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}
