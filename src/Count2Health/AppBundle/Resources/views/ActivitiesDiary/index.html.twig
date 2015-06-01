@@ -5,6 +5,8 @@
 {% block body %}
 <h1>Activity Diary</h1>
 
+{{ include('Count2HealthAppBundle:Activities:actions.html.twig') }}
+
 <p>
 <a href="{{ path('activities_diary_by_date', {'date': yesterday|date('Y-m-d')}) }}"
 title="Yesterday"
@@ -16,12 +18,6 @@ accesskey="p">
 title="Tomorrow"
 accesskey="n">
 &rarr;
-</a>
-</p>
-
-<p>
-<a href="{{ path('activities_browse') }}">
-Browse
 </a>
 </p>
 
