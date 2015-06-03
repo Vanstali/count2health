@@ -34,6 +34,18 @@ title="{{ nextMonth|date('F, Y') }}">
 
 <p>You have {{ weightToLose|weight(app.user) }} to go.</p>
 
+{% if weightLostThisMonth is not empty %}
+<p>Weight lost this month: {{ weightLostThisMonth|weight(app.user) }}</p>
+{% endif %}
+
+{% if weightLostPerWeek is not empty %}
+<p>Weight lost per week: {{ weightLostPerWeek|weight(app.user) }}</p>
+{% endif %}
+
+{% if averageCalorieDeficit is not empty %}
+<p>Average calorie deficit: {{ averageCalorieDeficit|round }}</p>
+{% endif %}
+
 <table border="1" cellpadding="3" cellspacing="3">
 <thead>
 <tr>

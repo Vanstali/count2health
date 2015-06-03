@@ -134,6 +134,50 @@ class UserStats
                 'kg');
     }
 
+    public function getWeightLostThisMonth(\DateTime $date, User $user)
+    {
+        $tz = $user->getDateTimeZone();
+
+        $entries = $this->fatSecretWeight
+            ->getMonth($date, $user, 31, true);
+
+        $weights = array();
+
+        foreach ($entries->day as $day) {
+            $weights[] = $day;
+        }
+
+        $numWeights = count($weights);
+
+        if ($numWeights < 2) {
+            return;
+        }
+
+        usort($weights, function ($a, $b) use ($user) {
+                    if ((int) $a->date_int < (int) $b->date_int) {
+                        return -1;
+                    } elseif ((int) $a->date_int > (int) $b->date_int) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                    });
+
+        $startWeight = $weights[0];
+        $endWeight = $weights[$numWeights - 1];
+        $startTrend = $this->fatSecretWeight
+    ->calculateTrend($this->fatSecret->dateIntToDateTime(
+                $startWeight->date_int, $user),
+            $user);
+        $endTrend = $this->fatSecretWeight
+    ->calculateTrend($this->fatSecret->dateIntToDateTime(
+                $endWeight->date_int, $user),
+            $user);
+
+        return new Mass(($startTrend->toUnit('kg') - $endTrend->toUnit('kg')),
+                'kg');
+    }
+
     public function getDailyCalorieDeficit(\DateTime $date, User $user)
     {
         $weights = $this->fatSecretWeight
@@ -161,28 +205,113 @@ class UserStats
         return round($perDay * 3500);
     }
 
+    public function getDailyCalorieDeficitThisMonth(\DateTime $date, User $user)
+    {
+        $entries = $this->fatSecretWeight
+    ->getMonth($date, $user);
+
+        $weights = array();
+
+        foreach ($entries->day as $day) {
+            $weights[] = $day;
+        }
+
+        $numWeights = count($weights);
+
+        if ($numWeights < 2) {
+            return;
+        }
+
+        usort($weights, function ($a, $b) use ($user) {
+                    if ((int) $a->date_int < (int) $b->date_int) {
+                        return -1;
+                    } elseif ((int) $a->date_int > (int) $b->date_int) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                    });
+
+        $startDate = $this->fatSecret
+->dateIntToDateTime($weights[0]->date_int, $user);
+        $endDate = $this->fatSecret
+->dateIntToDateTime($weights[$numWeights - 1]->date_int, $user);
+
+        $startWeight = $this->fatSecretWeight
+->calculateTrend($startDate, $user);
+        $endWeight = $this->fatSecretWeight
+->calculateTrend($endDate, $user);
+
+        $perDay = $startWeight->toUnit('lb') - $endWeight->toUnit('lb');
+        $perDay /= floatval($numWeights - 1);
+
+        return $perDay * 3500;
+    }
+
+    public function getWeightLostPerWeekThisMonth(\DateTime $date, User $user)
+    {
+        $calories = $this->getDailyCalorieDeficitThisMonth($date, $user);
+
+        if (null == $calories) {
+            return;
+        }
+
+        $weight = $calories / 3500.0 * 7;
+
+        return new Mass($weight, 'lb');
+    }
+
     public function getCaloriesConsumedPerDay(\DateTime $date, User $user)
     {
         $entries = $this->fatSecretFoodEntries
 ->getEntries($date, $user, 30);
 
-        if (!empty($entries)) {
-            $calories = 0;
-            $num = 0;
-
-            foreach ($entries as $day) {
-                if (intval($day->calories) > 0) {
-                    $num++;
-                    $calories += intval($day->calories);
-                }
-            }
-
-            if ($num == 0) {
-                return 0;
-            }
-
-            return round(floatval($calories) / $num);
+        if (empty($entries)) {
+            return;
         }
+
+        $calories = 0;
+        $num = 0;
+
+        foreach ($entries as $day) {
+            if (intval($day->calories) > 0) {
+                $num++;
+                $calories += intval($day->calories);
+            }
+        }
+
+        if ($num == 0) {
+            return 0;
+        }
+
+        return round(floatval($calories) / $num);
+    }
+
+    public function getCaloriesConsumedPerDayThisMonth(\DateTime $date,
+            User $user)
+    {
+        $entries = $this->fatSecretFoodEntries
+->getMonth($date, $user);
+
+        if (empty($entries->day)) {
+            return;
+        }
+
+        $calories = 0;
+        $num = 0;
+
+        foreach ($entries->day as $day) {
+            if (intval($day->calories) > 0) {
+                $num++;
+                $calories += intval($day->calories);
+            }
+        }
+
+        if ($num == 0) {
+            return 0;
+        }
+
+        return round(floatval($calories) / $num);
     }
 
     public function getBMR(\DateTime $date, User $user)

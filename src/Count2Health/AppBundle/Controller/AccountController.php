@@ -37,17 +37,6 @@ class AccountController extends Controller
             );
 
         if (null !== $user->getPersonalDetails()) {
-            $vars['bmr'] = $this->get('user_stats')->getBMR($date, $user);
-            $vars['tdee'] = $this->get('user_stats')->getEstimatedTDEE($date, $user);
-            $vars['inferredTdee'] = $this->get('user_stats')->getTDEE($date, $user);
-
-            $weightLossPerWeek = $this->get('user_stats')
-            ->getWeightLossPerWeek($user);
-
-            if (null !== $weightLossPerWeek) {
-                $vars['weightLossPerWeek'] = $weightLossPerWeek;
-            }
-
             $lastWeekWeightLoss = $this->get('user_stats')
             ->getLastWeekWeightLoss($user);
 
@@ -60,20 +49,6 @@ class AccountController extends Controller
 
             if (null !== $lastMonthWeightLoss) {
                 $vars['weightLossLast30Days'] = $lastMonthWeightLoss;
-            }
-
-            $caloriesConsumedPerDay = $this->get('user_stats')
-            ->getCaloriesConsumedPerDay($date, $user);
-
-            if (null !== $caloriesConsumedPerDay) {
-                $vars['caloriesConsumedPerDay'] = $caloriesConsumedPerDay;
-            }
-
-            $dailyCalorieDeficit = $this->get('user_stats')
-            ->getDailyCalorieDeficit($date, $user);
-
-            if (null !== $dailyCalorieDeficit) {
-                $vars['dailyCalorieDeficit'] = $dailyCalorieDeficit;
             }
         }
 
@@ -90,11 +65,14 @@ class AccountController extends Controller
                 'kg'
                 );
 
-        if (isset($vars['dailyCalorieDeficit'])) {
+        $dailyCalorieDeficit = $this->get('user_stats')
+            ->getDailyCalorieDeficit($date, $user);
+
+        if (null != $dailyCalorieDeficit) {
             $d = new \DateTime('today', $user->getDateTimeZone());
 
             $days = $vars['weightToLose']->toUnit('lb') * 3500
-                / $vars['dailyCalorieDeficit'];
+                / $dailyCalorieDeficit;
 
             if ($days > 0) {
                 $d->add(new \DateInterval('P'.ceil($days).'D'));

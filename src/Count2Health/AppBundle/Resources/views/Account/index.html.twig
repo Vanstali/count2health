@@ -42,10 +42,6 @@
 <div class="span-10 last">
 <h2>Your Health Journey At A Glance</h2>
 </div>
-{% if weightLossPerWeek is defined %}
-<div class="span-6 text-right">Weight Loss<br>Per Week</div>
-<div class="span-4 last">{{ weightLossPerWeek|weight(app.user) }}</div>
-{% endif %}
 {% if weightLossLast7Days is defined %}
 <div class="span-6 text-right">Weight Loss<br>(Last 7 Days)</div>
 <div class="span-4 last">{{ weightLossLast7Days|weight(app.user) }}</div>
@@ -53,26 +49,6 @@
 {% if weightLossLast30Days is defined %}
 <div class="span-6 text-right">Weight Loss<br>(Last 30 Days)</div>
 <div class="span-4 last">{{ weightLossLast30Days|weight(app.user) }}</div>
-{% endif %}
-{% if caloriesConsumedPerDay is defined %}
-<div class="span-6 text-right">Calories Consumed<br>Per Day</div>
-<div class="span-4 last">{{ caloriesConsumedPerDay }}</div>
-{% endif %}
-{% if dailyCalorieDeficit is defined %}
-<div class="span-6 text-right">Daily Calorie Deficit</div>
-<div class="span-4 last">{{ dailyCalorieDeficit }}</div>
-{% endif %}
-{% if bmr is defined %}
-<div class="span-6 text-right">Estimated BMR</div>
-<div class="span-4 last">{{ bmr|round }}</div>
-{% endif %}
-{% if tdee is defined %}
-<div class="span-6 text-right">Estimated TDEE</div>
-<div class="span-4 last">{{ tdee|round }}</div>
-{% endif %}
-{% if caloriesConsumedPerDay is defined and dailyCalorieDeficit is defined %}
-<div class="span-6 text-right">Inferred TDEE</div>
-<div class="span-4 last">{{ inferredTdee }}</div>
 {% endif %}
 <div class="span-6 text-right">Goal Weight</div>
 <div class="span-4 last">{{ profile.goal_weight|weight(app.user) }}</div>

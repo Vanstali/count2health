@@ -87,6 +87,13 @@ if (null == $month) {
                 }
                 });
 
+        $weightLostThisMonth = $this->get('user_stats')
+->getWeightLostThisMonth($month, $user);
+        $weightLostPerWeek = $this->get('user_stats')
+->getWeightLostPerWeekThisMonth($month, $user);
+        $averageCalorieDeficit = $this->get('user_stats')
+->getDailyCalorieDeficitThisMonth($month, $user);
+
         $dateData = array();
         $trendData = array();
         $weightData = array();
@@ -122,6 +129,9 @@ $start = $user->getPersonalDetails()->getStartWeight();
         'kg');
 
         return array(
+                'weightLostThisMonth' => $weightLostThisMonth,
+                'weightLostPerWeek' => $weightLostPerWeek,
+                'averageCalorieDeficit' => $averageCalorieDeficit,
                 'entries' => $entries,
                 'month' => $month,
 'lastMonth' => $lastMonth,

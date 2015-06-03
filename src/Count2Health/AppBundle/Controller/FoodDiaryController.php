@@ -342,7 +342,11 @@ public function getMonthlyLogAction(Request $request, $year = null, $month = nul
         array_unshift($days, $day);
     }
 
+    $caloriesConsumedPerDay = $this->get('user_stats')
+        ->getCaloriesConsumedPerDayThisMonth($date, $user);
+
     return array(
+            'caloriesConsumedPerDay' => $caloriesConsumedPerDay,
             'days' => $days,
             'date' => $date,
             'lastMonth' => $lastMonth,
