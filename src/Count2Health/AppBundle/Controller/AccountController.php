@@ -36,6 +36,10 @@ class AccountController extends Controller
                 'steps' => $steps,
             );
 
+        if (null != $user->getHealthPlan()) {
+            $vars['healthPlanType'] = $user->getHealthPlan()->getType();
+        }
+
         if (null !== $user->getPersonalDetails()) {
             $lastWeekWeightLoss = $this->get('user_stats')
             ->getLastWeekWeightLoss($user);
