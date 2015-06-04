@@ -331,19 +331,19 @@ $user);
         $fudgeFactor = $this->getFudgeFactor($date, $user);
 
         if (1.0 == $fudgeFactor) {
-        $bmr = 10 * $weight->toUnit('kg');
-        $bmr += 6.25 * $user->getPersonalDetails()->getHeight()->toUnit('cm');
+            $bmr = 10 * $weight->toUnit('kg');
+            $bmr += 6.25 * $user->getPersonalDetails()->getHeight()->toUnit('cm');
 
     // Get years since birth, i.e., age
     $today = new \DateTime();
-        $age = $today->diff($user->getPersonalDetails()->getBirthDate());
-        $bmr -= 4.92 * $age->y;
+            $age = $today->diff($user->getPersonalDetails()->getBirthDate());
+            $bmr -= 4.92 * $age->y;
 
-        if ('male' == $user->getPersonalDetails()->getGender()) {
-            $bmr += 5;
-        } elseif ('female' == $user->getPersonalDetails()->getGender()) {
-            $bmr -= 161;
-        }
+            if ('male' == $user->getPersonalDetails()->getGender()) {
+                $bmr += 5;
+            } elseif ('female' == $user->getPersonalDetails()->getGender()) {
+                $bmr -= 161;
+            }
         } else {
             $bmr = $weight->toUnit('kg') * 24 * $fudgeFactor;
         }
