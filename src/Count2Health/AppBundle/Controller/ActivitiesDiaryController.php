@@ -210,7 +210,7 @@ public function getMonthlyLogAction(Request $request, $year = null, $month = nul
     $numEntries = count($entries->day);
 
     $endDate = $this->get('fatsecret')
-    ->dateIntToDateTime($entries->to_date_int, $user);
+    ->dateIntToDateTime($entries->day[$numEntries-1]->date_int, $user);
 
     $fudgeFactor = $this->get('user_stats')
     ->getFudgeFactor($endDate, $user);
