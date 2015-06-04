@@ -42,6 +42,16 @@
 <div class="span-10 last">
 <h2>Your Health Journey At A Glance</h2>
 </div>
+{% if healthPlanType is defined %}
+<div class="span-6 text-right">Health Plan</div>
+<div class="span-4 last">{% if healthPlanType == 'loss' -%}
+Weight loss
+{%- elseif healthPlanType == 'maintenance' -%}
+Weight maintenance
+{%- elseif healthPlanType == 'gain' -%}
+Weight gain
+{%- endif %}</div>
+{% endif %}
 {% if weightLossLast7Days is defined %}
 <div class="span-6 text-right">Weight Loss<br>(Last 7 Days)</div>
 <div class="span-4 last">{{ weightLossLast7Days|weight(app.user) }}</div>
