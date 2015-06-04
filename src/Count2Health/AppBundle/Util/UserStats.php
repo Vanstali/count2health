@@ -328,6 +328,9 @@ $user);
             $weight = $user->getPersonalDetails()->getStartWeight();
         }
 
+        $fudgeFactor = $this->getFudgeFactor($date, $user);
+
+        if (1.0 == $fudgeFactor) {
         $bmr = 10 * $weight->toUnit('kg');
         $bmr += 6.25 * $user->getPersonalDetails()->getHeight()->toUnit('cm');
 
@@ -340,6 +343,9 @@ $user);
             $bmr += 5;
         } elseif ('female' == $user->getPersonalDetails()->getGender()) {
             $bmr -= 161;
+        }
+        } else {
+            $bmr = $weight->toUnit('kg') * 24 * $fudgeFactor;
         }
 
         return $bmr;
