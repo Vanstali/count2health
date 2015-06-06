@@ -45,6 +45,10 @@ class PersonalDetailsType extends AbstractType
         ->add('startWeight', 'weight', array(
                     'hidden' => true,
                     ))
+        ->add('startDate', 'date', array(
+                        'format' => 'MMMM d, yyyy',
+                        'years' => range(date('Y')-4, date('Y')),
+                    ))
             ->add('birthDate', 'birthday', array(
                         'format' => 'MMMM d, yyyy',
                         ))

@@ -40,6 +40,8 @@ class ProfileController extends BaseController
         if (null === $personal) {
             $personal = new PersonalDetails();
             $personal->setUser($user);
+            $personal->setStartDate(
+                    new \DateTime('today', $user->getDateTimeZone()));
             $personal->setBirthDate(
                     new \DateTime('today', $user->getDateTimeZone()));
             $user->setPersonalDetails($personal);

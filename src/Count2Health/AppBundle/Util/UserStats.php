@@ -440,28 +440,28 @@ return $this->getEstimatedTDEE($date, $user);
     {
         $tdee = $this->getTDEE($date, $user);
 
-        $targetDeficit = $user->getHealthPlan()->getTargetCalorieDeficit();
+        $targetDeficit = $this->getTargetDeficit($date, $user);
 
         $foodDiaryEntries = $this->fatSecretFoodEntries
-    ->getEntries($date, $user, 16, false);
-        $numEntries = count($foodDiaryEntries);
+    ->getMonth($date, $user, 16, false);
+        $numEntries = count($foodDiaryEntries->day);
 
-        if ($numEntries < 2) {
-            return $tdee - $targetDeficit;
+        if ($numEntries < 1) {
+            return round($tdee - $targetDeficit);
         }
 
 // We purposely unset the last element.
 // If there are fewer than 15 days, the first (last) entry will be garbage,
 // because it can't get average calories eaten per day.
 // If it is 16 days, we don't need the 16th day anyway.
-unset($foodDiaryEntries[$numEntries - 1]);
-        $numEntries--;
+//unset($foodDiaryEntries[$numEntries - 1]);
+        //$numEntries--;
 
         $type = $user->getHealthPlan()->getType();
         $fudgeFactor = $this->getFudgeFactor($date, $user);
         $deficit = 0;
 
-        foreach ($foodDiaryEntries as $entry) {
+        foreach ($foodDiaryEntries->day as $entry) {
             $calories = intval($entry->calories);
             if (0 == $calories) {
                 $numEntries--;
@@ -470,9 +470,19 @@ unset($foodDiaryEntries[$numEntries - 1]);
 
             $thisDate = $this->fatSecret
 ->dateIntToDateTime($entry->date_int, $user);
+
+            if ($thisDate >= $date) {
+                $numEntries--;
+                continue;
+            }
+
             $thisTdee = $this->getTDEE($thisDate, $user, $fudgeFactor);
 
             $deficit += ($thisTdee - $calories);
+        }
+
+        if ($numEntries <= 0) {
+            return round($tdee - $targetDeficit);
         }
 
         $deficitToday = $targetDeficit * ($numEntries + 15);
@@ -482,5 +492,82 @@ unset($foodDiaryEntries[$numEntries - 1]);
         $rdi = $tdee - $deficitToday;
 
         return round($rdi);
+    }
+
+    /**
+     * Get the target deficit.
+     *
+     * The target deficit takes into account the user's desired deficit, but
+     * also the variation from that deficit over all previous months.
+     *
+     * @param DateTime $date The date for which to obtain the deficit
+     * @param User     $user The user for whom to obtain the deficit
+     *
+     * @return int The target deficit for the given date
+     */
+    private function getTargetDeficit(\DateTime $date, User $user)
+    {
+        $targetDeficit = $user->getHealthPlan()->getTargetCalorieDeficit();
+
+        // Adjust the deficit to average out all previous months
+        $startDate = $user->getPersonalDetails()->getStartDate();
+        $startWeight = $user->getPersonalDetails()->getStartWeight();
+        $endDate = clone $date;
+        $endDate->modify('last day of last month');
+
+        if ($endDate < $startDate) {
+            // This is the first month
+            return $targetDeficit;
+        }
+
+        $endWeight = $this->fatSecretWeight
+            ->calculateTrend($endDate, $user);
+        $lastDay = clone $date;
+        $lastDay->modify('last day of 2 months');
+        $idealEndDate = $this->getIdealEndDate($user);
+        if ($lastDay > $idealEndDate) {
+            // Weight loss should be complete by this date
+            $lastDay = $idealEndDate;
+        }
+
+        $days = $endDate->diff($startDate);
+        $totalDays = $lastDay->diff($startDate);
+        $monthLength = $lastDay->diff($endDate);
+
+        $expectedDeltaWeight = $targetDeficit / 3500.0 * $totalDays->days;
+        $deltaWeight = $startWeight->toUnit('lb') - $endWeight->toUnit('lb');
+
+        $weightLeft = $expectedDeltaWeight - $deltaWeight;
+
+        return intval(round($weightLeft / floatval($monthLength->days) * 3500));
+    }
+
+    /**
+     * Calculates the ideal end date for the given user.
+     *
+     * The ideal end date is the date the user would reach their goal
+     * weight, if the target calorie deficit would be followed every day to
+     * the end.
+     *
+     * @param User $user The user whose ideal end date should be
+     *                   calculated
+     *
+     * @return DateTime The ideal end date
+     */
+    private function getIdealEndDate(User $user)
+    {
+        $startDate = $user->getPersonalDetails()->getStartDate();
+        $startWeight = $user->getPersonalDetails()->getStartWeight();
+        $goalWeight = $user->getHealthPlan()->getGoalWeight();
+        $targetDeficit = $user->getHealthPlan()->getTargetCalorieDeficit();
+
+        $weightDelta = $startWeight->toUnit('lb') - $goalWeight->toUnit('lb');
+
+        $days = floor($weightDelta / floatval($targetDeficit) * 3500);
+
+        $idealEndDate = clone $startDate;
+        $idealEndDate->add(new \DateInterval("P{$days}D"));
+
+        return $idealEndDate;
     }
 }

@@ -96,6 +96,14 @@ class PersonalDetails
     private $startWeight;
 
     /**
+     * @var DateTime
+     *
+     * @Assert\NotBlank()
+     * @ORM\Column(name="startDate", type="date")
+     */
+    private $startDate;
+
+    /**
      * @var \DateTime
      *
      * @Assert\NotNull(message="Please select your date of birth.")
@@ -317,5 +325,29 @@ class PersonalDetails
     public function getStartWeight()
     {
         return $this->startWeight;
+    }
+
+    /**
+     * Set startDate.
+     *
+     * @param \DateTime $startDate
+     *
+     * @return PersonalDetails
+     */
+    public function setStartDate($startDate)
+    {
+        $this->startDate = $startDate;
+
+        return $this;
+    }
+
+    /**
+     * Get startDate.
+     *
+     * @return \DateTime
+     */
+    public function getStartDate()
+    {
+        return $this->startDate;
     }
 }
