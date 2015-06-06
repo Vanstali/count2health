@@ -1,5 +1,9 @@
 <p>You've eaten: <span id="calories">{{ calories }}</span> of <span id="rdi">{{ rdi }}</span> calories</p>
 <p>Calories remaining: {{ rdi-calories }}</p>
+{% if recommendedActivityCalories is not empty %}
+<p>For best results, it is recommended you add another {{ recommendedActivityCalories }} calories of activity.
+<a href="{{ path('activities_diary') }}">View your activities here.</a></p>
+{% endif %}
 <p>Target deficit: {{ targetDeficit|round }} calories</p>
 <p>Deficit so far: {{ deficitToday|round }} calories</p>
 

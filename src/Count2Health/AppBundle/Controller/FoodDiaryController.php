@@ -65,6 +65,19 @@ public function showDayInfoAction(\DateTime $date)
     $rdi = $this->get('user_stats')->getRDI($date, $user);
     $tdee = $this->get('user_stats')->getTDEE($date, $user);
     $targetDeficit = $tdee - $rdi;
+    $recommendedActivityCalories = null;
+    $minimum = 0;
+
+    if ($user->getPersonalDetails()->getGender() == 'male') {
+        $minimum = 1500;
+    } else {
+        $minimum = 1200;
+    }
+
+    if ($rdi < $minimum) {
+        $recommendedActivityCalories = $minimum - $rdi;
+        $rdi = $minimum;
+    }
 
     $entries = $this->get('fatsecret.food_entries')->get($date, $user);
 
@@ -117,6 +130,7 @@ public function showDayInfoAction(\DateTime $date)
     return $this->render('Count2HealthAppBundle:FoodDiary:showDayInfo.html.twig',
 array(
         'rdi' => $rdi,
+        'recommendedActivityCalories' => $recommendedActivityCalories,
 'targetDeficit' => $targetDeficit,
 'deficitToday' => $deficitToday,
         'entries' => $entryArray,
