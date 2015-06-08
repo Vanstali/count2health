@@ -457,13 +457,6 @@ return $this->getEstimatedTDEE($date, $user);
             return round($tdee - $targetDeficit);
         }
 
-// We purposely unset the last element.
-// If there are fewer than 15 days, the first (last) entry will be garbage,
-// because it can't get average calories eaten per day.
-// If it is 16 days, we don't need the 16th day anyway.
-//unset($foodDiaryEntries[$numEntries - 1]);
-        //$numEntries--;
-
         $type = $user->getHealthPlan()->getType();
         $fudgeFactor = $this->getFudgeFactor($date, $user);
         $deficit = 0;
