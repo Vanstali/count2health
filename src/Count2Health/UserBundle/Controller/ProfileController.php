@@ -315,23 +315,13 @@ public function calculateTargetCaloriesAction(Request $request)
                         $requestDate['year'], $requestDate['month'], $requestDate['day']
                         ), $user->getDateTimeZone());
 
-        $today = new \DateTime('today', $user->getDateTimeZone());
+        $today = clone $user->getPersonalDetails()->getStartDate();
         $interval = $goalDate->diff($today);
 
         $days = $interval->days;
 
-// Is there a weight for today?
-$prevEntries = $this->get('fatsecret.weight')
-->getEntries($today, $user, 1, true);
-
-        if (empty($prevEntries)) {
-            $weight = $user->getPersonalDetails()->getStartWeight();
-        } else {
-            $weight = new Mass(floatval($prevEntries[0]->weight_kg), 'kg');
-        }
-
+        $weight = $user->getPersonalDetails()->getStartWeight();
         $weightToLose = $weight->subtract($goalWeight)->toUnit('lb');
-
         $weightToLose = abs($weightToLose);
 
         $calories = round($weightToLose / $days * 3500);

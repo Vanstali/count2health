@@ -326,26 +326,33 @@ class UserStats
 $user);
         } else {
             $weight = $user->getPersonalDetails()->getStartWeight();
+
+            return $this->calculateBMR($weight, $user);
         }
 
         $fudgeFactor = $this->getFudgeFactor($date, $user);
 
         if (1.0 == $fudgeFactor) {
-            $bmr = 10 * $weight->toUnit('kg');
-            $bmr += 6.25 * $user->getPersonalDetails()->getHeight()->toUnit('cm');
+            return $this->calculateBMR($weight, $user);
+        } else {
+            return $weight->toUnit('kg') * 24 * $fudgeFactor;
+        }
+    }
+
+    private function calculateBMR(Mass $weight, User $user)
+    {
+        $bmr = 10 * $weight->toUnit('kg');
+        $bmr += 6.25 * $user->getPersonalDetails()->getHeight()->toUnit('cm');
 
     // Get years since birth, i.e., age
     $today = new \DateTime();
-            $age = $today->diff($user->getPersonalDetails()->getBirthDate());
-            $bmr -= 4.92 * $age->y;
+        $age = $today->diff($user->getPersonalDetails()->getBirthDate());
+        $bmr -= 4.92 * $age->y;
 
-            if ('male' == $user->getPersonalDetails()->getGender()) {
-                $bmr += 5;
-            } elseif ('female' == $user->getPersonalDetails()->getGender()) {
-                $bmr -= 161;
-            }
-        } else {
-            $bmr = $weight->toUnit('kg') * 24 * $fudgeFactor;
+        if ('male' == $user->getPersonalDetails()->getGender()) {
+            $bmr += 5;
+        } elseif ('female' == $user->getPersonalDetails()->getGender()) {
+            $bmr -= 161;
         }
 
         return $bmr;
