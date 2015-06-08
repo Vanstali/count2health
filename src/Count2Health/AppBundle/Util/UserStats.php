@@ -460,6 +460,7 @@ return $this->getEstimatedTDEE($date, $user);
         $type = $user->getHealthPlan()->getType();
         $fudgeFactor = $this->getFudgeFactor($date, $user);
         $deficit = 0;
+        $mostRecentDate = null;
 
         foreach ($foodDiaryEntries->day as $entry) {
             $calories = intval($entry->calories);
@@ -479,15 +480,23 @@ return $this->getEstimatedTDEE($date, $user);
             $thisTdee = $this->getTDEE($thisDate, $user, $fudgeFactor);
 
             $deficit += ($thisTdee - $calories);
+            if (null == $mostRecentDate || $thisDate > $mostRecentDate) {
+                $mostRecentDate = $thisDate;
+            }
         }
 
         if ($numEntries <= 0) {
             return round($tdee - $targetDeficit);
         }
 
-        $deficitToday = $targetDeficit * ($numEntries + 15);
+        $endOfMonth = clone $date;
+        $endOfMonth->modify('last day of this month');
+        $daysLeft = $endOfMonth->diff($mostRecentDate);
+        $daysInMonth = $endOfMonth->format('t');
+
+        $deficitToday = $targetDeficit * $daysInMonth;
         $deficitToday -= $deficit;
-        $deficitToday /= 15.0;
+        $deficitToday /= $daysLeft->days;
 
         $rdi = $tdee - $deficitToday;
 
