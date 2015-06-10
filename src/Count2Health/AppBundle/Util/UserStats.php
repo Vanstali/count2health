@@ -531,52 +531,22 @@ return $this->getEstimatedTDEE($date, $user);
 
         $endWeight = $this->fatSecretWeight
             ->calculateTrend($endDate, $user);
-        $lastDay = clone $date;
-        $lastDay->modify('last day of 2 months');
-        $idealEndDate = $this->getIdealEndDate($user);
-        if ($lastDay > $idealEndDate) {
-            // Weight loss should be complete by this date
-            $lastDay = $idealEndDate;
-        }
+        $goalWeight = $user->getHealthPlan()->getGoalWeight();
+        $lastDay = $user->getHealthPlan()->getGoalDate();
 
         $days = $endDate->diff($startDate);
         $totalDays = $lastDay->diff($startDate);
-        $monthLength = $lastDay->diff($endDate);
+        $periodLength = $lastDay->diff($endDate);
 
-        $expectedDeltaWeight = $targetDeficit / 3500.0 * $totalDays->days;
+        // The weight to lose over the entirety of this health plan
+        $expectedDeltaWeight = $startWeight->toUnit('lb')
+            - $goalWeight->toUnit('lb');
+
+        // Weight lost so far, up to the end of last month
         $deltaWeight = $startWeight->toUnit('lb') - $endWeight->toUnit('lb');
 
         $weightLeft = $expectedDeltaWeight - $deltaWeight;
 
-        return intval(round($weightLeft / floatval($monthLength->days) * 3500));
-    }
-
-    /**
-     * Calculates the ideal end date for the given user.
-     *
-     * The ideal end date is the date the user would reach their goal
-     * weight, if the target calorie deficit would be followed every day to
-     * the end.
-     *
-     * @param User $user The user whose ideal end date should be
-     *                   calculated
-     *
-     * @return DateTime The ideal end date
-     */
-    private function getIdealEndDate(User $user)
-    {
-        $startDate = $user->getPersonalDetails()->getStartDate();
-        $startWeight = $user->getPersonalDetails()->getStartWeight();
-        $goalWeight = $user->getHealthPlan()->getGoalWeight();
-        $targetDeficit = $user->getHealthPlan()->getTargetCalorieDeficit();
-
-        $weightDelta = $startWeight->toUnit('lb') - $goalWeight->toUnit('lb');
-
-        $days = floor($weightDelta / floatval($targetDeficit) * 3500);
-
-        $idealEndDate = clone $startDate;
-        $idealEndDate->add(new \DateInterval("P{$days}D"));
-
-        return $idealEndDate;
+        return intval(round($weightLeft / floatval($periodLength->days) * 3500));
     }
 }
